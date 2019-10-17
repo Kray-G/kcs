@@ -67,6 +67,18 @@ EXTOBJ = \
 
 all: libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll kccext.dll
 
+test: all
+	test\test-8cc\test.cmd
+	test\test-qcc\test.cmd
+	test\test-lacc\test.cmd
+	test\test-picoc\test.cmd
+	test\test-picoc\csmith.cmd
+	test\test-8cc\test.cmd -j
+	test\test-qcc\test.cmd -j
+	test\test-lacc\test.cmd -j
+	test\test-picoc\test.cmd -j
+	test\test-picoc\csmith.cmd -j
+
 libs: onig_s.lib
 
 onig_s.lib:
