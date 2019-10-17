@@ -24,7 +24,7 @@ The main feature is below.
 
 ### Prerequisites
 
-Now KCC is tested only on a platform below.
+Now KCC was tested only on a platform below.
 
 *   Windows (x64) with Visual Studio 2017 (Express Edition).
 *   Linux (x64) with gcc. (Not available on github now, but coming soon)
@@ -137,7 +137,7 @@ int main()
 
 #### Execution Sample
 
-The result of this program is below.
+The results are below.
 
 ```c
 $ kcc -j fib.c
@@ -153,9 +153,9 @@ Maybe it will depend on the environment.
 Here is one of samples on Windows.
 For the reference, it shows a result of Ruby and Python.
 
-|           | KCC VM(64bit) | KCC JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |             |
-| --------- | :-----------: | :----------: | :--------: | :--------: | :-----------: | ----------- |
-| `fib(34)` |     0.718     |  **0.062**   |   1.171    |   0.734    |     1.578     | (in second) |
+|           | KCC VM(64bit) | KCC JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |              |
+| --------- | :-----------: | :----------: | :--------: | :--------: | :-----------: | ------------ |
+| `fib(34)` |     0.718     |  **0.062**   |   1.171    |   0.734    |     1.578     | (in seconds) |
 
 Ruby 2.6.3 is very fast against my expectations.
 
@@ -165,8 +165,9 @@ Here is a compiled x64 code and a VM instructions.
 Those are very long and it includes also lots of library code,
 so it shows the fib function only.
 
+##### x64 assembly code
+
 ```asm
-// x64 assembly code.
 $ kcc -J fib.c
 ...(omitted)...
                                   fib
@@ -215,8 +216,11 @@ $ kcc -J fib.c
 0000BD51: C9                            leave
 0000BD52: C3                            ret
 ...(omitted)...
+```
 
-// VM instructions.
+##### VM instructions
+
+```asm
 $ kcc -X fib.c
 ...(omitted)...
 ----------------------------------------------------------------
