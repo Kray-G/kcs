@@ -1,0 +1,10 @@
+*.dll
+*.exe
+*.obj
+*.exp
+*.map
+*.lib
+*.expect
+*.result
+test.c
+result.txt

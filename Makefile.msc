@@ -1,0 +1,116 @@
+
+NAME     = kcc
+CC       = cl
+LINK     = link
+CFLAGS   = /O2 /MT /Iinclude
+CPPFLAGS = /O2 /MT /Iinclude /EHac
+LFLAGS   =
+
+OBJS = \
+	src/kcc.obj \
+	src/kccutil.obj \
+	src/context.obj \
+	src/util/argparse.obj \
+	src/util/hash.obj \
+	src/util/string.obj \
+	src/backend/x86_64/instr.obj \
+	src/backend/x86_64/jit_util.obj \
+	src/backend/x86_64/jit.obj \
+	src/backend/x86_64/dwarf.obj \
+	src/backend/x86_64/elf.obj \
+	src/backend/x86_64/abi.obj \
+	src/backend/x86_64/assemble.obj \
+	src/backend/vm/vmdump.obj \
+	src/backend/vm/vminstr.obj \
+	src/backend/vm/vmrunlir.obj \
+	src/backend/vm/vmimplir.obj \
+	src/backend/vm/vmsevelir.obj \
+	src/backend/compile.obj \
+	src/backend/graphviz/dot.obj \
+	src/backend/linker.obj \
+	src/optimizer/transform.obj \
+	src/optimizer/liveness.obj \
+	src/optimizer/optimize.obj \
+	src/preprocessor/tokenize.obj \
+	src/preprocessor/strtab.obj \
+	src/preprocessor/input.obj \
+	src/preprocessor/directive.obj \
+	src/preprocessor/preprocess.obj \
+	src/preprocessor/macro.obj \
+	src/parser/typetree.obj \
+	src/parser/symtab.obj \
+	src/parser/parse.obj \
+	src/parser/statement.obj \
+	src/parser/initializer.obj \
+	src/parser/expression.obj \
+	src/parser/declaration.obj \
+	src/parser/eval.obj
+
+BUILTIN = \
+	src/backend/vm/builtin/vmbuiltin.obj \
+	src/backend/vm/builtin/vmacpconv.obj
+
+JIT = \
+	src/backend/x86_64/builtin/jitbuiltin.obj \
+	src/backend/vm/builtin/vmacpconv.obj
+
+EXTOBJ = \
+	src/_extdll/ext.obj \
+	src/_extdll/ext/fileio.obj \
+	src/_extdll/ext/regex.obj \
+	src/_extdll/ext/timer.obj \
+	src/_extdll/ext/zip_unzip.obj \
+	src/_extdll/lib/zip/miniz.obj
+
+.SUFFIXES :
+.SUFFIXES : .c .cpp .obj
+
+all: libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll kccext.dll
+
+test: all
+	test\test-8cc\test.cmd
+	test\test-qcc\test.cmd
+	test\test-lacc\test.cmd
+	test\test-picoc\test.cmd
+	test\test-picoc\csmith.cmd
+	test\test-8cc\test.cmd -j
+	test\test-qcc\test.cmd -j
+	test\test-lacc\test.cmd -j
+	test\test-picoc\test.cmd -j
+	test\test-picoc\csmith.cmd -j
+
+libs: onig_s.lib
+
+onig_s.lib:
+	cd src/_extdll/lib/onig
+	make_win64.bat
+	cd ../../../../
+	copy /y src\_extdll\lib\onig\onig_s.lib .
+
+sample_dll.dll: sample_dll.obj
+	$(CC) /nologo /LD /MT /Iinclude sample_dll.c
+
+clean:
+	del /S *.exe *.obj *.dll *.lib > NUL
+	del *.exp > NUL
+	cd src/_extdll/lib/onig
+	make_win64.bat clean
+	cd ../../../../
+
+kccext.dll: $(EXTOBJ)
+	$(CC) /Fekccext.dll /LD $(EXTOBJ) onig_s.lib
+
+$(NAME).exe: $(OBJS)
+	$(CC) /Fe$(NAME).exe /Fm$(NAME).map /Fa$(NAME).s $(OBJS)
+
+$(NAME)bltin.dll: $(BUILTIN)
+	$(CC) $(CFLAGS) /LD /Fe$(NAME)bltin.dll $(BUILTIN:.obj=.c) src\kccutil.obj src/util/string.obj
+
+$(NAME)jit.dll: $(JIT)
+	$(CC) $(CFLAGS) /LD /Fe$(NAME)jit.dll $(JIT:.obj=.c) src\kccutil.obj src/util/string.obj
+
+.c.obj:
+	$(CC) -c $(CFLAGS) -Fo$*.obj $<
+
+.cpp.obj:
+	$(CC) -c $(CPPFLAGS) /DONIG_EXTERN=extern -Fo$*.obj $<
