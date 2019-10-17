@@ -56,6 +56,10 @@ JIT = \
 
 EXTOBJ = \
 	src/_extdll/ext.obj \
+	src/_extdll/ext/fileio.obj \
+	src/_extdll/ext/regex.obj \
+	src/_extdll/ext/timer.obj \
+	src/_extdll/ext/zip_unzip.obj \
 	src/_extdll/lib/zip/miniz.obj
 
 .SUFFIXES :
@@ -77,6 +81,9 @@ sample_dll.dll: sample_dll.obj
 clean:
 	del /S *.exe *.obj *.dll *.lib > NUL
 	del *.exp > NUL
+	cd src/_extdll/lib/onig
+	make_win64.bat clean
+	cd ../../../../
 
 kccext.dll: $(EXTOBJ)
 	$(CC) /Fekccext.dll /LD $(EXTOBJ) onig_s.lib
