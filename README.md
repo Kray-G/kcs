@@ -27,7 +27,7 @@ The main feature is below.
 Now KCC was tested only on a platform below.
 
 *   Windows (x64) with Visual Studio 2017 (Express Edition).
-*   Linux (x64) with gcc. (Not available on github now, but coming soon)
+*   Linux (x64) with gcc/g++.
 
 I am waiting for pull requests to support any other platforms & compilers.
 
@@ -43,7 +43,7 @@ C:> make.cmd all test
 
 #### Linux
 
-Now not available, coming soon.
+Do make & test KCC on Linux x64 as below.
 
 ```
 $ make all test
