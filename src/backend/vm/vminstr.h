@@ -43,6 +43,7 @@ enum vm_opcode {
     VM_LT,
     VM_GLOBAL,
     VM_REFLIB,
+    VM_SAVE_RETVAL,
 };
 
 enum vm_optype {
