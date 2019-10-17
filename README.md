@@ -43,6 +43,8 @@ C:> make.cmd all test
 
 #### Linux
 
+Now not available, coming soon.
+
 ```
 $ make all test
 ```
