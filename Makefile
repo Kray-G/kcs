@@ -50,7 +50,7 @@ SOURCES = \
 
 LIBDIR_SOURCE = $(SRCDIR)/include/stdlib
 LIBDIR_TARGET = $(LIBDIR)/lacc/include
-TARGET = bin/selfhost/kcc
+TARGET = kcc
 OBJS=$(SOURCES:%.c=%.o)
 
 BUILTIN = \
@@ -61,7 +61,9 @@ JIT = \
 	src/backend/x86_64/builtin/jitbuiltin.c \
 	src/backend/vm/builtin/vmacpconv.c
 
-all: bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so
+all: $(TARGET)
+
+$(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so
 	cp -f bin/bootstrap/kcc .
 	cp -f bin/bootstrap/kccbltin.so .
 	cp -f bin/bootstrap/kccjit.so .
@@ -90,30 +92,21 @@ bin/bootstrap/kccjit.so:
 	done
 	$(CC) $(@D)/jitbuiltin.o $(@D)/vmacpconv.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
 
-test-c89: $(TARGET)
-	for file in $$(find test/ -maxdepth 1 -type f -iname '*.c') ; do \
-		./check.sh "$? -std=c89" "$$file" "$(CC) -std=c89 -w" ; \
-	done
+test-8cc: $(TARGET)
+	sh ./test/test-8cc/test.sh
 
-test-c99: $(TARGET)
-	for file in $$(find test/c99 -type f -iname '*.c') ; do \
-		./check.sh "$? -std=c99" "$$file" "$(CC) -std=c99 -w" ; \
-	done
+test-qcc: $(TARGET)
+	sh ./test/test-qcc/test.sh
 
-test-c11: $(TARGET)
-	for file in $$(find test/c11 -type f -iname '*.c') ; do \
-		./check.sh "$? -std=c11" "$$file" "$(CC) -std=c11 -w" ; \
-	done
+test-lacc: $(TARGET)
+	sh ./test/test-lacc/test.sh
 
-test-gnu: $(TARGET)
-	for file in $$(find test/gnu -type f -iname '*.c') ; do \
-		./check.sh "$?" "$$file" "gcc -w" ; \
-	done
+test-picoc: $(TARGET)
+	sh ./test/test-picoc/test.sh
+	sh ./test/test-picoc/csmith.sh
+	sh ./test/test-picoc/csmith.sh -j
 
-test-sqlite: $(TARGET)
-	./sqlite.sh $? "$(CC)"
-
-test: test-c89 test-c99 test-c11
+test: test-8cc test-qcc test-lacc test-picoc
 
 install: bin/release/kcc
 	mkdir -p $(LIBDIR_TARGET)
