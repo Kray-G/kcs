@@ -307,7 +307,7 @@ About library, thanks to the following amazing products.
 *   Library
     *   [Miniz][] (MIT License)
     *   [Oniguruma][] (BSD License)
-    *   [bigint][ (Public Domain)]
+    *   [bigint](Public Domain)
 
 [Oniguruma]: https://github.com/kkos/oniguruma/
 [Miniz]: https://github.com/richgel999/miniz
