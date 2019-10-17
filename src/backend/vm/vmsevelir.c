@@ -255,6 +255,8 @@ static void serialize_lir(FILE *fp, struct vm_program *prog)
             sel_put_string(fp, str_raw(code->d.name));
             continue;
         }
+        case VM_SAVE_RETVAL:
+            continue;
         default:
             assert(0);
         }

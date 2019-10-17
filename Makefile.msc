@@ -61,7 +61,7 @@ EXTOBJ = \
 .SUFFIXES :
 .SUFFIXES : .c .cpp .obj
 
-all: libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll sample_dll.dll kccext.dll
+all: libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll kccext.dll
 
 libs: onig_s.lib
 
@@ -69,7 +69,7 @@ onig_s.lib:
 	cd src/_extdll/lib/onig
 	make_win64.bat
 	cd ../../../../
-	copy /y lib\libsrc\kccdll\lib\onig\onig_s.lib .
+	copy /y src\_extdll\lib\onig\onig_s.lib .
 
 sample_dll.dll: sample_dll.obj
 	$(CC) /nologo /LD /MT /Iinclude sample_dll.c

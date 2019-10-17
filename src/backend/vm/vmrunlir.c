@@ -173,6 +173,7 @@ static void check_point(struct vm_program *prog, struct vm_code *code, int64_t s
 
 static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, int64_t bp)
 {
+    int64_t retval = 0;
     int32_t retsize;
     int64_t start = bp;
     int64_t sp = bp;
@@ -807,12 +808,17 @@ static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, in
             ++ip;
             continue;
         }
+        case VM_SAVE_RETVAL: {
+            retval = STACK_TOPI_OFFSET(-8);
+            ++ip;
+            continue;
+        }
         default:
             assert(0);
         }
     }
 
-    return STACK_TOPI_OFFSET(-8);
+    return retval;
 }
 
 INTERNAL int vm_get_return_value(void)

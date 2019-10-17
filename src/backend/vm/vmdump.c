@@ -341,6 +341,7 @@ INTERNAL void print_vm_instruction(struct vm_program *prog, struct vm_code *code
     case VM_LE:     print_vm_op(code->opcode, code->type);                      break;
     case VM_LT:     print_vm_op(code->opcode, code->type);                      break;
     case VM_REFLIB: printf(IDT4 "%-24s%s\n", "#lib", str_raw(code->d.name));    break;
+    case VM_SAVE_RETVAL: printf(IDT4 "%-24s\n", "save_retval");                 break;
     }
 }
 

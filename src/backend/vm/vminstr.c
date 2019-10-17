@@ -1120,6 +1120,9 @@ static void vm_fix_lir(void)
         },
     }));
     emit_vm_code(((struct vm_code){
+        .opcode = VM_SAVE_RETVAL,
+    }));
+    emit_vm_code(((struct vm_code){
         .opcode = VM_CALL,
         .type = VMOP_FUNCNAME,
         .d.addr = (struct vm_address){
