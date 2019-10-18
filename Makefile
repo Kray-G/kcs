@@ -72,11 +72,10 @@ EXTOBJ = \
 
 all: $(TARGET)
 
-$(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so bin/bootstrap/kccext.so
+$(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so
 	cp -f bin/bootstrap/kcc .
 	cp -f bin/bootstrap/kccbltin.so .
 	cp -f bin/bootstrap/kccjit.so .
-	cp -f bin/bootstrap/kccext.so .
 
 bin/bootstrap/kcc:
 	@mkdir -p $(@D)
