@@ -6,7 +6,9 @@ LIBDIR = $(PREFIX)/lib
 SRCDIR = $(CURDIR)$(.CURDIR)
 
 CC = gcc
+CPP = g++
 CFLAGS = -O2 -Wno-missing-braces -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -std=gnu99
+CPPFLAGS = -O2 -Wno-missing-braces
 
 SOURCES = \
 	src/kcc.c \
@@ -61,12 +63,20 @@ JIT = \
 	src/backend/x86_64/builtin/jitbuiltin.c \
 	src/backend/vm/builtin/vmacpconv.c
 
+EXTOBJ = \
+	src/_extdll/ext.cpp \
+	src/_extdll/ext/fileio.cpp \
+	src/_extdll/ext/regex.cpp \
+	src/_extdll/ext/timer.cpp \
+	src/_extdll/ext/zip_unzip.cpp
+
 all: $(TARGET)
 
-$(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so
+$(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so bin/bootstrap/kccext.so
 	cp -f bin/bootstrap/kcc .
 	cp -f bin/bootstrap/kccbltin.so .
 	cp -f bin/bootstrap/kccjit.so .
+	cp -f bin/bootstrap/kccext.so .
 
 bin/bootstrap/kcc:
 	@mkdir -p $(@D)
@@ -91,6 +101,15 @@ bin/bootstrap/kccjit.so:
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
 	done
 	$(CC) $(@D)/jitbuiltin.o $(@D)/vmacpconv.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
+
+bin/bootstrap/kccext.so:
+	@mkdir -p $(@D)
+	for file in $(EXTOBJ) ; do \
+		target=$(@D)/$$(basename $$file .cpp).o ; \
+		$(CPP) $(CPPFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
+	done
+	$(CC) $(CFLAGS) -fPIC -Iinclude -c src/_extdll/lib/zip/miniz.c -o $(@D)/miniz.o -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
+	$(CC) $(@D)/ext.o $(@D)/fileio.o $(@D)/regex.o $(@D)/timer.o $(@D)/zip_unzip.o $(@D)/miniz.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
 
 test-8cc: $(TARGET)
 	sh ./test/test-8cc/test.sh

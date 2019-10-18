@@ -1,10 +1,10 @@
-# KCC (Kray-G C Compiler)
+# KCCI (Kray-G C Compiler & Interpreter)
 
-Small but Useful C Execution Environment by JIT(x64)/VM.
+Small but Useful C Compiler & Interpreter As Execution Environment by JIT(x64)/VM.
 
 ## Overview
 
-KCC is a compact C Compiler and Interpreter.
+KCCI is a compact C Compiler and Interpreter.
 This compiler has a JIT routine to run the code on the fly.
 And this has also a VM execution routine to run the code on the VM.
 It is basically same except the performance.
@@ -13,10 +13,10 @@ The main feature is below.
 
 *   The language is C, so it is easy to use for almost all programmers.
 *   You can execute the code on the fly with JIT or VM like a scripting.
-*   KCC provides a standard C library.
+*   KCCI provides a standard C library.
     *   Not completed so far, though. 
     *   See [doc/cstdlib.md](doc/cstdlib.md) for the current status.
-*   KCC also provides useful libraries by default like regex, zip, and so on.
+*   KCCI also provides useful libraries by default like regex, zip, and so on.
     *   Some libraries will be coming soon.
     *   Please let me know if you have library which you want to use.
 
@@ -24,7 +24,7 @@ The main feature is below.
 
 ### Prerequisites
 
-Now KCC was tested only on a platform below.
+Now KCCI was tested only on a platform below.
 
 *   Windows (x64) with Visual Studio 2017 (Express Edition).
 *   Linux (x64) with gcc/g++.
@@ -43,7 +43,7 @@ C:> make.cmd all test
 
 #### Linux
 
-Do make & test KCC on Linux x64 as below.
+Do make & test KCCI on Linux x64 as below.
 
 ```
 $ make all test
@@ -51,7 +51,7 @@ $ make all test
 
 ### Architecture
 
-Here is the basic block diagram of KCC.
+Here is the basic block diagram of KCCI.
 
 ```
 +-----------------------------------------------------------+
@@ -61,7 +61,7 @@ Here is the basic block diagram of KCC.
 +-----------------------------+-----------------------------+
                              ---
 +-----------------------------+-----------------------------+
-| KCC - Kray-G C Compiler & Interpreter                     |
+| KCCI - Kray-G C Compiler & Interpreter                     |
 |                                                           |   +---------------------------------------+
 |   +---------------------------------------------------+   |   |  stdio, stdlib, string...             |
 |   |                   Library Code                    +-------+    bigint, regex, xml, json...        |
@@ -69,8 +69,8 @@ Here is the basic block diagram of KCC.
 |                                                           |   +-------------------+-------------------+
 |   +-----------------------+   +-----------------------+   |                       |
 |   |     JIT builtin       |   |     VM builtin        |   |   +-------------------+-------------------+
-|   |        kccjit.dll     |   |       kccbltin.dll    |   |   |             Extension DLL             |
-|   +-----------------------+   +-----------------------+   |   |                  kccext.dll           |
+|   |        KCCIjit.dll     |   |       KCCIbltin.dll    |   |   |             Extension DLL             |
+|   +-----------------------+   +-----------------------+   |   |                  KCCIext.dll           |
 |   +-----------------------+   +-----------------------+   |   +---+-----------------------------------+
 |   |     JIT Executor      |   |    VM Interpreter     |   |       |       |       |       |       |
 |   +-----------+-----------+   +-----------+-----------+   |   +-------+   :       :       :       :
@@ -96,9 +96,9 @@ Use the option `-J` if you want to see the x64 assembly code.
 
 ```c
 // Run on the x64 JIT.
-$ kcc -j program.c
+$ KCCI -j program.c
 // Show the x64 assembly code.
-$ kcc -J program.c
+$ KCCI -J program.c
 ```
 
 ### Run on the VM
@@ -108,10 +108,10 @@ Use the option `-X` if you want to see the VM instructions.
 
 ```c
 // Run on the VM.
-$ kcc program.c
-$ kcc -x program.c
+$ KCCI program.c
+$ KCCI -x program.c
 // Show the VM instruction code.
-$ kcc -X program.c
+$ KCCI -X program.c
 ```
 
 ## Examples
@@ -140,10 +140,10 @@ int main()
 The results are below.
 
 ```c
-$ kcc -j fib.c
+$ KCCI -j fib.c
 9227465
 
-$ kcc fib.c
+$ KCCI fib.c
 9227465
 ```
 
@@ -153,7 +153,7 @@ Maybe it will depend on the environment.
 Here is one of samples on Windows.
 For the reference, it shows a result of Ruby and Python.
 
-|           | KCC VM(64bit) | KCC JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |              |
+|           | KCCI VM(64bit) | KCCI JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |              |
 | --------- | :-----------: | :----------: | :--------: | :--------: | :-----------: | ------------ |
 | `fib(34)` |     0.718     |  **0.062**   |   1.171    |   0.734    |     1.578     | (in seconds) |
 
@@ -168,7 +168,7 @@ so it shows the fib function only.
 ##### x64 assembly code
 
 ```asm
-$ kcc -J fib.c
+$ KCCI -J fib.c
 ...(omitted)...
                                   fib
 0000BCE6: 55                            pushq   %rbp
@@ -221,7 +221,7 @@ $ kcc -J fib.c
 ##### VM instructions
 
 ```asm
-$ kcc -X fib.c
+$ KCCI -X fib.c
 ...(omitted)...
 ----------------------------------------------------------------
 fib
@@ -267,7 +267,7 @@ I have a plan to do the followings when I have a time.
 *   [ ] Supporting jump table for switch-case.
 *   [ ] One instruction for increment and decrement.
 *   [ ] Combining VM instructions to improve the performance.
-*   [ ] Building libkcc to use it as a shared library.
+*   [ ] Building libKCCI to use it as a shared library.
 
 ## License
 
@@ -318,3 +318,6 @@ About library, thanks to the following amazing products.
 [bigint]: https://github.com/983/bigint
 
 Lastly, thank you very much for all programmers in the world.
+
+---
+https://github.com/Kray-G/KCCIi-platform
