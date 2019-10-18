@@ -1,10 +1,10 @@
-# KCC (Kray-G C Compiler)
+# KCCI (Kray-G C Compiler & Interpreter)
 
-Small but Useful C Execution Environment by JIT(x64)/VM.
+Small but Useful C Compiler & Interpreter As Execution Environment by JIT(x64)/VM.
 
 ## Overview
 
-KCC is a compact C Compiler and Interpreter.
+KCCI is a compact C Compiler and Interpreter.
 This compiler has a JIT routine to run the code on the fly.
 And this has also a VM execution routine to run the code on the VM.
 It is basically same except the performance.
@@ -13,10 +13,10 @@ The main feature is below.
 
 *   The language is C, so it is easy to use for almost all programmers.
 *   You can execute the code on the fly with JIT or VM like a scripting.
-*   KCC provides a standard C library.
+*   KCCI provides a standard C library.
     *   Not completed so far, though. 
     *   See [doc/cstdlib.md](doc/cstdlib.md) for the current status.
-*   KCC also provides useful libraries by default like regex, zip, and so on.
+*   KCCI also provides useful libraries by default like regex, zip, and so on.
     *   Some libraries will be coming soon.
     *   Please let me know if you have library which you want to use.
 
@@ -24,10 +24,10 @@ The main feature is below.
 
 ### Prerequisites
 
-Now KCC was tested only on a platform below.
+Now KCCI was tested only on a platform below.
 
 *   Windows (x64) with Visual Studio 2017 (Express Edition).
-*   Linux (x64) with gcc. (Not available on github now, but coming soon)
+*   Linux (x64) with gcc/g++.
 
 I am waiting for pull requests to support any other platforms & compilers.
 
@@ -43,7 +43,7 @@ C:> make.cmd all test
 
 #### Linux
 
-Now not available, coming soon.
+Do make & test KCCI on Linux x64 as below.
 
 ```
 $ make all test
@@ -51,7 +51,7 @@ $ make all test
 
 ### Architecture
 
-Here is the basic block diagram of KCC.
+Here is the basic block diagram of KCCI.
 
 ```
 +-----------------------------------------------------------+
@@ -61,7 +61,7 @@ Here is the basic block diagram of KCC.
 +-----------------------------+-----------------------------+
                              ---
 +-----------------------------+-----------------------------+
-| KCC - Kray-G C Compiler & Interpreter                     |
+| KCCI - Kray-G C Compiler & Interpreter                    |
 |                                                           |   +---------------------------------------+
 |   +---------------------------------------------------+   |   |  stdio, stdlib, string...             |
 |   |                   Library Code                    +-------+    bigint, regex, xml, json...        |
@@ -150,12 +150,12 @@ $ kcc fib.c
 #### Benchmark
 
 Maybe it will depend on the environment.
-Here is one of samples on Windows.
+Here is one of samples on Windows, and it is an execution time in seconds.
 For the reference, it shows a result of Ruby and Python.
 
-|           | KCC VM(64bit) | KCC JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |              |
-| --------- | :-----------: | :----------: | :--------: | :--------: | :-----------: | ------------ |
-| `fib(34)` |     0.718     |  **0.062**   |   1.171    |   0.734    |     1.578     | (in seconds) |
+|           | KCCI VM(64bit) | KCCI JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |
+| --------- | :------------: | :-----------: | :--------: | :--------: | :-----------: |
+| `fib(34)` |     0.718      |   **0.062**   |   1.171    |   0.734    |     1.578     |
 
 Ruby 2.6.3 is very fast against my expectations.
 
@@ -318,3 +318,6 @@ About library, thanks to the following amazing products.
 [bigint]: https://github.com/983/bigint
 
 Lastly, thank you very much for all programmers in the world.
+
+---
+https://github.com/Kray-G/kcci-platform
