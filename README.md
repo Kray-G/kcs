@@ -1,6 +1,6 @@
 # KCCI (Kray-G C Compiler & Interpreter)
 
-Small but Useful C Compiler & Interpreter As Execution Environment by JIT(x64)/VM.
+Small but Useful C Compiler & Interpreter As an Execution Environment by JIT(x64)/VM.
 
 ## Overview
 
@@ -61,7 +61,7 @@ Here is the basic block diagram of KCCI.
 +-----------------------------+-----------------------------+
                              ---
 +-----------------------------+-----------------------------+
-| KCCI - Kray-G C Compiler & Interpreter                     |
+| KCCI - Kray-G C Compiler & Interpreter                    |
 |                                                           |   +---------------------------------------+
 |   +---------------------------------------------------+   |   |  stdio, stdlib, string...             |
 |   |                   Library Code                    +-------+    bigint, regex, xml, json...        |
@@ -69,8 +69,8 @@ Here is the basic block diagram of KCCI.
 |                                                           |   +-------------------+-------------------+
 |   +-----------------------+   +-----------------------+   |                       |
 |   |     JIT builtin       |   |     VM builtin        |   |   +-------------------+-------------------+
-|   |        KCCIjit.dll     |   |       KCCIbltin.dll    |   |   |             Extension DLL             |
-|   +-----------------------+   +-----------------------+   |   |                  KCCIext.dll           |
+|   |        kccjit.dll     |   |       kccbltin.dll    |   |   |             Extension DLL             |
+|   +-----------------------+   +-----------------------+   |   |                  kccext.dll           |
 |   +-----------------------+   +-----------------------+   |   +---+-----------------------------------+
 |   |     JIT Executor      |   |    VM Interpreter     |   |       |       |       |       |       |
 |   +-----------+-----------+   +-----------+-----------+   |   +-------+   :       :       :       :
@@ -96,9 +96,9 @@ Use the option `-J` if you want to see the x64 assembly code.
 
 ```c
 // Run on the x64 JIT.
-$ KCCI -j program.c
+$ kcc -j program.c
 // Show the x64 assembly code.
-$ KCCI -J program.c
+$ kcc -J program.c
 ```
 
 ### Run on the VM
@@ -108,10 +108,10 @@ Use the option `-X` if you want to see the VM instructions.
 
 ```c
 // Run on the VM.
-$ KCCI program.c
-$ KCCI -x program.c
+$ kcc program.c
+$ kcc -x program.c
 // Show the VM instruction code.
-$ KCCI -X program.c
+$ kcc -X program.c
 ```
 
 ## Examples
@@ -140,22 +140,22 @@ int main()
 The results are below.
 
 ```c
-$ KCCI -j fib.c
+$ kcc -j fib.c
 9227465
 
-$ KCCI fib.c
+$ kcc fib.c
 9227465
 ```
 
 #### Benchmark
 
 Maybe it will depend on the environment.
-Here is one of samples on Windows.
+Here is one of samples on Windows, and it is an execution time in seconds.
 For the reference, it shows a result of Ruby and Python.
 
-|           | KCCI VM(64bit) | KCCI JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |              |
-| --------- | :-----------: | :----------: | :--------: | :--------: | :-----------: | ------------ |
-| `fib(34)` |     0.718     |  **0.062**   |   1.171    |   0.734    |     1.578     | (in seconds) |
+|           | KCCI VM(64bit) | KCCI JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |
+| --------- | :------------: | :-----------: | :--------: | :--------: | :-----------: |
+| `fib(34)` |     0.718      |   **0.062**   |   1.171    |   0.734    |     1.578     |
 
 Ruby 2.6.3 is very fast against my expectations.
 
@@ -168,7 +168,7 @@ so it shows the fib function only.
 ##### x64 assembly code
 
 ```asm
-$ KCCI -J fib.c
+$ kcc -J fib.c
 ...(omitted)...
                                   fib
 0000BCE6: 55                            pushq   %rbp
@@ -221,7 +221,7 @@ $ KCCI -J fib.c
 ##### VM instructions
 
 ```asm
-$ KCCI -X fib.c
+$ kcc -X fib.c
 ...(omitted)...
 ----------------------------------------------------------------
 fib
@@ -267,7 +267,7 @@ I have a plan to do the followings when I have a time.
 *   [ ] Supporting jump table for switch-case.
 *   [ ] One instruction for increment and decrement.
 *   [ ] Combining VM instructions to improve the performance.
-*   [ ] Building libKCCI to use it as a shared library.
+*   [ ] Building libkcc to use it as a shared library.
 
 ## License
 
@@ -320,4 +320,4 @@ About library, thanks to the following amazing products.
 Lastly, thank you very much for all programmers in the world.
 
 ---
-https://github.com/Kray-G/KCCIi-platform
+https://github.com/Kray-G/kcci-platform
