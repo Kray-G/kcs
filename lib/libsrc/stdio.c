@@ -33,7 +33,7 @@ int puts(const char *ss)
         goto ERROR;
     }
     __kcc_builtin_acpfree(base);
-    return 0;
+    return s - base + 1;
 
 ERROR:
     __kcc_builtin_acpfree(base);

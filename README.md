@@ -1,6 +1,6 @@
 # KCCI (Kray-G C Compiler & Interpreter)
 
-Small but Useful C Compiler & Interpreter As Execution Environment by JIT(x64)/VM.
+Small but Useful C Compiler & Interpreter As an Execution Environment by JIT(x64)/VM.
 
 ## Overview
 
