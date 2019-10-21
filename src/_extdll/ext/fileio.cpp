@@ -50,7 +50,7 @@ DLLEXPORT int fileio_fgetpos(int argc, arg_type_t* argv)
         return 0;
     }
     klib::fileio *fp = (klib::fileio *)argv[0].value.p;
-    int64_t *pos = (int64_t *)argv[1].value.p;
+    klib::fpos_t *pos = (klib::fpos_t *)argv[1].value.p;
     return klib::fgetpos(fp, pos);
 }
 
@@ -60,7 +60,7 @@ DLLEXPORT int fileio_fsetpos(int argc, arg_type_t* argv)
         return 0;
     }
     klib::fileio *fp = (klib::fileio *)argv[0].value.p;
-    int64_t *pos = (int64_t *)argv[1].value.p;
+    klib::fpos_t *pos = (klib::fpos_t *)argv[1].value.p;
     return klib::fsetpos(fp, pos);
 }
 

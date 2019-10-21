@@ -57,7 +57,9 @@ OBJS=$(SOURCES:%.c=%.o)
 
 BUILTIN = \
 	src/backend/vm/builtin/vmbuiltin.c \
-	src/backend/vm/builtin/vmacpconv.c
+	src/backend/vm/builtin/vmacpconv.c \
+	src/util/string.c \
+	src/kccutil.c
 
 JIT = \
 	src/backend/x86_64/builtin/jitbuiltin.c \
@@ -72,10 +74,11 @@ EXTOBJ = \
 
 all: $(TARGET)
 
-$(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so
+$(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so bin/bootstrap/kccext.so
 	cp -f bin/bootstrap/kcc .
 	cp -f bin/bootstrap/kccbltin.so .
 	cp -f bin/bootstrap/kccjit.so .
+	cp -f bin/bootstrap/kccext.so .
 
 bin/bootstrap/kcc:
 	@mkdir -p $(@D)
@@ -91,7 +94,7 @@ bin/bootstrap/kccbltin.so:
 		target=$(@D)/$$(basename $$file .c).o ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
 	done
-	$(CC) $(@D)/vmbuiltin.o $(@D)/vmacpconv.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
+	$(CC) $(@D)/vmbuiltin.o $(@D)/vmacpconv.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
 
 bin/bootstrap/kccjit.so:
 	@mkdir -p $(@D)
@@ -99,16 +102,23 @@ bin/bootstrap/kccjit.so:
 		target=$(@D)/$$(basename $$file .c).o ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
 	done
-	$(CC) $(@D)/jitbuiltin.o $(@D)/vmacpconv.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
+	$(CC) $(@D)/jitbuiltin.o $(@D)/vmacpconv.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
 
-bin/bootstrap/kccext.so:
+bin/bootstrap/kccext.so: bin/bootstrap/libonig.a
 	@mkdir -p $(@D)
 	for file in $(EXTOBJ) ; do \
 		target=$(@D)/$$(basename $$file .cpp).o ; \
 		$(CPP) $(CPPFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
 	done
 	$(CC) $(CFLAGS) -fPIC -Iinclude -c src/_extdll/lib/zip/miniz.c -o $(@D)/miniz.o -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
-	$(CC) $(@D)/ext.o $(@D)/fileio.o $(@D)/regex.o $(@D)/timer.o $(@D)/zip_unzip.o $(@D)/miniz.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
+	$(CPP) $(@D)/ext.o $(@D)/fileio.o $(@D)/regex.o $(@D)/timer.o $(@D)/zip_unzip.o $(@D)/miniz.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm -L$(@D) -lonig
+
+bin/bootstrap/libonig.a:
+	cd src/_extdll/lib/onig; \
+	autoreconf -vfi; \
+	./configure --with-pic; \
+	make
+	cp -f src/_extdll/lib/onig/src/.libs/libonig.a $(@D)/libonig.a
 
 test-8cc: $(TARGET)
 	sh ./test/test-8cc/test.sh
@@ -138,6 +148,7 @@ uninstall:
 clean:
 	rm -rf bin
 	rm -f test/*.out test/*.txt test/*.s
+	cd src/_extdll/lib/onig; make clean 
 
 .PHONY: install uninstall clean test \
 	test-c89 test-c99 test-c11 test-gnu test-sqlite

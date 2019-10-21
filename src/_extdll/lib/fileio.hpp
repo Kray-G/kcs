@@ -2,13 +2,14 @@
 #define KLIB_FILESYSTEM_FILEIO_HPP_
 
 #include <cstdio>
+#include <cstdarg>
 
 namespace klib {
 
     #if !defined(KLIB_CONFIG_FILEIO_WIN)
 
     #ifdef _LARGEFILE_SOURCE
-    typedef long long fpos_t;
+    typedef ::fpos64_t fpos_t;
     #else
     typedef ::fpos_t fpos_t;
     #endif
