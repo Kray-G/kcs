@@ -1,5 +1,7 @@
 # KCCI (Kray-G C Compiler & Interpreter)
 
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+
 Small but Useful C Compiler & Interpreter As an Execution Environment by JIT(x64)/VM.
 
 ## Overview
