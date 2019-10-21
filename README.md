@@ -35,19 +35,18 @@ I am waiting for pull requests to support any other platforms & compilers.
 
 **Notes for executing:**
 
-To execute `kcc` on Linux, the files below are required,
-and `.dll` & `.exe` instead are required for Windows.
-Especially for `lib` folder is used at runtime.
+To execute `kcc` on Linux or `kcc.exe` on Windows, the files below are required.
+Especially for `lib` folder will be used at runtime.
 
 ```
 +-- (installed)
     +-- lib
     |   +-- include/*
     |   +-- libsrc/*
-    +-- kcc
-    +-- kccbltin.so
-    +-- kccjit.so
-    +-- kccext.so
+    +-- kcc                 (kcc.exe)
+    +-- kccbltin.so         (kccbltin.dll)
+    +-- kccjit.so           (kccjit.dll)
+    +-- kccext.so           (kccext.dll)
 ```
 
 #### Windows
