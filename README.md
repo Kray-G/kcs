@@ -33,6 +33,23 @@ I am waiting for pull requests to support any other platforms & compilers.
 
 ### Building & Testing
 
+**Notes for executing:**
+
+To execute `kcc` on Linux, the files below are required,
+and `.dll` & `.exe` instead are required for Windows.
+Especially for `lib` folder is used at runtime.
+
+```
++-- (installed)
+    +-- lib
+    |   +-- include/*
+    |   +-- libsrc/*
+    +-- kcc
+    +-- kccbltin.so
+    +-- kccjit.so
+    +-- kccext.so
+```
+
 #### Windows
 
 After installing Visual Studio and prepareing an environment, do make & test as below.
