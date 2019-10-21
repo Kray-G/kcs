@@ -8,3 +8,4 @@
 *.result
 test.c
 result.txt
+timeit.dat
