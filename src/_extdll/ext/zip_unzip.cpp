@@ -266,7 +266,7 @@ DLLEXPORT void ziplib_create(int argc, arg_type_t* argv)
     for (int i = 2; i < argc; ++i) {
         if (argv[i].type ==  C_STR) {
             const char *srcfile = (const char *)argv[i].value.s;
-            if (!mz_zip_writer_add_file(z, name, srcfile, NULL, 0, level)) {
+            if (!mz_zip_writer_add_file(z, srcfile, srcfile, NULL, 0, level)) {
                 return;
             }
         }
