@@ -38,11 +38,11 @@ I am waiting for pull requests to support any other platforms & compilers.
 **Notes for executing:**
 
 To execute `kcc` on Linux or `kcc.exe` on Windows, the files below are required.
-Especially for `lib` folder will be used at runtime.
+Especially for `kccrt` folder will be used at runtime.
 
 ```
 +-- (installed)
-    +-- lib
+    +-- kccrt
     |   +-- include/*
     |   +-- libsrc/*
     +-- kcc                 (kcc.exe)
