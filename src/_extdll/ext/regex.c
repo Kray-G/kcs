@@ -7,8 +7,6 @@
     regex
 --------------------------------------------------------------------------------------------- */
 
-extern "C" {
-
 static char g_regex_last_error[ONIG_MAX_ERROR_MESSAGE_LEN] = {0};
 typedef struct regex_pack_ {
     regex_t    *reg;
@@ -23,7 +21,7 @@ DLLEXPORT void* regex_compile(int argc, arg_type_t* argv)
         return NULL;
     }
 
-    regex_pack_t *rpack = new regex_pack_t();
+    regex_pack_t *rpack = (regex_pack_t *)calloc(1, sizeof(regex_pack_t));
     OnigErrorInfo einfo;
     const unsigned char *pattern = (const unsigned char *)argv[0].value.s;
     int r = onig_new(&rpack->reg, pattern, pattern + strlen((char* )pattern),
@@ -112,7 +110,5 @@ DLLEXPORT void regex_free(int argc, arg_type_t* argv)
     regex_pack_t *rpack = (regex_pack_t*)argv[0].value.p;
     onig_region_free(rpack->region, 1);
     onig_free(rpack->reg);
-    delete rpack;
+    free(rpack);
 }
-
-} // extern "C"

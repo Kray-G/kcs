@@ -66,11 +66,11 @@ JIT = \
 	src/backend/vm/builtin/vmacpconv.c
 
 EXTOBJ = \
-	src/_extdll/ext.cpp \
-	src/_extdll/ext/fileio.cpp \
-	src/_extdll/ext/regex.cpp \
-	src/_extdll/ext/timer.cpp \
-	src/_extdll/ext/zip_unzip.cpp
+	src/_extdll/ext.c \
+	src/_extdll/ext/fileio.c \
+	src/_extdll/ext/regex.c \
+	src/_extdll/ext/timer.c \
+	src/_extdll/ext/zip_unzip.c
 
 all: $(TARGET)
 
@@ -108,10 +108,10 @@ bin/bootstrap/kccext.so: bin/bootstrap/libonig.a
 	@mkdir -p $(@D)
 	for file in $(EXTOBJ) ; do \
 		target=$(@D)/$$(basename $$file .cpp).o ; \
-		$(CPP) $(CPPFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
+		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
 	done
 	$(CC) $(CFLAGS) -fPIC -Iinclude -c src/_extdll/lib/zip/miniz.c -o $(@D)/miniz.o -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
-	$(CPP) $(@D)/ext.o $(@D)/fileio.o $(@D)/regex.o $(@D)/timer.o $(@D)/zip_unzip.o $(@D)/miniz.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm -L$(@D) -lonig
+	$(CC) $(@D)/ext.o $(@D)/fileio.o $(@D)/regex.o $(@D)/timer.o $(@D)/zip_unzip.o $(@D)/miniz.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm -L$(@D) -lonig
 
 bin/bootstrap/libonig.a:
 	cd src/_extdll/lib/onig; \
@@ -148,7 +148,7 @@ uninstall:
 clean:
 	rm -rf bin
 	rm -f test/*.out test/*.txt test/*.s
-	cd src/_extdll/lib/onig; make clean 
+	cd src/_extdll/lib/onig; make clean
 
 .PHONY: install uninstall clean test \
 	test-c89 test-c99 test-c11 test-gnu test-sqlite

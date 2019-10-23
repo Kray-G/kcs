@@ -19,15 +19,15 @@
 #include <windows.h>
 #if !defined(KLIB_SNPRINTF)
 #if defined(_MSC_VER)
-    #define KLIB_SNPRINTF   ::_snprintf
-    #define KLIB_SNWPRINTF  ::_snwprintf
-    #define KLIB_VSNPRINTF  ::_vsnprintf
-    #define KLIB_VSNWPRINTF ::_vsnwprintf
+    #define KLIB_SNPRINTF   _snprintf
+    #define KLIB_SNWPRINTF  _snwprintf
+    #define KLIB_VSNPRINTF  _vsnprintf
+    #define KLIB_VSNWPRINTF _vsnwprintf
 #else
-    #define KLIB_SNPRINTF   ::snprintf
-    #define KLIB_SNWPRINTF  ::swprintf
-    #define KLIB_VSNPRINTF  ::vsnprintf
-    #define KLIB_VSNWPRINTF ::vsnwprintf
+    #define KLIB_SNPRINTF   snprintf
+    #define KLIB_SNWPRINTF  swprintf
+    #define KLIB_VSNPRINTF  vsnprintf
+    #define KLIB_VSNWPRINTF vsnwprintf
 #endif
 #endif
 #else
@@ -35,10 +35,10 @@
 /* Using files as 64-bit. */
 #define _FILE_OFFSET_BITS 64
 #if !defined(KLIB_SNPRINTF)
-    #define KLIB_SNPRINTF   ::snprintf
-    #define KLIB_SNWPRINTF  ::swprintf
-    #define KLIB_VSNPRINTF  ::vsnprintf
-    #define KLIB_VSNWPRINTF ::vswprintf
+    #define KLIB_SNPRINTF   snprintf
+    #define KLIB_SNWPRINTF  swprintf
+    #define KLIB_VSNPRINTF  vsnprintf
+    #define KLIB_VSNWPRINTF vswprintf
 #endif
 #endif
 
