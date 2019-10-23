@@ -538,12 +538,14 @@ static void add_include_search_paths(void)
 {
     // Search in kcc include path first.
     add_include_search_path(make_path(get_exe_path(), "kccrt/include"));
-    add_include_search_path("/usr/local/include");
-    add_include_search_path(LACC_STDLIB_PATH);
+    add_include_search_path("/usr/local/lib/kccrt/include");
+    // add_include_search_path(LACC_STDLIB_PATH);
 #ifdef SYSTEM_STDLIB_PATH
     add_include_search_path(SYSTEM_STDLIB_PATH);
 #endif
+#if 0
     add_include_search_path("/usr/include");
+#endif
 }
 
 static int process_file(struct input_file file)

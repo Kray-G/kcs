@@ -50,69 +50,72 @@ SOURCES = \
 	src/parser/declaration.c \
 	src/parser/eval.c
 
-LIBDIR_SOURCE = $(SRCDIR)/include/stdlib
-LIBDIR_TARGET = $(LIBDIR)/lacc/include
-TARGET = kcc
+LIBDIR_TARGET = $(LIBDIR)
+TARGETDIR = bin/release
+TARGET = $(TARGETDIR)/kcc
 OBJS=$(SOURCES:%.c=%.o)
 
 BUILTIN = \
 	src/backend/vm/builtin/vmbuiltin.c \
 	src/backend/vm/builtin/vmacpconv.c \
-	src/util/string.c \
-	src/kccutil.c
 
 JIT = \
 	src/backend/x86_64/builtin/jitbuiltin.c \
 	src/backend/vm/builtin/vmacpconv.c
 
-EXTOBJ = \
+EXTSRC = \
 	src/_extdll/ext.c \
 	src/_extdll/ext/fileio.c \
 	src/_extdll/ext/regex.c \
 	src/_extdll/ext/timer.c \
 	src/_extdll/ext/zip_unzip.c \
-	src/_extdll/lib/fileio/fileio_.c
+	src/_extdll/lib/fileio/_fileio.c \
+	src/_extdll/lib/zip/miniz.c
 
 all: $(TARGET)
 
 $(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so bin/bootstrap/kccext.so
-	cp -f bin/bootstrap/kcc .
+	mkdir -p $(TARGETDIR)
+	cp -f bin/bootstrap/kcc         $(TARGETDIR)/
+	cp -f bin/bootstrap/kccbltin.so $(TARGETDIR)/
+	cp -f bin/bootstrap/kccjit.so   $(TARGETDIR)/
+	cp -f bin/bootstrap/kccext.so   $(TARGETDIR)/
+	cp -f bin/bootstrap/kcc         .
 	cp -f bin/bootstrap/kccbltin.so .
-	cp -f bin/bootstrap/kccjit.so .
-	cp -f bin/bootstrap/kccext.so .
+	cp -f bin/bootstrap/kccjit.so   .
+	cp -f bin/bootstrap/kccext.so   .
 
 bin/bootstrap/kcc:
 	@mkdir -p $(@D)
 	for file in $(SOURCES) ; do \
 		target=$(@D)/$$(basename $$file .c).o ; \
-		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
+		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
 	$(CC) $(@D)/*.o -o $@ -Wl,-rpath,'$$ORIGIN' -ldl
 
 bin/bootstrap/kccbltin.so:
-	@mkdir -p $(@D)
+	@mkdir -p $(@D)/bltin
 	for file in $(BUILTIN) ; do \
-		target=$(@D)/$$(basename $$file .c).o ; \
-		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
+		target=$(@D)/bltin/$$(basename $$file .c).o ; \
+		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
-	$(CC) $(@D)/vmbuiltin.o $(@D)/vmacpconv.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
+	$(CC) $(@D)/bltin/*.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
 
 bin/bootstrap/kccjit.so:
-	@mkdir -p $(@D)
+	@mkdir -p $(@D)/jit
 	for file in $(JIT) ; do \
-		target=$(@D)/$$(basename $$file .c).o ; \
-		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
+		target=$(@D)/jit/$$(basename $$file .c).o ; \
+		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
-	$(CC) $(@D)/jitbuiltin.o $(@D)/vmacpconv.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
+	$(CC) $(@D)/jit/*.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
 
 bin/bootstrap/kccext.so: bin/bootstrap/libonig.a
-	@mkdir -p $(@D)
-	for file in $(EXTOBJ) ; do \
-		target=$(@D)/$$(basename $$file .cpp).o ; \
-		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
+	@mkdir -p $(@D)/ext
+	for file in $(EXTSRC) ; do \
+		target=$(@D)/ext/$$(basename $$file .c).o ; \
+		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
-	$(CC) $(CFLAGS) -fPIC -Iinclude -c src/_extdll/lib/zip/miniz.c -o $(@D)/miniz.o -D'LACC_STDLIB_PATH="$(LIBDIR_SOURCE)"' ; \
-	$(CC) $(@D)/ext.o $(@D)/fileio.o $(@D)/regex.o $(@D)/timer.o $(@D)/zip_unzip.o $(@D)/miniz.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm -L$(@D) -lonig
+	$(CC) $(@D)/ext/*.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm -L$(@D) -lonig
 
 bin/bootstrap/libonig.a:
 	cd src/_extdll/lib/onig; \
@@ -139,12 +142,18 @@ test: test-8cc test-qcc test-lacc test-picoc
 
 install: bin/release/kcc
 	mkdir -p $(LIBDIR_TARGET)
-	cp $(LIBDIR_SOURCE)/*.h $(LIBDIR_TARGET)/
-	cp $? $(BINDIR)/kcc
+	cp -r kccrt/                $(LIBDIR_TARGET)
+	cp $(TARGETDIR)/kcc         $(BINDIR)/kcc
+	cp $(TARGETDIR)/kccbltin.so $(BINDIR)/kccbltin.so
+	cp $(TARGETDIR)/kccjit.so   $(BINDIR)/kccjit.so
+	cp $(TARGETDIR)/kccext.so   $(BINDIR)/kccext.so
 
 uninstall:
-	rm -rf $(LIBDIR_TARGET)
-	rm $(BINDIR)/kcc
+	rm -rf $(LIBDIR_TARGET)/kccrt
+	rm -f $(BINDIR)/kcc
+	rm -f $(BINDIR)/kccbltin.so
+	rm -f $(BINDIR)/kccjit.so
+	rm -f $(BINDIR)/kccext.so
 
 clean:
 	rm -rf bin
@@ -152,4 +161,4 @@ clean:
 	cd src/_extdll/lib/onig; make clean
 
 .PHONY: install uninstall clean test \
-	test-c89 test-c99 test-c11 test-gnu test-sqlite
+	test-8cc test-qcc test-lacc test-picoc
