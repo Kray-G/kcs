@@ -57,7 +57,7 @@
 #include <kcc/assert.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <xunistd.h>
 
 /*
  * Configurable location of implementation defined standard library

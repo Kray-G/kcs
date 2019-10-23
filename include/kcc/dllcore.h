@@ -9,7 +9,7 @@
 #elif defined(__linux__)
 #if !defined(KCC_LINUX)
 #define KCC_LINUX
-#include <unistd.h>
+#include <xunistd.h>
 #endif
 #endif
 

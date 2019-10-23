@@ -1,6 +1,8 @@
 #include <kcc/dll.h>
 #include <kcc/dllcore.h>
 
+#include <stdlib.h>
+
 #if defined(KLIB_USE_DEFAULT_TIMER)
 
 #include <time.h>
@@ -23,7 +25,7 @@
 
 #include <sys/time.h>
 #include <time.h>
-#include <unistd.h>
+#include <xunistd.h>
 
 #if defined(KLIB_TMR_USE_CLOCK_GETTIME) && defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
 

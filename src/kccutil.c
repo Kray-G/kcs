@@ -3,6 +3,8 @@
 # define INTERNAL
 # define EXTERNAL extern
 #endif
+
+#include <stdlib.h>
 #include <string.h>
 #include <lacc/string.h>
 
@@ -43,7 +45,10 @@ char* get_exe_path(void)
     return s_result;
 }
 #elif defined(KCC_LINUX)
+
+#include <xunistd.h>
 #include <linux/limits.h>
+
 char* get_exe_path(void)
 {
     static char s_result[2048] = {0};
