@@ -1,6 +1,12 @@
 #ifndef SYS_WAIT_H_
 #define SYS_WAIT_H_
 
+#if !defined(_WIN32) && !defined(_WIN64)
+
+#include <sys/wait.h>
+
+#else
+
 #define _W_INT(w)    (*(int *)&(w))    /* convert union wait to int */
 #define WCOREFLAG    0200
 
@@ -64,3 +70,5 @@ union wait {
 #define w_stopsigf       (w_s.w_stopsigf)
 
 #endif
+#endif
+

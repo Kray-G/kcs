@@ -1,7 +1,11 @@
 #ifndef SYS_UNISTD_H
 #define SYS_UNISTD_H
 
-#ifndef __GNUC__
+#ifdef __GNUC__
+
+#include <unistd.h>
+
+#else
 
 #include <stdlib.h>
 #include <io.h>

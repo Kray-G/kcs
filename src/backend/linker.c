@@ -7,11 +7,11 @@
 #include <lacc/array.h>
 
 #include <sys/types.h>
-#include <sys/wait.h>
+#include <wait.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
-#include <unistd.h>
+#include <xunistd.h>
 
 static array_of(char *) ld_args;
 
@@ -23,7 +23,7 @@ static void add_option(const char *opt)
 
     len = strlen(opt) + 1;
     buf = calloc(len, sizeof(*buf));
-    strncpy(buf, opt, len);
+    strcpy(buf, opt);
     array_push_back(&ld_args, buf);
 #endif
 }

@@ -144,7 +144,9 @@ union value {
     int64_t i;
     float f;
     double d;
-    long double ld;
+    // Currently long double is not used because its assignment is commented out.
+    // long double ld;
+    double ld;
 };
 
 INTERNAL union value convert(union value val, Type from, Type to);
