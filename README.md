@@ -6,6 +6,8 @@ Small but Useful C Compiler & Interpreter As an Execution Environment by JIT(x64
 
 ## Overview
 
+### Features
+
 KCCI is a compact C Compiler and Interpreter.
 This compiler has a JIT routine to run the code on the fly.
 And this has also a VM execution routine to run the code on the VM.
@@ -21,6 +23,14 @@ The main feature is below.
 *   KCCI also provides useful libraries by default like regex, zip, and so on.
     *   Some libraries will be coming soon.
     *   Please let me know if you have library which you want to use.
+
+### Why not using Clang?
+
+Clang is too big for a light use.
+KCCI's goal is a lightweight and easy to use.
+If you want to do JIT with Clang, see [clang-jit][] project for your help.
+
+[clang-jit]: https://github.com/Kray-G/clang-jit
 
 ## Getting Started
 
