@@ -324,7 +324,7 @@ And special thanks to the following products for useful test codes.
 [qcc]: https://github.com/maekawatoshiki/qcc/
 [picoc]: https://github.com/jpoirier/picoc/
 
-About library, thanks to the following amazing products.
+About library, so many thanks to the following amazing products.
 
 *   Library
     *   [Miniz][] (MIT License)
