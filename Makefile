@@ -70,7 +70,8 @@ EXTOBJ = \
 	src/_extdll/ext/fileio.c \
 	src/_extdll/ext/regex.c \
 	src/_extdll/ext/timer.c \
-	src/_extdll/ext/zip_unzip.c
+	src/_extdll/ext/zip_unzip.c \
+	src/_extdll/lib/fileio/fileio_.c
 
 all: $(TARGET)
 
