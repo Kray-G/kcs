@@ -2,8 +2,7 @@
 NAME     = kcc
 CC       = cl
 LINK     = link
-CFLAGS   = /O2 /MT /Iinclude
-CPPFLAGS = /O2 /MT /Iinclude /EHac
+CFLAGS   = /O2 /MT /Iinclude /DONIG_EXTERN=extern
 LFLAGS   =
 
 OBJS = \
@@ -60,10 +59,30 @@ EXTOBJ = \
 	src/_extdll/ext/regex.obj \
 	src/_extdll/ext/timer.obj \
 	src/_extdll/ext/zip_unzip.obj \
-	src/_extdll/lib/zip/miniz.obj
+	src/_extdll/lib/zip/miniz.obj \
+	src/_extdll/lib/fileio/_fileio.obj \
+	src/_extdll/lib/fileio/fclose.obj \
+	src/_extdll/lib/fileio/feof.obj \
+	src/_extdll/lib/fileio/fflush.obj \
+	src/_extdll/lib/fileio/fgetc.obj \
+	src/_extdll/lib/fileio/fgetpos.obj \
+	src/_extdll/lib/fileio/fgets.obj \
+	src/_extdll/lib/fileio/fopen.obj \
+	src/_extdll/lib/fileio/fprintf.obj \
+	src/_extdll/lib/fileio/fputc.obj \
+	src/_extdll/lib/fileio/fputs.obj \
+	src/_extdll/lib/fileio/fread.obj \
+	src/_extdll/lib/fileio/fseek.obj \
+	src/_extdll/lib/fileio/fsetpos.obj \
+	src/_extdll/lib/fileio/ftell.obj \
+	src/_extdll/lib/fileio/fwrite.obj \
+	src/_extdll/lib/fileio/rewind.obj \
+	src/_extdll/lib/fileio/ungetc.obj \
+	src/_extdll/lib/fileio/vfprintf.obj \
+	src/_extdll/lib/fileio/vprintf.obj
 
 .SUFFIXES :
-.SUFFIXES : .c .cpp .obj
+.SUFFIXES : .c .obj
 
 all: libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll kccext.dll
 
@@ -97,11 +116,11 @@ clean:
 	make_win64.bat clean
 	cd ../../../../
 
-kccext.dll: $(EXTOBJ)
-	$(CC) /Fekccext.dll /LD $(EXTOBJ) onig_s.lib
+$(NAME)ext.dll: $(EXTOBJ)
+	$(CC) /Fe$(NAME)ext.dll /LD $(EXTOBJ) onig_s.lib
 
 $(NAME).exe: $(OBJS)
-	$(CC) /Fe$(NAME).exe /Fm$(NAME).map /Fa$(NAME).s $(OBJS)
+	$(CC) /Fe$(NAME).exe $(OBJS)
 
 $(NAME)bltin.dll: $(BUILTIN)
 	$(CC) $(CFLAGS) /LD /Fe$(NAME)bltin.dll $(BUILTIN:.obj=.c) src\kccutil.obj src/util/string.obj
@@ -111,6 +130,3 @@ $(NAME)jit.dll: $(JIT)
 
 .c.obj:
 	$(CC) -c $(CFLAGS) -Fo$*.obj $<
-
-.cpp.obj:
-	$(CC) -c $(CPPFLAGS) /DONIG_EXTERN=extern -Fo$*.obj $<

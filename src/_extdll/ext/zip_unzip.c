@@ -6,8 +6,6 @@
     zip/unzip
 --------------------------------------------------------------------------------------------- */
 
-extern "C" {
-
 typedef struct mz_zip_archive_file_stat_info_ {
     mz_zip_archive *z;
     mz_zip_archive_file_stat s;
@@ -274,5 +272,3 @@ DLLEXPORT void ziplib_create(int argc, arg_type_t* argv)
     mz_zip_writer_finalize_archive(z);
     mz_zip_end(z);
 }
-
-} // extern "C"

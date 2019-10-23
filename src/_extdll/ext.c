@@ -6,8 +6,6 @@
     initializer/finalizer
 --------------------------------------------------------------------------------------------- */
 
-extern "C" {
-
 DLLEXPORT int initialize(int argc, arg_type_t* argv)
 {
     OnigEncoding use_encs[] = { ONIG_ENCODING_UTF8 };
@@ -20,5 +18,3 @@ DLLEXPORT int finalize(int argc, arg_type_t* argv)
     onig_end();
     return 0;
 }
-
-} // extern "C"
