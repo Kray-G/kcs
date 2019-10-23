@@ -537,7 +537,7 @@ static void register_builtin_declarations(void)
 static void add_include_search_paths(void)
 {
     // Search in kcc include path first.
-    add_include_search_path(make_path(get_exe_path(), "lib/include"));
+    add_include_search_path(make_path(get_exe_path(), "kccrt/include"));
     add_include_search_path("/usr/local/include");
     add_include_search_path(LACC_STDLIB_PATH);
 #ifdef SYSTEM_STDLIB_PATH
