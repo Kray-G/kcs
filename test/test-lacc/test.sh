@@ -29,6 +29,7 @@ do_test() {
 }
 
 pushd `dirname $0`
+do_test abstract-declaration.c
 do_test address-deref-offset.c
 # do_test anonymous-members.c
 do_test anonymous-struct.c
@@ -128,6 +129,7 @@ do_test increment.c
 do_test initialize-address.c
 do_test initialize-array.c
 do_test initialize-float.c
+do_test initialize-id.c
 # do_test initialize-null.c
 do_test initialize-string.c
 do_test initialize-union.c

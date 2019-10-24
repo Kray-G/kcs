@@ -178,6 +178,12 @@ struct block {
      */
     int has_return_value;
 
+    /*
+     * Flag to mark block as having parsed and evaluated next element
+     * for initialization.
+     */
+    char has_init_value;
+
     /* Used to mark nodes as visited during graph traversal. */
     enum color {
         WHITE,
