@@ -815,7 +815,7 @@ static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, in
         ++ip;
         NEXT();
     }
-    LABEL_VM_CASE_DEFAULT:
+    VM_CASE_DEFAULT:
         assert(0);
     }
 
