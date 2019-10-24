@@ -1,6 +1,6 @@
 # How to contribute this project
 
-Your contribution must be very helpful for this product.
+Your contribution would be just what I need for this product.
 
 ## 1. Put a Star
 
