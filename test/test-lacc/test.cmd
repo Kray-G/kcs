@@ -29,6 +29,10 @@ call :TEST c99\flexible-array-arg.c
 call :TEST c99\flexible-array.c
 call :TEST c99\flexible-union.c
 call :TEST c99\for-declaration.c
+call :TEST c99\initialize-compound.c
+call :TEST c99\initialize-object.c
+call :TEST c99\inline-address.c
+call :TEST c99\inline-declare.c
 call :TEST c99\line-comment.c
 call :TEST c99\restrict.c
 call :TEST c99\va_copy.c
@@ -52,6 +56,7 @@ call :TEST gnu\large-objects.c
 REM call :TEST gnu\long-double-convert.c
 
 REM standard
+call :TEST abstract-declaration.c
 call :TEST address-deref-offset.c
 call :TEST anonymous-members.c
 call :TEST anonymous-struct.c
@@ -151,6 +156,7 @@ call :TEST increment.c
 call :TEST initialize-address.c
 call :TEST initialize-array.c
 call :TEST initialize-float.c
+call :TEST initialize-id.c
 call :TEST initialize-null.c
 call :TEST initialize-string.c
 call :TEST initialize-union.c

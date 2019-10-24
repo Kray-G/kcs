@@ -5,6 +5,7 @@
 #endif
 #include "declaration.h"
 #include "expression.h"
+#include "initializer.h"
 #include "parse.h"
 #include "symtab.h"
 #include <lacc/deque.h>
@@ -68,6 +69,7 @@ static void recycle_block(struct block *block)
     block->label = NULL;
     block->expr = expr;
     block->has_return_value = 0;
+    block->has_init_value = 0;
     block->jump[0] = block->jump[1] = NULL;
     block->body = NULL;
     block->color = WHITE;
@@ -234,6 +236,7 @@ INTERNAL void parse_finalize(void)
     array_clear(&prototypes);
     array_clear(&blocks);
 
+    initializer_finalize();
     clear_argument_lists();
     symtab_finalize();
 }

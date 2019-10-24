@@ -13,54 +13,110 @@
 
 #include <kcc/assert.h>
 
+/*
+ * Introduce separate blocks to hold list of assignment operations for
+ * each initializer. This is appended at the end after all expressions
+ * inside initializers are evaluated.
+ *
+ * Padding initialization is handled only after the whole initializer is
+ * read, as postprocessing of the statements in these blocks.
+ *
+ * Since initializers can be nested with compound literals, we need
+ * arbitrary many blocks. Re-use for memory efficiency.
+ */
+static array_of(struct block *) inititializer_blocks;
+
+static struct block *get_initializer_block(void)
+{
+    struct block *block;
+
+    if (array_len(&inititializer_blocks)) {
+        block = array_pop_back(&inititializer_blocks);
+    } else {
+        block = cfg_block_init(NULL);
+    }
+
+    return block;
+}
+
+static void release_initializer_block(struct block *block)
+{
+    assert(!block->label);
+    assert(!block->has_init_value);
+
+    array_empty(&block->code);
+    array_push_back(&inititializer_blocks, block);
+}
+
+INTERNAL void initializer_finalize(void)
+{
+    array_clear(&inititializer_blocks);
+}
+
 static struct block *initialize_member(
     struct definition *def,
     struct block *block,
     struct block *values,
     struct var target);
 
-/*
- * Evaluate sequence of IR_ASSIGN statements in a separate block. This
- * is appended at the end after all expressions inside initializers are
- * evaluated.
- *
- * Padding initialization is handled only after the whole initializer is
- * read, as postprocessing of the statements in this block.
- */
-static struct block *get_initializer_block(int i)
+static int is_loadtime_constant(struct expression expr)
 {
-    static struct block *block[3];
+    if (!is_identity(expr))
+        return 0;
 
-    return !block[i] ? (block[i] = cfg_block_init(NULL)) : block[i];
+    switch (expr.l.kind) {
+    case IMMEDIATE:
+        return 1;
+    case DIRECT:
+        if (!is_array(expr.type) && !is_function(expr.type))
+            return 0;
+    case ADDRESS:
+        return expr.l.symbol->linkage != LINK_NONE;
+    default:
+        return 0;
+    }
 }
 
+/*
+ * Read assignment expression into block->expr.
+ *
+ * Since initializer assignments can be reordered, we need to evaluate
+ * call expressions into a temporary variable.
+ */
 static struct block *read_initializer_element(
     struct definition *def,
     struct block *block,
-    struct var target)
+    const struct symbol *sym)
 {
     size_t ops;
-    struct var value;
+    struct var tmp;
     const struct block *top;
 
+    assert(!block->has_init_value);
     ops = array_len(&block->code);
     top = block;
     block = assignment_expression(def, block);
-    value = block->expr.l;
+    if (is_void(block->expr.type)) {
+        error("Cannot initialize with void value.");
+        exit(1);
+    }
 
-    if (target.symbol->linkage != LINK_NONE) {
+    if (sym->linkage != LINK_NONE) {
         if (block != top
             || array_len(&block->code) - ops > 0
             || !is_identity(block->expr)
-            || (!is_constant(value) && value.kind != ADDRESS
-                && !(value.kind == DIRECT
-                    && (is_function(value.type) || is_array(value.type)))))
+            || !is_loadtime_constant(block->expr))
         {
             error("Initializer must be computable at load time.");
             exit(1);
         }
+    } else if (block->expr.op == IR_OP_CALL) {
+        tmp = create_var(def, block->expr.type);
+        eval_assign(def, block, tmp, block->expr);
+        block->expr = as_expr(tmp);
     }
 
+    block->has_init_value = 1;
     return block;
 }
 
@@ -154,7 +210,7 @@ static struct block *initialize_union(
     done = 0;
     filled = target.offset;
     type = target.type;
-    init = get_initializer_block(2);
+    init = get_initializer_block();
     assert(is_union(type));
     assert(nmembers(type) > 0);
 
@@ -177,6 +233,7 @@ static struct block *initialize_union(
     } while (next_element(state));
 
     array_concat(&values->code, &init->code);
+    release_initializer_block(init);
     return block;
 }
 
@@ -209,8 +266,9 @@ static struct block *initialize_struct(
 
     m = nmembers(type);
     i = 0;
+
     do {
-        if (peek().token == '.') {
+        if (!block->has_init_value && peek().token == '.') {
             next();
             name = consume(IDENTIFIER).d.string;
             member = get_named_member(type, name, &i);
@@ -241,6 +299,15 @@ static struct block *initialize_struct(
     return block;
 }
 
+/*
+ * Read initializer for struct or union. Make sure to read first element
+ * if possible, to catch assignments of aggregate values initializing
+ * the whole object at once.
+ *
+ *     struct A { char c; } foo = { 'a' };
+ *     struct { struct A a; } bar = { foo };
+ *
+ */
 static struct block *initialize_struct_or_union(
     struct definition *def,
     struct block *block,
@@ -251,7 +318,22 @@ static struct block *initialize_struct_or_union(
     assert(is_struct_or_union(target.type));
     assert(nmembers(target.type) > 0);
 
-    if (is_union(target.type)) {
+    if (!block->has_init_value) switch (peek().token) {
+    case '.':
+    case '{':
+    case '[':
+        break;
+    default:
+        block = read_initializer_element(def, block, target.symbol);
+        break;
+    }
+
+    if (block->has_init_value
+        && is_compatible_unqualified(target.type, block->expr.type))
+    {
+        eval_assign(def, values, target, block->expr);
+        block->has_init_value = 0;
+    } else if (is_union(target.type)) {
         block = initialize_union(def, block, values, target, state);
     } else {
         block = initialize_struct(def, block, values, target, state);
@@ -260,9 +342,13 @@ static struct block *initialize_struct_or_union(
     return block;
 }
 
-static int next_array_element(enum current_object_state state)
+static int has_next_array_element(
+    enum current_object_state state,
+    int *is_designator)
 {
     struct token t = peek();
+
+    *is_designator = 0;
     if (t.token == ',') {
         t = peekn(2);
         switch (t.token) {
@@ -273,8 +359,8 @@ static int next_array_element(enum current_object_state state)
             if (state != CURRENT) {
                 break;
             }
+            *is_designator = 1;
         default:
-            next();
             return 1;
         }
     }
@@ -328,13 +414,14 @@ static struct block *initialize_array(
     struct var target,
     enum current_object_state state)
 {
+    int is_designator;
     Type type, elem;
-    size_t initial, width, i, alen;
+    size_t initial, width, i, c;
 
     assert(is_array(target.type));
     assert(target.kind == DIRECT);
 
-    i = alen = 0;
+    i = c = 0;
     type = target.type;
     elem = type_next(type);
     width = size_of(elem);
@@ -344,34 +431,70 @@ static struct block *initialize_array(
      * Need to read expression to determine if element is a string
      * constant, or an integer like "Hello"[2].
      */
-    if (is_char(elem) && peek().token != '[') {
-        block = read_initializer_element(def, block, target);
-        if (is_identity(block->expr) && is_string(block->expr.l)) {
-            target = eval_assign(def, values, target, block->expr);
-        } else {
-            target.type = elem;
-            eval_assign(def, values, target, block->expr);
-            goto next;
-        }
+    if (!block->has_init_value) switch (peek().token) {
+    case '.':
+    case '{':
+    case '[':
+        break;
+    default:
+        block = read_initializer_element(def, block, target.symbol);
+        break;
+    }
+
+    /* Assign string literal to initialize the whole array. */
+    if (block->has_init_value
+        && is_char(elem)
+        && is_identity(block->expr)
+        && is_array(block->expr.type)
+        && is_string(block->expr.l))
+    {
+        target = eval_assign(def, values, target, block->expr);
+        block->has_init_value = 0;
     } else {
         target.type = elem;
-        do {
+        while (1) {
             if (try_parse_index(&i) && peek().token == '=') {
                 next();
             }
             target.offset = initial + (i * width);
             block = initialize_member(def, block, values, target);
-next:       i += 1;
-            if (alen < i) alen = i;
-        } while (next_array_element(state));
+            i += 1;
+            c = i > c ? i : c;
+            if (has_next_array_element(state, &is_designator)) {
+                consume(',');
+            } else break;
+        }
     }
 
     if (!is_complete(type) || !size_of(type)) {
         assert(is_array(target.symbol->type));
-        set_array_length(target.symbol->type, alen);
+        set_array_length(target.symbol->type, c);
     }
 
     return block;
+}
+
+/*
+ * Add assignment operation to initializer values block.
+ *
+ * Assignment evaluation can generate a cast statement, which needs to
+ * be added to the normal block.
+ */
+static void assign_initializer_element(
+    struct definition *def,
+    struct block *block,
+    struct block *values,
+    struct var target)
+{
+    struct statement st;
+    assert(target.kind == DIRECT);
+    assert(block->has_init_value);
+
+    eval_assign(def, block, target, block->expr);
+    st = array_pop_back(&block->code);
+    assert(st.st == IR_ASSIGN);
+    array_push_back(&values->code, st);
+    block->has_init_value = 0;
 }
 
 static struct block *initialize_member(
@@ -381,8 +504,9 @@ static struct block *initialize_member(
     struct var target)
 {
     assert(target.kind == DIRECT);
+
     if (is_struct_or_union(target.type)) {
-        if (peek().token == '{') {
+        if (!block->has_init_value && peek().token == '{') {
             next();
             block = initialize_struct_or_union(def, block, values, target, CURRENT);
             if (peek().token == ',')
@@ -396,7 +520,7 @@ static struct block *initialize_member(
             error("Invalid initialization of flexible array member.");
             exit(1);
         }
-        if (peek().token == '{') {
+        if (!block->has_init_value && peek().token == '{') {
             next();
             block = initialize_array(def, block, values, target, CURRENT);
             if (peek().token == ',')
@@ -406,14 +530,17 @@ static struct block *initialize_member(
             block = initialize_array(def, block, values, target, DESIGNATOR);
         }
     } else {
-        if (peek().token == '{') {
-            next();
-            block = read_initializer_element(def, block, target);
-            consume('}');
-        } else {
-            block = read_initializer_element(def, block, target);
+        if (!block->has_init_value) {
+            if (peek().token == '{') {
+                next();
+                block = read_initializer_element(def, block, target.symbol);
+                consume('}');
+            } else {
+                block = read_initializer_element(def, block, target.symbol);
+            }
         }
-        eval_assign(def, values, target, block->expr);
+
+        assign_initializer_element(def, block, values, target);
     }
 
     return block;
@@ -426,6 +553,7 @@ static struct block *initialize_object(
     struct var target)
 {
     assert(target.kind == DIRECT);
+    assert(!block->has_init_value);
 
     if (peek().token == '{') {
         next();
@@ -443,8 +571,8 @@ static struct block *initialize_object(
     } else if (is_array(target.type)) {
         block = initialize_array(def, block, values, target, MEMBER);
     } else {
-        block = read_initializer_element(def, block, target);
-        eval_assign(def, values, target, block->expr);
+        block = read_initializer_element(def, block, target.symbol);
+        assign_initializer_element(def, block, values, target);
     }
 
     return block;
@@ -470,6 +598,7 @@ static void zero_initialize(
     struct var var;
 
     assert(target.kind == DIRECT);
+    assert(!values->has_init_value);
     size = size_of(target.type);
     switch (type_of(target.type)) {
     case T_STRUCT:
@@ -569,8 +698,12 @@ static void initialize_padding(
             target.offset += size_of(target.type);
             target.field_offset = 0;
             target.field_width = 0;
+            if (target.offset > field.offset) {
+                target.offset = field.offset;
+            }
         }
 
+        assert(field.offset >= target.offset);
         padding = field.offset - target.offset;
         zero_initialize_bytes(def, block, target, padding);
     } else if (target.field_offset < field.field_offset) {
@@ -622,6 +755,7 @@ static void initialize_trailing_padding(
         target.offset += size_of(target.type);
     }
 
+    assert(size >= target.offset);
     if (size > target.offset) {
         zero_initialize_bytes(def, block, target, size - target.offset);
     }
@@ -640,7 +774,7 @@ static void validate_initializer_block(struct block *block)
         assert(target.offset <= st.t.offset);
         field = st.t;
         if (target.offset < field.offset) {
-            assert(field.offset - target.offset == size_of(target.type));
+            assert(field.offset - target.offset <= size_of(target.type));
         } else {
             assert(target.offset == field.offset);
             assert(target.field_offset + target.field_width
@@ -705,7 +839,7 @@ static struct block *postprocess_object_initialization(
 
     assert(target.offset == 0);
     sort_and_trim(values);
-    block = get_initializer_block(1);
+    block = get_initializer_block();
     total_size = size_of(target.type);
     bitfield_size = 0;
 
@@ -717,6 +851,7 @@ static struct block *postprocess_object_initialization(
         }
 
         assert(st.st == IR_ASSIGN);
+        assert(st.expr.op != IR_OP_CALL);
         assert(field.offset >= 0);
         assert(target.offset <= field.offset);
 
@@ -743,7 +878,7 @@ static struct block *postprocess_object_initialization(
     }
 
     initialize_trailing_padding(def, block, target, total_size, bitfield_size);
-    array_empty(&values->code);
+    release_initializer_block(values);
 #ifndef NDEBUG
     validate_initializer_block(block);
 #endif
@@ -755,18 +890,21 @@ INTERNAL struct block *initializer(
     struct block *block,
     const struct symbol *sym)
 {
-    struct block *values = get_initializer_block(0);
+    struct block *values;
     struct var target = var_direct(sym);
 
     if (peek().token == '{' || is_array(sym->type)) {
+        values = get_initializer_block();
         block = initialize_object(def, block, values, target);
         values = postprocess_object_initialization(def, values, target);
         array_concat(&block->code, &values->code);
-        array_empty(&values->code);
+        release_initializer_block(values);
     } else {
-        block = read_initializer_element(def, block, target);
+        block = read_initializer_element(def, block, target.symbol);
         eval_assign(def, block, target, block->expr);
+        block->has_init_value = 0;
     }
 
+    assert(!block->has_init_value);
     return block;
 }
