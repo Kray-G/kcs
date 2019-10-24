@@ -5,7 +5,7 @@ Your contribution would be just what I need for this product.
 ## 1. Put a Star
 
 If you have an account of GitHub, I want you to put a star.
-It would be a strong incentive for me to increase the count of star.
+Increasing the count of stars would give me a motivation to make the product better.
 
 ## 2. Use This Product
 
