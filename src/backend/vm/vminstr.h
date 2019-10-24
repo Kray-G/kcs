@@ -46,6 +46,74 @@ enum vm_opcode {
     VM_SAVE_RETVAL,
 };
 
+#if defined(__GNUC__)
+#define KCCVM_DEFINE_DISPATCH_TABLE()\
+    static const void* vm_dispatch_table[] = {\
+        &&LABEL_VM_NOP, \
+        &&LABEL_VM_LABEL, \
+        &&LABEL_VM_HALT, \
+        &&LABEL_VM_STORE, \
+        &&LABEL_VM_FZERO, \
+        &&LABEL_VM_CALL, \
+        &&LABEL_VM_RET, \
+        &&LABEL_VM_CLUP, \
+        &&LABEL_VM_ENTER, \
+        &&LABEL_VM_DEREF, \
+        &&LABEL_VM_CAST, \
+        &&LABEL_VM_ALLOCA, \
+        &&LABEL_VM_JMP, \
+        &&LABEL_VM_JZ, \
+        &&LABEL_VM_JNZ, \
+        &&LABEL_VM_PUSH, \
+        &&LABEL_VM_POP, \
+        &&LABEL_VM_DEPOP, \
+        &&LABEL_VM_NOT, \
+        &&LABEL_VM_NEG, \
+        &&LABEL_VM_ADD, \
+        &&LABEL_VM_SUB, \
+        &&LABEL_VM_MUL, \
+        &&LABEL_VM_DIV, \
+        &&LABEL_VM_MOD, \
+        &&LABEL_VM_AND, \
+        &&LABEL_VM_OR, \
+        &&LABEL_VM_XOR, \
+        &&LABEL_VM_SHL, \
+        &&LABEL_VM_SHR, \
+        &&LABEL_VM_EQ, \
+        &&LABEL_VM_NE, \
+        &&LABEL_VM_GE, \
+        &&LABEL_VM_GT, \
+        &&LABEL_VM_LE, \
+        &&LABEL_VM_LT, \
+        &&LABEL_VM_HALT, \
+        &&LABEL_VM_HALT, \
+        &&LABEL_VM_SAVE_RETVAL, \
+    };\
+    /**/
+#define VM_START(ip)    struct vm_code *code = base[ip];\
+                        goto *vm_dispatch_table[code->opcode]; {\
+                        /**/
+#define VM_END()        LABEL_VM_END_LOOP:;
+#define VM_CASE_(op)    LABEL_ ## op
+#define VM_CASE_DEFAULT LABEL_VM_DEFAULT
+#define NEXT()          code = base[ip];\
+                        goto *vm_dispatch_table[code->opcode];\
+                        /**/
+#define VM_GOTO_END()   goto LABEL_VM_END_LOOP;
+#else // !defined(__GNUC__)
+#define KCCVM_DEFINE_DISPATCH_TABLE()
+#define VM_START(ip)    while (ip >= 0) {\
+                            struct vm_code *code = base[ip];\
+                            CHECK_POINT();\
+                            switch (code->opcode) {\
+                        /**/
+#define VM_END()        } LABEL_VM_END_LOOP:;
+#define VM_CASE_(op)    case op
+#define VM_CASE_DEFAULT default
+#define NEXT()          continue
+#define VM_GOTO_END()   goto LABEL_VM_END_LOOP;
+#endif // defined(__GNUC__)
+
 enum vm_optype {
     VMOP_NONE,
     VMOP_LABEL,
