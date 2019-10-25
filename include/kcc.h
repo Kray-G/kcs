@@ -13,6 +13,7 @@
 #endif
 #endif
 
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -35,12 +36,21 @@
 
 extern char* get_exe_path(void);
 extern const char* make_path(const char* base, const char* name);
-void *load_library(const char *name, const char *envname);
-void *get_function(void *h, const char *name);
-void unload_library(void *h);
+extern void *load_library(const char *name, const char *envname);
+extern void *get_function(void *h, const char *name);
+extern void unload_library(void *h);
+extern FILE *fmemopen(void *buf, size_t len, const char *type);
 
 extern int kcc_argc;
 extern int kcc_argx;
 extern uint64_t *kcc_argv;
+
+#if !defined(DLLEXPORT)
+#if defined(KCC_WINDOWS)
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
+#endif
 
 #endif

@@ -44,6 +44,9 @@ struct source {
 
     /* Current line. */
     int line;
+
+    /* Is string stream flag. */
+    int is_string_stream;
 };
 
 /* Temporary buffer used to construct search paths. */
@@ -208,7 +211,7 @@ INTERNAL int add_include_search_path(const char *path)
     return 0;
 }
 
-INTERNAL void set_input_file(const char *path)
+INTERNAL void set_input_file(const char *path, int is_string_stream)
 {
     const char *sep;
     struct source source = {0};
@@ -225,12 +228,18 @@ INTERNAL void set_input_file(const char *path)
     }
 
     if (path) {
-        sep = strrchr(path, '/');
-        if (!sep) sep = strrchr(path, '\\');
-        source.path = str_init(path);
-        source.file = fopen(path, "r");
-        if (sep) {
-            source.dirlen = sep - path;
+        if (is_string_stream) {
+            source.path = str_init("<string-stream>");
+            source.file = fmemopen((void*)path, strlen(path), "r");
+            source.is_string_stream = 1;
+        } else {
+            sep = strrchr(path, '/');
+            if (!sep) sep = strrchr(path, '\\');
+            source.path = str_init(path);
+            source.file = fopen(path, "r");
+            if (sep) {
+                source.dirlen = sep - path;
+            }
         }
         if (!source.file) {
             error("Unable to open file %s.", path);
@@ -487,11 +496,10 @@ static char *initial_preprocess_line(struct source *fn)
     assert(fn->buffer);
     assert(fn->processed <= fn->read);
     assert(fn->read < fn->size);
-
     do {
         if (fn->processed == fn->read || !fn->processed) {
             if (feof(fn->file)) {
-                if (fn->read > fn->processed) {
+                if (!fn->is_string_stream && fn->read > fn->processed) {
                     error("Unable to process the whole input.");
                     exit(1);
                 }
@@ -501,13 +509,13 @@ static char *initial_preprocess_line(struct source *fn)
                 fn->read += fread(
                     fn->buffer + fn->read,
                     sizeof(char),
-                    fn->size - fn->read - 1,
+                    fn->size - fn->read - 2,
                     fn->file);
             } else {
                 fn->read = fread(
                     fn->buffer,
                     sizeof(char),
-                    fn->size - 1,
+                    fn->size - 2,
                     fn->file);
             }
             fn->processed = 0;
@@ -516,7 +524,10 @@ static char *initial_preprocess_line(struct source *fn)
                 if (!fn->read) {
                     return NULL;
                 }
-                if (fn->buffer[fn->read - 1] != '\n') {
+                if (fn->is_string_stream) {
+                    fn->buffer[fn->read++] = '\n';
+                    fn->buffer[fn->read] = '\0';
+                } else if (fn->buffer[fn->read - 1] != '\n') {
                     error("Missing newline at end of file.");
                     fn->buffer[fn->read] = '\n';
                 }

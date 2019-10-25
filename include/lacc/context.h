@@ -30,8 +30,9 @@ INTERNAL struct context {
     int32_t errors;
     int32_t verbose;
     int32_t suppress_warning;
-    uint32_t pic : 1;            /* position independent code */
-    uint32_t debug : 1;          /* Generate debug information. */
+    uint32_t pic : 1;               /* position independent code */
+    uint32_t debug : 1;             /* Generate debug information. */
+    uint32_t is_string_input : 1;   /* Input from string */
     enum target target;
     enum cstd standard;
 } context;
