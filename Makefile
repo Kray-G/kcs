@@ -10,11 +10,15 @@ CPP = g++
 CFLAGS = -O2 -Wno-missing-braces -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -std=gnu99
 CPPFLAGS = -O2 -Wno-missing-braces
 
+MAINSRC = \
+	src/kcc.c
+
 SOURCES = \
-	src/kcc.c \
+	src/kccmain.c \
 	src/kccutil.c \
 	src/context.c \
 	src/util/argparse.c \
+	src/util/fmemopen.c \
 	src/util/hash.c \
 	src/util/string.c \
 	src/backend/x86_64/instr.c \
@@ -77,21 +81,27 @@ all: $(TARGET)
 $(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so bin/bootstrap/kccext.so
 	mkdir -p $(TARGETDIR)
 	cp -f bin/bootstrap/kcc         $(TARGETDIR)/
+	cp -f bin/bootstrap/libkcc.so   $(TARGETDIR)/
 	cp -f bin/bootstrap/kccbltin.so $(TARGETDIR)/
 	cp -f bin/bootstrap/kccjit.so   $(TARGETDIR)/
 	cp -f bin/bootstrap/kccext.so   $(TARGETDIR)/
 	cp -f bin/bootstrap/kcc         .
+	cp -f bin/bootstrap/libkcc.so   .
 	cp -f bin/bootstrap/kccbltin.so .
 	cp -f bin/bootstrap/kccjit.so   .
 	cp -f bin/bootstrap/kccext.so   .
 
-bin/bootstrap/kcc:
+bin/bootstrap/kcc: bin/bootstrap/libkcc.so
+	@mkdir -p $(@D)
+	$(CC) $(@D)/*.o -o $@ -Wl,-rpath,'$$ORIGIN' -L$(@D) -lkcc
+
+bin/bootstrap/libkcc.so:
 	@mkdir -p $(@D)
 	for file in $(SOURCES) ; do \
 		target=$(@D)/$$(basename $$file .c).o ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
-	$(CC) $(@D)/*.o -o $@ -Wl,-rpath,'$$ORIGIN' -ldl
+	$(CC) $(@D)/*.o -o $@ -shared -Wl,-rpath,'$$ORIGIN' -ldl
 
 bin/bootstrap/kccbltin.so:
 	@mkdir -p $(@D)/bltin

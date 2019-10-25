@@ -7,7 +7,7 @@
  * Initialize with root file name, and store relative path to resolve
  * later includes. Passing NULL defaults to taking input from stdin.
  */
-INTERNAL void set_input_file(const char *);
+INTERNAL void set_input_file(const char *, int);
 
 /* Free resources used for reading input. */
 INTERNAL void input_finalize(void);
