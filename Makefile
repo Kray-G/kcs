@@ -154,6 +154,7 @@ install: bin/release/kcc
 	mkdir -p $(LIBDIR_TARGET)
 	cp -r kccrt/                $(LIBDIR_TARGET)
 	cp $(TARGETDIR)/kcc         $(BINDIR)/kcc
+	cp $(TARGETDIR)/libkcc.so   $(BINDIR)/libkcc.so
 	cp $(TARGETDIR)/kccbltin.so $(BINDIR)/kccbltin.so
 	cp $(TARGETDIR)/kccjit.so   $(BINDIR)/kccjit.so
 	cp $(TARGETDIR)/kccext.so   $(BINDIR)/kccext.so
@@ -161,6 +162,7 @@ install: bin/release/kcc
 uninstall:
 	rm -rf $(LIBDIR_TARGET)/kccrt
 	rm -f $(BINDIR)/kcc
+	rm -f $(BINDIR)/libkcc.so
 	rm -f $(BINDIR)/kccbltin.so
 	rm -f $(BINDIR)/kccjit.so
 	rm -f $(BINDIR)/kccext.so
@@ -172,3 +174,4 @@ clean:
 
 .PHONY: install uninstall clean test \
 	test-8cc test-qcc test-lacc test-picoc
+
