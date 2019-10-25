@@ -93,7 +93,7 @@ $(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so b
 
 bin/bootstrap/kcc: bin/bootstrap/libkcc.so
 	@mkdir -p $(@D)
-	$(CC) $(@D)/*.o -o $@ -Wl,-rpath,'$$ORIGIN' -L$(@D) -lkcc
+	$(CC) $(MAINSRC) -o $@ -Wl,-rpath,'$$ORIGIN' -L$(@D) -lkcc
 
 bin/bootstrap/libkcc.so:
 	@mkdir -p $(@D)
