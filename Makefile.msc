@@ -5,11 +5,15 @@ LINK     = link
 CFLAGS   = /O2 /MT /Iinclude /DONIG_EXTERN=extern
 LFLAGS   =
 
+MAINOBJ = \
+	src/kcc.obj
+
 OBJS = \
-	src/kcc.obj \
+	src/kccmain.obj \
 	src/kccutil.obj \
 	src/context.obj \
 	src/util/argparse.obj \
+	src/util/fmemopen.obj \
 	src/util/hash.obj \
 	src/util/string.obj \
 	src/backend/x86_64/instr.obj \
@@ -119,8 +123,11 @@ clean:
 $(NAME)ext.dll: $(EXTOBJ)
 	$(CC) /Fe$(NAME)ext.dll /LD $(EXTOBJ) onig_s.lib
 
-$(NAME).exe: $(OBJS)
-	$(CC) /Fe$(NAME).exe $(OBJS)
+$(NAME).exe: $(NAME)lib.dll
+	$(CC) $(CFLAGS) /Fe$(NAME).exe $(MAINOBJ:.obj=.c) $(NAME)lib.lib
+
+$(NAME)lib.dll: $(OBJS)
+	$(CC) /LD /Fe$(NAME)lib.dll $(OBJS)
 
 $(NAME)bltin.dll: $(BUILTIN)
 	$(CC) $(CFLAGS) /LD /Fe$(NAME)bltin.dll $(BUILTIN:.obj=.c) src\kccutil.obj src/util/string.obj
