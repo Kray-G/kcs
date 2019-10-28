@@ -101,6 +101,7 @@ bin/bootstrap/libkcc.so:
 	@mkdir -p $(@D)
 	for file in $(SOURCES) ; do \
 		target=$(@D)/$$(basename $$file .c).o ; \
+		echo $$target ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
 	$(CC) $(@D)/*.o -o $@ -shared -Wl,-rpath,'$$ORIGIN' -ldl
@@ -109,6 +110,7 @@ bin/bootstrap/kccbltin.so:
 	@mkdir -p $(@D)/bltin
 	for file in $(BUILTIN) ; do \
 		target=$(@D)/bltin/$$(basename $$file .c).o ; \
+		echo $$target ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
 	$(CC) $(@D)/bltin/*.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
@@ -117,6 +119,7 @@ bin/bootstrap/kccjit.so:
 	@mkdir -p $(@D)/jit
 	for file in $(JIT) ; do \
 		target=$(@D)/jit/$$(basename $$file .c).o ; \
+		echo $$target ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
 	$(CC) $(@D)/jit/*.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
@@ -128,7 +131,7 @@ bin/bootstrap/kccext.so: bin/bootstrap/libonig.a
 		echo $$target ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
-	$(CC) $(@D)/ext/*.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm -L$(@D) -lonig
+	$(CC) $(@D)/ext/*.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -pthread -lm -L$(@D) -lonig
 
 bin/bootstrap/libonig.a:
 	cd src/_extdll/lib/onig; \
