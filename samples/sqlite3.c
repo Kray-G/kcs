@@ -19,7 +19,7 @@ int main(void)
     sqlite3_t *db = NULL;
     sqlite3_stmt_t *stmt = NULL;
 
-    db = sqlite3_open("sample.db", -1);
+    db = sqlite3_open("sample.db", SQLITE_NO_TIMEOUT);
     if (!db) {
         error(db, "File open error");
         goto END;
