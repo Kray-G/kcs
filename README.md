@@ -58,7 +58,7 @@ Especially for `kccrt` folder will be used at runtime.
     |   +-- include/*
     |   +-- libsrc/*
     +-- kcc                 (kcc.exe)
-    +-- libkcc.so           (kcclib.dll)
+    +-- libkcc.so           (libkcc.dll)
     +-- kccbltin.so         (kccbltin.dll)
     +-- kccjit.so           (kccjit.dll)
     +-- kccext.so           (kccext.dll)
