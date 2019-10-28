@@ -73,7 +73,9 @@ EXTSRC = \
 	src/_extdll/ext/regex.c \
 	src/_extdll/ext/timer.c \
 	src/_extdll/ext/zip_unzip.c \
+	src/_extdll/ext/sqlite3.c \
 	src/_extdll/lib/fileio/_fileio.c \
+	src/_extdll/lib/sqlite3/sqlite3.c \
 	src/_extdll/lib/zip/miniz.c
 
 all: $(TARGET)
