@@ -340,10 +340,12 @@ About library, so many thanks to the following amazing products.
 *   Library
     *   [Miniz][] (MIT License)
     *   [Oniguruma][] (BSD License)
+    *   [SQLite3] (Public Domain)
     *   [bigint] (Public Domain)
 
 [Oniguruma]: https://github.com/kkos/oniguruma/
 [Miniz]: https://github.com/richgel999/miniz
+[SQLite3]: https://www.sqlite.org/
 [bigint]: https://github.com/983/bigint
 
 Lastly, thank you very much for all programmers in the world.
