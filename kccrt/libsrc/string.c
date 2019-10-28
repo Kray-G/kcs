@@ -68,6 +68,19 @@ char* strchr(const char* s, int c)
     return NULL;
 }
 
+size_t strcspn(const char *s1, const char *s2)
+{
+    const char *p = s1;
+    for ( ; *s1; ++s1) {
+        for (const char *t = s2; *t; t++) {
+            if (*t == *s1) {
+                return s1 - p;
+            }
+        }
+    }
+    return s1 - p;
+}
+
 char* index(const char* s, int c)
 {
     return strchr(s, c);

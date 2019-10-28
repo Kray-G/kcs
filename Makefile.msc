@@ -61,9 +61,11 @@ EXTOBJ = \
 	src/_extdll/ext.obj \
 	src/_extdll/ext/fileio.obj \
 	src/_extdll/ext/regex.obj \
+	src/_extdll/ext/sqlite3.obj \
 	src/_extdll/ext/timer.obj \
 	src/_extdll/ext/zip_unzip.obj \
 	src/_extdll/lib/zip/miniz.obj \
+	src/_extdll/lib/sqlite3/sqlite3.obj \
 	src/_extdll/lib/fileio/_fileio.obj \
 	src/_extdll/lib/fileio/fclose.obj \
 	src/_extdll/lib/fileio/feof.obj \
