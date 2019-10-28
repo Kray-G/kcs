@@ -21,6 +21,8 @@ The main feature is below.
     *   Not completed so far, though. 
     *   See [doc/cstdlib.md](doc/cstdlib.md) for the current status.
 *   KCCI also provides useful libraries by default like regex, zip, and so on.
+    *   See [doc/extension.md](doc/extension.md) for extended library interface.
+    *   See the [samples](samples) because there are some samples about how to use.
     *   Some libraries will be coming soon.
     *   Please let me know if you have library which you want to use.
 

@@ -23,7 +23,7 @@
 #include <kcc/bigint.h>
 ```
 
-*   [Big Integer](extensios/bigint.md)
+*   [Big Integer](extensions/bigint.md)
 
 ---
 
@@ -33,7 +33,7 @@
 #include <kcc/regex.h>
 ```
 
-*   [Regular Expression](extensios/regex.md)
+*   [Regular Expression](extensions/regex.md)
 
 ---
 
@@ -43,7 +43,7 @@
 #include <kcc/zip.h>
 ```
 
-*   [Zip/Unzip](extensios/zip.md)
+*   [Zip/Unzip](extensions/zip.md)
 
 ---
 
@@ -53,4 +53,4 @@
 #include <kcc/sqlite3.h>
 ```
 
-*   [SQLite3](extensios/sqlite3.md)
+*   [SQLite3](extensions/sqlite3.md)
