@@ -112,9 +112,6 @@ onig_s.lib:
 	cd ../../../../
 	copy /y src\_extdll\lib\onig\onig_s.lib .
 
-sample_dll.dll: sample_dll.obj
-	$(CC) /nologo /LD /MT /Iinclude sample_dll.c
-
 clean:
 	del /S *.exe *.obj *.dll *.lib > NUL
 	del *.exp > NUL
@@ -125,11 +122,11 @@ clean:
 $(NAME)ext.dll: $(EXTOBJ)
 	$(CC) /Fe$(NAME)ext.dll /LD $(EXTOBJ) onig_s.lib
 
-$(NAME).exe: $(NAME)lib.dll
-	$(CC) $(CFLAGS) /Fe$(NAME).exe $(MAINOBJ:.obj=.c) $(NAME)lib.lib
+$(NAME).exe: lib$(NAME).dll
+	$(CC) $(CFLAGS) /Fe$(NAME).exe $(MAINOBJ:.obj=.c) lib$(NAME).lib
 
-$(NAME)lib.dll: $(OBJS)
-	$(CC) /LD /Fe$(NAME)lib.dll $(OBJS)
+lib$(NAME).dll: $(OBJS)
+	$(CC) /LD /Felib$(NAME).dll $(OBJS)
 
 $(NAME)bltin.dll: $(BUILTIN)
 	$(CC) $(CFLAGS) /LD /Fe$(NAME)bltin.dll $(BUILTIN:.obj=.c) src\kccutil.obj src/util/string.obj

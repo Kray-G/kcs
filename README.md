@@ -290,7 +290,6 @@ fib
 I have a plan to do the followings when I have a time.
 
 *   [ ] Providing all of Standard C Library.
-*   [ ] Adding a library of SQLite3.
 *   [ ] Adding a library of XML Parser.
 *   [ ] Adding a library of JSON Parser.
 *   [ ] Adding a library with libCurl.
@@ -298,7 +297,6 @@ I have a plan to do the followings when I have a time.
 *   [ ] Supporting jump table for switch-case.
 *   [ ] One instruction for increment and decrement.
 *   [ ] Combining VM instructions to improve the performance.
-*   [ ] Building libkcc to use it as a shared library.
 
 ## License
 
