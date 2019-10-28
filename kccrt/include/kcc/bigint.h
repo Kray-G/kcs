@@ -129,7 +129,7 @@ int bigint_count_trailing_zeros(const bigint *a);
 bigint* bigint_div_mod(
     bigint *dst_quotient,
     bigint *dst_remainder,
-    const bigint *src_biginterator,
+    const bigint *src_numerator,
     const bigint *src_denominator
 );
 

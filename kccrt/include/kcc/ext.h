@@ -25,7 +25,7 @@ extern void string_append_cstr(string_t* lhs, const char *rhs);
 extern string_t string_substr(const string_t str, int start, int len);
 
 #define string_free(str)    free((str).cstr)
-#define string_clear(str)   (free((str).cstr), (str).cstr = NULL, (str).len = 0)
+#define string_clear(str)   ((str).len = 0)
 
 #ifndef KCC_NO_IMPORT
 #if defined(__KCC_JIT__) || defined(__KCC__)
@@ -40,7 +40,7 @@ extern string_t string_substr(const string_t str, int start, int len);
 typedef struct binary_ {
     uint8_t      *buf;  // buffer of a byte.
     unsigned int cap;   // capacity of a buffer.
-    unsigned int len;   // actual length of a string.
+    unsigned int len;   // actual length of a binary.
 } binary_t;
 
 extern binary_t binary_init(const uint8_t *buf, int len);
@@ -49,8 +49,8 @@ extern void binary_append(binary_t* lhs, const binary_t rhs);
 extern void binary_append_bytes(binary_t* lhs, const uint8_t *rhs, int len);
 extern binary_t binary_subbin(const binary_t ary, int start, int len);
 
-#define binary_free(str)    free((str).buf)
-#define binary_clear(str)   (free((str).buf), (str).buf = NULL, (str).len = 0)
+#define binary_free(bin)    free((bin).buf)
+#define binary_clear(bin)   ((bin).len = 0)
 
 #ifndef KCC_NO_IMPORT
 #if defined(__KCC_JIT__) || defined(__KCC__)
@@ -108,6 +108,10 @@ typedef struct {
 #define vector_resize(VECTOR, SIZE) \
     (vector_try_grow((VECTOR), (SIZE)), vector_meta(VECTOR)->used += (SIZE), \
         &(VECTOR)[vector_meta(VECTOR)->used - (SIZE)])
+
+/* Get the head element in [VECTOR] */
+#define vector_head(VECTOR) \
+    ((VECTOR)[0])
 
 /* Get the last element in [VECTOR] */
 #define vector_last(VECTOR) \

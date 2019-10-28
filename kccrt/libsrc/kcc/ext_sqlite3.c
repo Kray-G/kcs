@@ -61,20 +61,20 @@ void sqlite3_finalize(sqlite3_stmt_t *stmt)
     __kcc_builtin_call(h, "sqlite3lib_finalize");
 }
 
-int sqlite3_bind_null(sqlite3_t *db, int index)
+int sqlite3_bind_null(sqlite3_stmt_t *stmt, int index)
 {
     void *h = kcc_extlib();
     __kcc_builtin_reset_args();
-    __kcc_builtin_add_arg_p(db);
+    __kcc_builtin_add_arg_p(stmt);
     __kcc_builtin_add_arg_i(index);
     return __kcc_builtin_call_i(h, "sqlite3lib_bind_null");
 }
 
-int sqlite3_bind_blob(sqlite3_t *db, int index, void *blob, int len, int mkcopy)
+int sqlite3_bind_blob(sqlite3_stmt_t *stmt, int index, void *blob, int len, int mkcopy)
 {
     void *h = kcc_extlib();
     __kcc_builtin_reset_args();
-    __kcc_builtin_add_arg_p(db);
+    __kcc_builtin_add_arg_p(stmt);
     __kcc_builtin_add_arg_i(index);
     __kcc_builtin_add_arg_p(blob);
     __kcc_builtin_add_arg_i(len);
@@ -82,31 +82,31 @@ int sqlite3_bind_blob(sqlite3_t *db, int index, void *blob, int len, int mkcopy)
     return __kcc_builtin_call_i(h, "sqlite3lib_bind_blob");
 }
 
-int sqlite3_bind_double(sqlite3_t *db, int index, double val)
+int sqlite3_bind_double(sqlite3_stmt_t *stmt, int index, double val)
 {
     void *h = kcc_extlib();
     __kcc_builtin_reset_args();
-    __kcc_builtin_add_arg_p(db);
+    __kcc_builtin_add_arg_p(stmt);
     __kcc_builtin_add_arg_i(index);
     __kcc_builtin_add_arg_d(val);
     return __kcc_builtin_call_i(h, "sqlite3lib_bind_double");
 }
 
-int sqlite3_bind_int(sqlite3_t *db, int index, int val)
+int sqlite3_bind_int(sqlite3_stmt_t *stmt, int index, int val)
 {
     void *h = kcc_extlib();
     __kcc_builtin_reset_args();
-    __kcc_builtin_add_arg_p(db);
+    __kcc_builtin_add_arg_p(stmt);
     __kcc_builtin_add_arg_i(index);
     __kcc_builtin_add_arg_i(val);
     return __kcc_builtin_call_i(h, "sqlite3lib_bind_int");
 }
 
-int sqlite3_bind_text(sqlite3_t *db, int index, const char *val, int len)
+int sqlite3_bind_text(sqlite3_stmt_t *stmt, int index, const char *val, int len)
 {
     void *h = kcc_extlib();
     __kcc_builtin_reset_args();
-    __kcc_builtin_add_arg_p(db);
+    __kcc_builtin_add_arg_p(stmt);
     __kcc_builtin_add_arg_i(index);
     __kcc_builtin_add_arg_s(val);
     __kcc_builtin_add_arg_i(len);
