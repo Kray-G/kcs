@@ -61,7 +61,7 @@ EXTOBJ = \
 	src/_extdll/ext.obj \
 	src/_extdll/ext/fileio.obj \
 	src/_extdll/ext/regex.obj \
-	src/_extdll/ext/sqlite3.obj \
+	src/_extdll/ext/sqlite3x.obj \
 	src/_extdll/ext/timer.obj \
 	src/_extdll/ext/zip_unzip.obj \
 	src/_extdll/lib/zip/miniz.obj \

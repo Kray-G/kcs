@@ -73,7 +73,7 @@ EXTSRC = \
 	src/_extdll/ext/regex.c \
 	src/_extdll/ext/timer.c \
 	src/_extdll/ext/zip_unzip.c \
-	src/_extdll/ext/sqlite3.c \
+	src/_extdll/ext/sqlite3x.c \
 	src/_extdll/lib/fileio/_fileio.c \
 	src/_extdll/lib/sqlite3/sqlite3.c \
 	src/_extdll/lib/zip/miniz.c
@@ -125,6 +125,7 @@ bin/bootstrap/kccext.so: bin/bootstrap/libonig.a
 	@mkdir -p $(@D)/ext
 	for file in $(EXTSRC) ; do \
 		target=$(@D)/ext/$$(basename $$file .c).o ; \
+		echo $$target ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
 	$(CC) $(@D)/ext/*.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm -L$(@D) -lonig

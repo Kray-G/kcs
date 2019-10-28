@@ -1,6 +1,7 @@
 #include <kcc/dll.h>
 #include <kcc/dllcore.h>
 #include "../lib/sqlite3/sqlite3.h"
+#include <string.h>
 
 static char *g_last_error = NULL;
 
