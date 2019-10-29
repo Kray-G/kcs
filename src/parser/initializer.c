@@ -416,12 +416,13 @@ static struct block *initialize_array(
 {
     int is_designator;
     Type type, elem;
-    size_t initial, width, i, c;
+    size_t initial, width, count, i, c;
 
     assert(is_array(target.type));
     assert(target.kind == DIRECT);
 
     i = c = 0;
+    count = is_complete(target.type) ? type_array_len(target.type) : 0;
     type = target.type;
     elem = type_next(type);
     width = size_of(elem);
@@ -461,8 +462,21 @@ static struct block *initialize_array(
             i += 1;
             c = i > c ? i : c;
             if (has_next_array_element(state, &is_designator)) {
+                if (!is_designator && count && c >= count)
+                    break;
                 consume(',');
             } else break;
+        }
+    }
+    if (state == CURRENT) {
+        if (peek().token == ',') {
+            next();
+            if (peek().token != '}') {
+                warning("Length of array initializer elements exceeds target array size.");
+            }
+        }
+        while (peek().token != '}' && peek().token != END) {
+            next();
         }
     }
 
