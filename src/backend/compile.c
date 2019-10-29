@@ -341,6 +341,19 @@ static struct immediate constant(int64_t n, int w)
 }
 
 /*
+ * Check if operand can be represented as a 32 bit constant, which is
+ * the largest width allowed for many instructions.
+ */
+static int is_int_constant(struct var v)
+{
+    return v.kind == IMMEDIATE
+        && (is_integer(v.type) || is_pointer(v.type))
+        && !v.symbol
+        && (size_of(v.type) < 4
+            || (v.imm.i <= INT_MAX && v.imm.i >= INT_MIN));
+}
+
+/*
  * Return smallest type big enough to cover the i'th eightbyte slice of
  * aggregate type. Scalar types are returned as is.
  */
@@ -710,8 +723,13 @@ static void push(struct var v)
             emit(INSTR_PUSH, OPT_MEM, location(address(0, SI, 0, 0), 8));
         }
     } else if (is_scalar(v.type)) {
-        if (v.kind == IMMEDIATE && size_of(v.type) < 8 && !is_real(v.type)) {
-            emit(INSTR_PUSH, OPT_IMM, value_of(v, 8));
+        if (v.kind == IMMEDIATE && is_int_constant(v)) {
+            if (size_of(v.type) == 8) {
+                load_int(v, AX, 8);
+                emit(INSTR_PUSH, OPT_REG, reg(AX, 8));
+            } else {
+                emit(INSTR_PUSH, OPT_IMM, value_of(v, 8));
+            }
         } else {
             /*
              * Not possible to push SSE registers, so load as if normal
@@ -2181,15 +2199,6 @@ static int operand_equal(struct var a, struct var b)
         && a.field_width == b.field_width
         && a.field_offset == b.field_offset
         && a.offset == b.offset;
-}
-
-static int is_int_constant(struct var v)
-{
-    return v.kind == IMMEDIATE
-        && (is_integer(v.type) || is_pointer(v.type))
-        && !v.symbol
-        && (size_of(v.type) < 8
-            || (v.imm.i <= INT_MAX && v.imm.i >= INT_MIN));
 }
 
 static enum reg compile_add(

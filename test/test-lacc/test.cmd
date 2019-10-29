@@ -7,8 +7,8 @@ if NOT "%1" == "" SET GEN=..\..\kcc.exe -x
 
 :CLEANUP
 pushd %~dp0
-del *.expect > NUL 2>&1
-del *.result > NUL 2>&1
+del /S /Q *.expect > NUL 2>&1
+del /S /Q *.result > NUL 2>&1
 
 :DO_TEST
 REM c11
@@ -202,6 +202,7 @@ call :TEST params-mixed.c
 call :TEST params-system-v.c
 call :TEST partial-initialization.c
 call :TEST pointer-diff.c
+call :TEST pointer-immediate.c
 call :TEST pointer.c
 call :TEST preprocess-expression.c
 call :TEST preprocess.c
@@ -210,6 +211,7 @@ REM call :TEST printstr.c
 call :TEST promote-unsigned.c
 call :TEST prototype-scope-enum.c
 call :TEST ptrdiff.c
+call :TEST push-immediate.c
 call :TEST qualifier-repeat.c
 call :TEST register-param.c
 REM call :TEST return-bitfield.c
