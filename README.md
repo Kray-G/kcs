@@ -26,6 +26,9 @@ The main feature is below.
     *   Some libraries will be coming soon.
     *   Please let me know if you have library which you want to use.
 
+FYI, please see the [technical notes](doc/technical.md)
+if you have any interest in what I have done in the development.
+
 ### Why not using Clang?
 
 Clang is too big for a light use.
@@ -41,7 +44,7 @@ If you want to do JIT with Clang, see [clang-jit][] project for your help.
 Now KCCI was tested only on a platform below.
 
 *   Windows (x64) with Visual Studio 2017 (Express Edition).
-*   Linux (x64) with gcc/g++.
+*   Linux (x64) with gcc.
 
 I am waiting for pull requests to support any other platforms & compilers.
 
