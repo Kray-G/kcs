@@ -251,6 +251,10 @@ static void serialize_lir(FILE *fp, struct vm_program *prog)
             sel_put_code_byte(fp, code->type);
             continue;
         }
+        case VM_INC:
+        case VM_DEC: {
+            continue;
+        }
         case VM_REFLIB: {
             sel_put_string(fp, str_raw(code->d.name));
             continue;

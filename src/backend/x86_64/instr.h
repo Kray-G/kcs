@@ -204,10 +204,8 @@ enum opcode {
     INSTR_FSUBRP,       /* Subtract and pop. */
     INSTR_FMULP,        /* Multiply and pop. */
     INSTR_FDIVRP,       /* Divide and pop. */
-
     INSTR_INC,
     INSTR_DEC,
-
     INSTR_BUILTIN,
 };
 

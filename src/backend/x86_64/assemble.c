@@ -158,6 +158,32 @@ static const char *immediate(struct immediate imm, int *size)
     return asm_address(imm.d.addr);
 }
 
+static int is_imm_incdec_range(struct immediate imm)
+{
+    #define IS_IN_INCDEC_RANGE(field) (0 < imm.d.field && imm.d.field <= JIT_INCDEC_COUNT_MAX)
+    if (imm.type == IMM_INT) {
+        switch (imm.w) {
+        case 1: return IS_IN_INCDEC_RANGE(byte) ? imm.d.byte : 0;
+        case 2: return IS_IN_INCDEC_RANGE(word) ? imm.d.word : 0;
+        case 4: return IS_IN_INCDEC_RANGE(dword) ? imm.d.dword : 0;
+        case 8: return IS_IN_INCDEC_RANGE(qword) ? imm.d.qword : 0;
+        }
+    }
+    return 0;
+    #undef IS_IN_INCDEC_RANGE
+}
+
+static void display_address(int addr, struct code *c, int len)
+{
+    printf("%08X:", addr);
+    for (int i = 0; i < len; ++i) {
+        printf(" %02X", c->val[i]);
+    }
+    for (int i = len; i < 8; ++i) {
+        printf("   ");
+    }
+}
+
 INTERNAL void asm_init(FILE *output, const char *file)
 {
     asm_output = output;
@@ -238,6 +264,40 @@ INTERNAL int asm_symbol(const struct symbol *sym)
         break;
     }
 
+    return 0;
+}
+
+INTERNAL int asm_text_with_address(int addr, struct code *c, struct instruction instr)
+{
+    int ws = 0, len = 0;
+    const char *source = NULL;
+
+    int count = (instr.optype == OPT_IMM_REG) ? is_imm_incdec_range(instr.source.imm) : 0;
+    if (count > 0) {
+        switch (instr.opcode) {
+        case INSTR_ADD:
+            len = c->len / count;
+            ws = instr.dest.reg.w;
+            source = mnemonic(instr.dest.reg);
+            while (count--) {
+                display_address(addr, c, len);
+                U1("inc", ws, source);
+            }
+            return 0;
+        case INSTR_SUB:
+            len = c->len / count;
+            ws = instr.dest.reg.w;
+            source = mnemonic(instr.dest.reg);
+            while (count--) {
+                display_address(addr, c, len);
+                U1("dec", ws, source);
+            }
+            return 0;
+        }
+    }
+
+    display_address(addr, c, c->len);
+    asm_text(instr);
     return 0;
 }
 
@@ -397,9 +457,6 @@ INTERNAL int asm_text(struct instruction instr)
     case INSTR_FSUBRP:   I1("fsubrp", source); break;
     case INSTR_FMULP:    I1("fmulp", source); break;
     case INSTR_FDIVRP:   I1("fdivrp", source); break;
-
-    case INSTR_INC:      U1("inc", ws, source); break;
-    case INSTR_DEC:      U1("dec", ws, source); break;
 
     case INSTR_BUILTIN:  I0("(builtin)");
     }

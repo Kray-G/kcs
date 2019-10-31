@@ -416,16 +416,27 @@ static struct code encode_sub(
 
     switch (optype) {
     case OPT_IMM_REG:
-        assert(is_64_bit(b.reg));
-        c.val[c.len++] = REX | W(b.reg) | B(b.reg);
-        c.val[c.len++] = 0x81 | is_byte_imm(a.imm) << 1;
-        c.val[c.len++] = 0xE8 | regi(b.reg);
-        if (is_byte_imm(a.imm)) {
-            c.val[c.len++] = a.imm.d.byte;
-        } else if (is_32bit_imm(a.imm)) {
-            memcpy(&c.val[c.len], &a.imm.d.dword, 4);
-            c.len += 4;
-        } else assert(0);
+        if (0 < a.imm.d.qword && a.imm.d.qword <= JIT_INCDEC_COUNT_MAX) {
+            for (int i = 0; i < a.imm.d.qword; ++i) {
+                if (is_64_bit(b.reg)) {
+                    c.val[c.len++] = REX | W(b.reg) | B(b.reg);
+                }
+                c.val[c.len++] = 0xFF;
+                c.val[c.len++] = 0xC8 | regi(b.reg);
+            }
+        } else {
+            if (is_64_bit(b.reg)) {
+                c.val[c.len++] = REX | W(b.reg) | B(b.reg);
+            }
+            c.val[c.len++] = 0x81 | is_byte_imm(a.imm) << 1;
+            c.val[c.len++] = 0xE8 | regi(b.reg);
+            if (is_byte_imm(a.imm)) {
+                c.val[c.len++] = a.imm.d.byte;
+            } else if (is_32bit_imm(a.imm)) {
+                memcpy(&c.val[c.len], &a.imm.d.dword, 4);
+                c.len += 4;
+            } else assert(0);
+        }
         break;
     case OPT_REG_REG:
         if (rrex(a.reg)) {
@@ -458,16 +469,27 @@ static struct code encode_add(
         break;
     case OPT_IMM_REG:
         assert(a.imm.type == IMM_INT);
-        if (rrex(b.reg))
-            c.val[c.len++] = REX | W(b.reg) | B(b.reg);
-        c.val[c.len++] = 0x80 | is_byte_imm(a.imm) << 1 | w(b.reg);
-        c.val[c.len++] = 0xC0 | regi(b.reg);
-        if (is_byte_imm(a.imm)) {
-            c.val[c.len++] = a.imm.d.byte;
+        if (0 < a.imm.d.qword && a.imm.d.qword <= JIT_INCDEC_COUNT_MAX) {
+            for (int i = 0; i < a.imm.d.qword; ++i) {
+                if (rrex(b.reg)) {
+                    c.val[c.len++] = REX | W(b.reg) | B(b.reg);
+                }
+                c.val[c.len++] = 0xFF;
+                c.val[c.len++] = 0xC0 | regi(b.reg);
+            }
         } else {
-            assert(is_32bit_imm(a.imm));
-            memcpy(&c.val[c.len], &a.imm.d.dword, 4);
-            c.len += 4;
+            if (rrex(b.reg)) {
+                c.val[c.len++] = REX | W(b.reg) | B(b.reg);
+            }
+            c.val[c.len++] = 0x80 | is_byte_imm(a.imm) << 1 | w(b.reg);
+            c.val[c.len++] = 0xC0 | regi(b.reg);
+            if (is_byte_imm(a.imm)) {
+                c.val[c.len++] = a.imm.d.byte;
+            } else {
+                assert(is_32bit_imm(a.imm));
+                memcpy(&c.val[c.len], &a.imm.d.dword, 4);
+                c.len += 4;
+            }
         }
         break;
     case OPT_IMM_MEM:

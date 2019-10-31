@@ -365,6 +365,13 @@ static void vm_load_module(struct vm_context *ctx, struct vm_program *prog, stru
             }));
             continue;
         }
+        case VM_INC:
+        case VM_DEC: {
+            PUSH_CODE(((struct vm_code){
+                .opcode = opcode,
+            }));
+            continue;
+        }
         case VM_GLOBAL: {
             vm_load_label(buf, fp);
             array_push_back(&ctx->globals, ((struct vm_label){ .name = str_init(buf), .index = global_base }));

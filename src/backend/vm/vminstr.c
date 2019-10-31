@@ -25,6 +25,8 @@ typedef const char *(*vm_builtin_get_name_t)(int index);
 typedef vm_builtin_t (*vm_builtin_get_func_t)(int index);
 static vm_builtin_get_func_t builtin_get_func = NULL;
 
+#define VM_INCDEC_COUNT_MAX (3)
+
 #define PUSH_ARGS() {\
     for (int p = array_len(&vm_func_args.expr) - 1; 0 <= p ; --p) {\
         struct expression expr = array_get(&vm_func_args.expr, p);\
@@ -40,8 +42,7 @@ static vm_builtin_get_func_t builtin_get_func = NULL;
     if (is_swap_available(expr.r)) {\
         vm_load_var(expr.r);\
         vm_load_var(expr.l);\
-    }\
-    else {\
+    } else {\
         vm_load_var(expr.l);\
         vm_load_var(expr.r);\
     }\
@@ -49,12 +50,32 @@ static vm_builtin_get_func_t builtin_get_func = NULL;
 }\
 /**/
 
+#define GEN_2OP_SWAP_CHECK_ADD() {\
+    do {\
+        if (expr.r.kind == IMMEDIATE && type_of(expr.r.type) == T_INT && (0 < expr.r.imm.i && expr.r.imm.i <= VM_INCDEC_COUNT_MAX)) {\
+            vm_load_var(expr.l);\
+            for (int i = 0; i < expr.r.imm.i; ++i) {\
+                emit_vm_code(((struct vm_code){ .opcode = VM_INC }));\
+            }\
+        } else {\
+            if (is_swap_available(expr.r)) {\
+                vm_load_var(expr.r);\
+                vm_load_var(expr.l);\
+            } else {\
+                vm_load_var(expr.l);\
+                vm_load_var(expr.r);\
+            }\
+            emit_vm_op(VM_ADD, get_vm_optype(expr.type));\
+        }\
+    } while (0);\
+}\
+/**/
+
 #define GEN_2OP_SWAP_CHECK_L(op) {\
     if (is_swap_available(expr.r)) {\
         vm_load_var(expr.r);\
         vm_load_var(expr.l);\
-    }\
-    else {\
+    } else {\
         vm_load_var(expr.l);\
         vm_load_var(expr.r);\
     }\
@@ -67,8 +88,7 @@ static vm_builtin_get_func_t builtin_get_func = NULL;
         vm_load_var(expr.r);\
         vm_load_var(expr.l);\
         emit_vm_op(op2, get_vm_optype(expr.l.type));\
-    }\
-    else {\
+    } else {\
         vm_load_var(expr.l);\
         vm_load_var(expr.r);\
         emit_vm_op(op1, get_vm_optype(expr.l.type));\
@@ -697,12 +717,19 @@ static void vm_gen_expr(struct expression expr)
         emit_vm_op(VM_NEG, get_vm_optype(expr.l.type));
         break;
     case IR_OP_ADD:
-        GEN_2OP_SWAP_CHECK(VM_ADD);
+        GEN_2OP_SWAP_CHECK_ADD();
         break;
     case IR_OP_SUB:
-        vm_load_var(expr.l);
-        vm_load_var(expr.r);
-        emit_vm_op(VM_SUB, get_vm_optype(expr.type));
+        if (expr.r.kind == IMMEDIATE && type_of(expr.r.type) == T_INT && (0 < expr.r.imm.i && expr.r.imm.i <= VM_INCDEC_COUNT_MAX)) {
+            vm_load_var(expr.l);
+            for (int i = 0; i < expr.r.imm.i; ++i) {
+                emit_vm_code(((struct vm_code){ .opcode = VM_DEC }));
+            }
+        } else {
+            vm_load_var(expr.l);
+            vm_load_var(expr.r);
+            emit_vm_op(VM_SUB, get_vm_optype(expr.type));
+        }
         break;
     case IR_OP_MUL:
         GEN_2OP_SWAP_CHECK(VM_MUL);

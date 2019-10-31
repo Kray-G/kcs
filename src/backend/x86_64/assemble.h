@@ -16,7 +16,10 @@ INTERNAL void asm_init(FILE *output, const char *file);
  */
 INTERNAL int asm_symbol(const struct symbol *sym);
 
-/* Add instruction to function context. */
+/* Display assemble list with address. */
+INTERNAL int asm_text_with_address(int addr, struct code *c, struct instruction instr);
+
+/* Display assemble list. */
 INTERNAL int asm_text(struct instruction instr);
 
 /* Add data to internal symbol context. */
