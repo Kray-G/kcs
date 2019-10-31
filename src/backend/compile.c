@@ -2218,6 +2218,9 @@ static enum reg compile_add(
         emit(INSTR_FADDP, OPT_REG, reg(ax, w));
         assert(x87_stack == 2);
         x87_stack--;
+    } else if (is_int_constant(r) && is_integer(type)) {
+        ax = load_cast(l, type);
+        emit(INSTR_ADD, OPT_IMM_REG, value_of(r, w), reg(ax, w));
     } else if (is_real(type)) {
         ax = load_cast(l, type);
         cx = load_cast(r, type);
@@ -2331,6 +2334,12 @@ static enum reg compile_sub(
         x87_stack--;
         if (!is_void(target.type)) {
             store_x87(target);
+        }
+    } else if (is_int_constant(r) && is_integer(type)) {
+        ax = load_cast(l, type);
+        emit(INSTR_SUB, OPT_IMM_REG, value_of(r, w), reg(ax, w));
+        if (!is_void(target.type)) {
+            store(ax, target);
         }
     } else {
         ax = load_cast(l, type);

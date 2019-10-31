@@ -41,6 +41,10 @@ enum vm_opcode {
     VM_GT,
     VM_LE,
     VM_LT,
+
+    VM_INC,
+    VM_DEC,
+
     VM_GLOBAL,
     VM_REFLIB,
     VM_SAVE_RETVAL,
@@ -85,12 +89,14 @@ enum vm_opcode {
         &&LABEL_VM_GT, \
         &&LABEL_VM_LE, \
         &&LABEL_VM_LT, \
+        &&LABEL_VM_INC, \
+        &&LABEL_VM_DEC, \
         &&LABEL_VM_HALT, \
         &&LABEL_VM_HALT, \
         &&LABEL_VM_SAVE_RETVAL, \
     };\
     /**/
-#define VM_START(ip)    struct vm_code *code = base[ip];\
+#define VM_START()      struct vm_code *code = base[ip];\
                         goto *vm_dispatch_table[code->opcode]; {\
                         /**/
 #define VM_END()        LABEL_VM_END_LOOP:;
@@ -102,16 +108,59 @@ enum vm_opcode {
 #define VM_GOTO_END()   goto LABEL_VM_END_LOOP;
 #else // !defined(__GNUC__)
 #define KCCVM_DEFINE_DISPATCH_TABLE()
-#define VM_START(ip)    while (ip >= 0) {\
-                            struct vm_code *code = base[ip];\
-                            CHECK_POINT();\
-                            switch (code->opcode) {\
+#define VM_START()      struct vm_code *code;\
+                        NEXT();\
                         /**/
-#define VM_END()        } LABEL_VM_END_LOOP:;
-#define VM_CASE_(op)    case op
-#define VM_CASE_DEFAULT default
-#define NEXT()          continue
+#define VM_END()        LABEL_VM_END_LOOP:;
+#define VM_CASE_(op)    LBL_ ## op
+#define VM_CASE_DEFAULT if (0) { LABEL_VM_DEFAULT
 #define VM_GOTO_END()   goto LABEL_VM_END_LOOP;
+#define VM_GOTO_S()     code = base[ip]; switch (code->opcode) {
+#define VM_GOTO_L(op)   case op: goto LBL_ ## op
+#define VM_GOTO_E()     }
+#define NEXT()          VM_GOTO_S()\
+    VM_GOTO_L(VM_NOP); \
+    VM_GOTO_L(VM_LABEL); \
+    VM_GOTO_L(VM_HALT); \
+    VM_GOTO_L(VM_STORE); \
+    VM_GOTO_L(VM_FZERO); \
+    VM_GOTO_L(VM_CALL); \
+    VM_GOTO_L(VM_RET); \
+    VM_GOTO_L(VM_CLUP); \
+    VM_GOTO_L(VM_ENTER); \
+    VM_GOTO_L(VM_DEREF); \
+    VM_GOTO_L(VM_CAST); \
+    VM_GOTO_L(VM_ALLOCA); \
+    VM_GOTO_L(VM_JMP); \
+    VM_GOTO_L(VM_JZ); \
+    VM_GOTO_L(VM_JNZ); \
+    VM_GOTO_L(VM_PUSH); \
+    VM_GOTO_L(VM_POP); \
+    VM_GOTO_L(VM_DEPOP); \
+    VM_GOTO_L(VM_NOT); \
+    VM_GOTO_L(VM_NEG); \
+    VM_GOTO_L(VM_ADD); \
+    VM_GOTO_L(VM_SUB); \
+    VM_GOTO_L(VM_MUL); \
+    VM_GOTO_L(VM_DIV); \
+    VM_GOTO_L(VM_MOD); \
+    VM_GOTO_L(VM_AND); \
+    VM_GOTO_L(VM_OR); \
+    VM_GOTO_L(VM_XOR); \
+    VM_GOTO_L(VM_SHL); \
+    VM_GOTO_L(VM_SHR); \
+    VM_GOTO_L(VM_EQ); \
+    VM_GOTO_L(VM_NE); \
+    VM_GOTO_L(VM_GE); \
+    VM_GOTO_L(VM_GT); \
+    VM_GOTO_L(VM_LE); \
+    VM_GOTO_L(VM_LT); \
+    VM_GOTO_L(VM_INC); \
+    VM_GOTO_L(VM_DEC); \
+    VM_GOTO_L(VM_SAVE_RETVAL); \
+    VM_GOTO_E();\
+    /**/
+
 #endif // defined(__GNUC__)
 
 enum vm_optype {

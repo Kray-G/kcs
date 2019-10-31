@@ -313,6 +313,8 @@ int sprintf(char* buf, const char* fmt, ...)
     return r;
 }
 
+#define FGETC(stream) (ungetch ? ((ungetchd = ungetch), ungetch = 0, ungetchd) : fgetc(stream))
+#define UNGETC(ch, stream) (ungetch = ch)
 #define KCC_IS_ENTER(ch) ((ch) == '\n' || (ch) == '\r')
 #define KCC_IS_SPACE(ch) ((ch) == ' ' || (ch) == '\t')
 #define KCC_IS_WS(ch)    (KCC_IS_SPACE(ch) || KCC_IS_ENTER(ch))
@@ -322,23 +324,26 @@ int sprintf(char* buf, const char* fmt, ...)
         if (stream) {\
             int ch;\
             for (i = 0; (width == 0 || i < width); i++) {\
-                ch = fgetc(stream);\
-                if (ch == EOF || KCC_IS_WS(ch)) break;\
+                ch = FGETC(stream);\
+                if (ch == EOF || KCC_IS_WS(ch)) {\
+                    UNGETC(ch, stream);\
+                    break;\
+                }\
                 buf[i] = ch;\
             }\
             if (stream == stdin) {\
                 while (!KCC_IS_ENTER(ch)) {\
-                    ch = fgetc(stream);\
+                    ch = FGETC(stream);\
                     if (ch == EOF || KCC_IS_ENTER(ch) || !KCC_IS_SPACE(ch)) {\
-                        ungetc(ch, stream);\
+                        UNGETC(ch, stream);\
                         break;\
                     }\
                 }\
             } else {\
                 while (!KCC_IS_WS(ch)) {\
-                    ch = fgetc(stream);\
+                    ch = FGETC(stream);\
                     if (ch == EOF || !KCC_IS_WS(ch)) {\
-                        ungetc(ch, stream);\
+                        UNGETC(ch, stream);\
                         break;\
                     }\
                 }\
@@ -432,6 +437,7 @@ int scanf_core(FILE *stream, const char *src, const char *fmt, va_list ap)
         return 0;
     }
 
+    int ungetch = 0, ungetchd = 0;
     int conv = 0, chsetmode = 0, assign, width, type;
     const char *fp, *sp = src;
     char buf[__KCC_PRINTF_BUFFER_SIZE] = {'\0'};
@@ -441,15 +447,15 @@ int scanf_core(FILE *stream, const char *src, const char *fmt, va_list ap)
         if (*fp != '%' && *fp != '\0') {
             if (!KCC_IS_WS(*fp)) {
                 int ch;
-                if (stream) ch = fgetc(stream);
+                if (stream) ch = FGETC(stream);
                 else        ch = *sp++;
                 if (ch != *fp) return EOF;
             } else {
                 int ch;
-                if (stream) ch = fgetc(stream);
+                if (stream) ch = FGETC(stream);
                 else        ch = *sp++;
                 if (!KCC_IS_WS(ch)) {
-                    if (stream) ungetc(ch, stream);
+                    if (stream) UNGETC(ch, stream);
                     else        --sp;
                 } else {
                     --fp;
@@ -475,14 +481,14 @@ int scanf_core(FILE *stream, const char *src, const char *fmt, va_list ap)
                     char *rp = va_arg(ap, char *);
                     do {
                         int ch = 0;
-                        if (stream) ch = fgetc(stream);
+                        if (stream) ch = FGETC(stream);
                         else        ch = *sp++;
                         if ((chsetmode == KCC_SSCANF_MODE_FOUND && chset[ch]) || (chsetmode == KCC_SSCANF_MODE_NOT && !chset[ch])) {
                             if (assign) {
                                 *rp++ = ch;
                             }
                         } else {
-                            if (stream) ungetc(*buf, stream);
+                            if (stream) UNGETC(*buf, stream);
                             else        --sp;
                             break;
                         }
@@ -492,6 +498,14 @@ int scanf_core(FILE *stream, const char *src, const char *fmt, va_list ap)
                     return EOF;
                 } else {
                     int ch = *fp++;
+                    if (*fp == '\\') {
+                        ch = *fp++;
+                        switch (ch) {
+                        case 'n': ch = '\n'; break;
+                        case 't': ch = '\t'; break;
+                        case 'r': ch = '\r'; break;
+                        }
+                    }
                     if (*fp != '-') {
                         chset[ch] = 1;
                     } else {

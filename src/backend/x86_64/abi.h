@@ -10,6 +10,8 @@
 #define MAX_INTEGER_RET 2
 #define MAX_SSE_RET 2
 
+#define JIT_INCDEC_COUNT_MAX (3)
+
 /*
  * Parameter class of an 8-byte slice of an object. Objects which take
  * up more than 4 eightbytes automatically get class PC_MEMORY.

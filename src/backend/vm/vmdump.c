@@ -266,6 +266,8 @@ static void print_vm_op(enum vm_opcode opcode, enum vm_optype type)
     case VM_GT:     opname = "gt";  break;
     case VM_LE:     opname = "le";  break;
     case VM_LT:     opname = "lt";  break;
+    case VM_INC:    opname = "inc"; break;
+    case VM_DEC:    opname = "dec"; break;
     }
     printf(IDT4 "%-24s(%s)\n", opname, make_vm_type_string(type));
 }
@@ -340,6 +342,8 @@ INTERNAL void print_vm_instruction(struct vm_program *prog, struct vm_code *code
     case VM_GT:     print_vm_op(code->opcode, code->type);                      break;
     case VM_LE:     print_vm_op(code->opcode, code->type);                      break;
     case VM_LT:     print_vm_op(code->opcode, code->type);                      break;
+    case VM_INC:    print_vm_op(code->opcode, code->type);                      break;
+    case VM_DEC:    print_vm_op(code->opcode, code->type);                      break;
     case VM_REFLIB: printf(IDT4 "%-24s%s\n", "#lib", str_raw(code->d.name));    break;
     case VM_SAVE_RETVAL: printf(IDT4 "%-24s\n", "save_retval");                 break;
     }

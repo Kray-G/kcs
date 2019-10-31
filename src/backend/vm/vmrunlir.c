@@ -182,7 +182,7 @@ static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, in
     KCCVM_DEFINE_DISPATCH_TABLE();
     struct vm_code** base = prog->exec.data;
 
-    VM_START(ip)
+    VM_START()
 
     VM_CASE_(VM_NOP): { ++ip; NEXT(); }
     VM_CASE_(VM_LABEL): { assert(0); }
@@ -807,6 +807,16 @@ static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, in
         case VMOP_DBL:      OP2DC( <, double);                      break;
         case VMOP_LDBL:     OP2LDC(<);                              break;
         }
+        ++ip;
+        NEXT();
+    }
+    VM_CASE_(VM_INC): {
+        ++TOPIV(uint32_t);
+        ++ip;
+        NEXT();
+    }
+    VM_CASE_(VM_DEC): {
+        --TOPIV(uint32_t);
         ++ip;
         NEXT();
     }

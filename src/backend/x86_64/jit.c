@@ -294,15 +294,7 @@ static void jit_print_code()
             }
             printf("\t%llu\n", jc->value.u);
         } else {
-            struct code c = jc->code;
-            printf("%08X:", jc->addr);
-            for (int i = 0; i < c.len; ++i) {
-                printf(" %02X", c.val[i]);
-            }
-            for (int i = c.len; i < 8; ++i) {
-                printf("   ");
-            }
-            asm_text(jc->instr);
+            asm_text_with_address(jc->addr, &(jc->code), jc->instr);
         }
     }
 }
