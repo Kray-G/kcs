@@ -282,6 +282,7 @@ INTERNAL int asm_text_with_address(int addr, struct code *c, struct instruction 
             while (count--) {
                 display_address(addr, c, len);
                 U1("inc", ws, source);
+                addr += len;
             }
             return 0;
         case INSTR_SUB:
@@ -291,6 +292,7 @@ INTERNAL int asm_text_with_address(int addr, struct code *c, struct instruction 
             while (count--) {
                 display_address(addr, c, len);
                 U1("dec", ws, source);
+                addr += len;
             }
             return 0;
         }
