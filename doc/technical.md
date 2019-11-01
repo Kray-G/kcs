@@ -216,7 +216,7 @@ When it is the VM code, see below.
 ```
 
 Notes: The threshold between items are that the interval each item is less than 16 now.
-If there is the interval over threshold, then use binary search algorithm.
+If there is the interval over threshold, then use a binary search algorithm.
 Threfore I prefer you change the code if you write the code like below. 
 
 ```c
