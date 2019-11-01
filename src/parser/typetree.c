@@ -238,7 +238,7 @@ static struct member *add_member(Type parent, struct member m)
             }
             t->is_flexible = 1;
         }
-        if (LONG_MAX - m.offset < size_of(m.type)) {
+        if (LONGLONG_MAX - m.offset < size_of(m.type)) {
             error("Object is too large.");
             exit(1);
         }
@@ -384,7 +384,7 @@ INTERNAL Type type_create_array(Type next, size_t count)
     Type type;
     struct typetree *t;
 
-    if (count * size_of(next) > LONG_MAX) {
+    if (count * size_of(next) > LONGLONG_MAX) {
         error("Array is too large (%lu elements).", count);
         exit(1);
     }

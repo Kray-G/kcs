@@ -535,6 +535,7 @@ INTERNAL struct symbol *sym_create_unnamed(Type type)
     sym->name = str_init(PREFIX_UNNAMED);
     sym->type = type;
     sym->n = ++n;
+    array_push_back(&ns_ident.symbol, sym);
     return sym;
 }
 

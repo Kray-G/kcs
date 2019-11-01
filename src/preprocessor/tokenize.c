@@ -186,7 +186,7 @@ static const Type constant_integer_type(
             type = basic_type__int;
         } else if (!is_decimal && value <= UINT_MAX) {
             type = basic_type__unsigned_int;
-        } else if (value <= LONG_MAX) {
+        } else if (value <= LONGLONG_MAX) {
             type = basic_type__long;
         } else {
             type = basic_type__unsigned_long;
@@ -204,7 +204,7 @@ static const Type constant_integer_type(
         break;
     case SUFFIX_L:
     case SUFFIX_LL:
-        if (value <= LONG_MAX) {
+        if (value <= LONGLONG_MAX) {
             type = basic_type__long;
         } else {
             type = basic_type__unsigned_long;

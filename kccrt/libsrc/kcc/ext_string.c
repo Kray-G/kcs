@@ -4,41 +4,22 @@
 string_t string_init(const char *cstr)
 {
     unsigned int len = cstr ? strlen(cstr) : 0;
+    unsigned int cap = ((unsigned int)(len / KCC_CAPACITY_UNIT) + 1) * KCC_CAPACITY_UNIT;
+    char *buf = (char *)calloc(cap, sizeof(char));
     if (len > 0) {
-        unsigned int cap = ((unsigned int)(len / KCC_CAPACITY_UNIT) + 1) * KCC_CAPACITY_UNIT;
-        char *buf = (char *)calloc(cap, sizeof(char));
         strcpy(buf, cstr);
-        return (string_t) {
-            .len = len,
-            .cap = cap,
-            .cstr = buf,
-        };
     }
     return (string_t) {
-        .len = 0,
-        .cap = 0,
-        .cstr = NULL,
+        .len = len,
+        .cap = cap,
+        .cstr = buf,
     };
 }
 
 string_t string_copy(const string_t rhs)
 {
-    if (rhs.len > 0) {
-        // resizes a capacity.
-        unsigned int cap = ((unsigned int)(rhs.len / KCC_CAPACITY_UNIT) + 1) * KCC_CAPACITY_UNIT;
-        char *buf = (char *)calloc(cap, sizeof(char));
-        strcpy(buf, rhs.cstr);
-        return (string_t) {
-            .len = rhs.len,
-            .cap = cap,
-            .cstr = buf,
-        };
-    }
-    return (string_t) {
-        .len = 0,
-        .cap = 0,
-        .cstr = NULL,
-    };
+    // resizes a capacity.
+    return string_init(rhs.cstr);
 }
 
 void string_append(string_t* lhs, const string_t rhs)
@@ -55,7 +36,7 @@ void string_append(string_t* lhs, const string_t rhs)
         char *buf = (char *)calloc(cap, sizeof(char));
         strcpy(buf, lhs->cstr);
         strcat(buf, rhs.cstr);
-        string_free(*lhs);
+        string_free(lhs);
         lhs->len = len;
         lhs->cap = cap;
         lhs->cstr = buf;
@@ -77,7 +58,7 @@ void string_append_cstr(string_t* lhs, const char *rhs)
         char *buf = (char *)calloc(cap, sizeof(char));
         strcpy(buf, lhs->cstr);
         strcat(buf, rhs);
-        string_free(*lhs);
+        string_free(lhs);
         lhs->len = len;
         lhs->cap = cap;
         lhs->cstr = buf;

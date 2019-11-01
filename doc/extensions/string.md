@@ -50,12 +50,12 @@ string_t string_substr(const string_t str, int start, int len);
 *   Returned value should be freed by `string_free()`.
 
 ```c
-void string_free(string_t str);
+void string_free(string_t *str);
 ```
 *   `string_t` object will be freed.
 *   Do not use it after freed.
 
 ```c
-void string_clear(string_t str);
+void string_clear(string_t *str);
 ```
 *   Make the `string_t` object empty.

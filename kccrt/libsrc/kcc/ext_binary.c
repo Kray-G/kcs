@@ -4,41 +4,21 @@
 
 binary_t binary_init(const uint8_t *src, int len)
 {
+    unsigned int cap = ((unsigned int)(len / KCC_CAPACITY_UNIT) + 1) * KCC_CAPACITY_UNIT;
+    uint8_t *buf = (uint8_t *)calloc(cap, sizeof(uint8_t));
     if (len > 0) {
-        unsigned int cap = ((unsigned int)(len / KCC_CAPACITY_UNIT) + 1) * KCC_CAPACITY_UNIT;
-        uint8_t *buf = (uint8_t *)calloc(cap, sizeof(uint8_t));
         memcpy(buf, src, len);
-        return (binary_t) {
-            .len = len,
-            .cap = cap,
-            .buf = buf,
-        };
     }
     return (binary_t) {
-        .len = 0,
-        .cap = 0,
-        .buf = NULL,
+        .len = len,
+        .cap = cap,
+        .buf = buf,
     };
 }
 
 binary_t binary_copy(const binary_t rhs)
 {
-    if (rhs.len > 0) {
-        // resizes a capacity.
-        unsigned int cap = ((unsigned int)(rhs.len / KCC_CAPACITY_UNIT) + 1) * KCC_CAPACITY_UNIT;
-        uint8_t *buf = (uint8_t *)calloc(cap, sizeof(uint8_t));
-        memcpy(buf, rhs.buf, rhs.len);
-        return (binary_t) {
-            .len = rhs.len,
-            .cap = cap,
-            .buf = buf,
-        };
-    }
-    return (binary_t) {
-        .len = 0,
-        .cap = 0,
-        .buf = NULL,
-    };
+    return binary_init(rhs.buf, rhs.len);
 }
 
 void binary_append(binary_t* lhs, const binary_t rhs)
@@ -55,7 +35,7 @@ void binary_append(binary_t* lhs, const binary_t rhs)
         uint8_t *buf = (uint8_t *)calloc(cap, sizeof(uint8_t));
         memcpy(buf, lhs->buf, lhs->len);
         memcpy(buf + lhs->len, rhs.buf, rhs.len);
-        binary_free(*lhs);
+        binary_free(lhs);
         lhs->len = len;
         lhs->cap = cap;
         lhs->buf = buf;
@@ -76,7 +56,7 @@ void binary_append_bytes(binary_t* lhs, const uint8_t *rhs, int rlen)
         uint8_t *buf = (uint8_t *)calloc(cap, sizeof(uint8_t));
         memcpy(buf, lhs->buf, lhs->len);
         memcpy(buf + lhs->len, rhs, len);
-        binary_free(*lhs);
+        binary_free(lhs);
         lhs->len = len;
         lhs->cap = cap;
         lhs->buf = buf;

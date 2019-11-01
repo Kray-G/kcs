@@ -649,6 +649,15 @@ DLLEXPORT int kccmain(int argc, char *argv[])
     int i, ret;
     struct input_file file;
 
+    #if defined(KCC_WINDOWS_DEBUG)
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDOUT);
+    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDOUT);
+    #endif
+
     setup_args(argc, argv);
     if ((ret = parse_program_arguments(argc, argv)) == 1) {
         goto end;
@@ -679,5 +688,9 @@ end:
     clear_linker_args();
     clear_args(kcc_argc);
     clear_string_all();
+
+    #if defined(KCC_WINDOWS_DEBUG)
+    _CrtDumpMemoryLeaks();
+    #endif
     return ret;
 }
