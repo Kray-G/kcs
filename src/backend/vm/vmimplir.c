@@ -366,9 +366,18 @@ static void vm_load_module(struct vm_context *ctx, struct vm_program *prog, stru
             continue;
         }
         case VM_INC:
-        case VM_DEC: {
+        case VM_DEC:
+        case VM_JMPTBL: {
             PUSH_CODE(((struct vm_code){
                 .opcode = opcode,
+            }));
+            continue;
+        }
+        case VM_TBL_ENTRY: {
+            int index = vm_load_address_index(fp);
+            PUSH_CODE(((struct vm_code){
+                .opcode = opcode,
+                .d.addr.index = index,
             }));
             continue;
         }

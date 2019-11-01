@@ -16,6 +16,8 @@
 
 #include <kcc/assert.h>
 
+#define JUMPTABLE_THRESHOLD (16)
+
 #define set_break_target(old, brk) \
     old = break_target; \
     break_target = brk;
@@ -362,7 +364,103 @@ static void link_switch_context_bsearch(
     struct block *parent,
     struct block *next)
 {
-    int i, j;
+    struct var value = eval(def, parent, parent->expr);
+    parent->jump[0] = link_switch_case_bsearch_item(
+        def, value, next, 0, array_len(&switch_context->sorted));
+}
+
+static void link_switch_context_jump_table(
+    struct definition *def,
+    struct block *parent,
+    struct block *next,
+    int minv,
+    int maxv)
+{
+    struct block *comp1, *comp2, *jtbl;
+    struct block *last = (switch_context->default_label) ? switch_context->default_label : next;
+    struct var value = eval(def, parent, parent->expr);
+    struct var check;
+    struct var maxval;
+    struct expression expr;
+    if (minv > 0) {
+        expr = eval_expr(def, parent, IR_OP_SUB, value, var_int(minv));
+        maxval = var_int(maxv - minv);
+        check = eval(def, parent, expr);
+    } else if (minv < 0) {
+        expr = eval_expr(def, parent, IR_OP_ADD, value, var_int(-minv));
+        maxval = var_int(maxv - minv);
+        check = eval(def, parent, expr);
+    } else {
+        expr = as_expr(value);
+        maxval = var_int(maxv);
+        check = value;
+    }
+
+    comp1 = cfg_block_init(def);
+    comp2 = cfg_block_init(def);
+    jtbl = cfg_block_init(def);
+    parent->jump[0] = comp1;
+    comp1->expr = eval_expr(def, comp1, IR_OP_GT, var_int(0), check);
+    comp1->jump[0] = comp2;
+    comp1->jump[1] = last;
+    comp2->expr = eval_expr(def, comp2, IR_OP_GT, check, maxval);
+    comp2->jump[0] = jtbl;
+    comp2->jump[1] = last;
+
+    jtbl->expr = as_expr(check);
+    jtbl->has_jump_table = 1;
+    jtbl->table_offset = var_direct(sym_create_table());
+    int v = minv;
+    int len = array_len(&switch_context->sorted);
+    for (int i = 0; i < len; ++i) {
+        struct switch_case *sc = array_get(&switch_context->sorted, i);
+        int value = sc->value.imm.i;
+        while (v < value) {
+            array_push_back(&jtbl->jump_table, ((struct jump_pair){
+                .value = v - minv,
+                .label = last,
+                .symbol = sym_create_table_entry(last->label)
+            }));
+            ++v;
+        }
+        array_push_back(&jtbl->jump_table, ((struct jump_pair){
+            .value = value - minv,
+            .label = sc->label,
+            .symbol = sym_create_table_entry(sc->label->label)
+        }));
+        ++v;
+    }
+}
+
+static int use_jump_table_for_switch_case(int *minv, int *maxv)
+{
+    int prev = 0, maxdiff = 0;
+    int len = array_len(&switch_context->sorted);
+    if (len == 0) {
+        return 0;
+    }
+
+    *minv = array_get(&switch_context->sorted, 0)->value.imm.i;
+    *maxv = array_get(&switch_context->sorted, len-1)->value.imm.i;
+    for (int i = 0; i < len; ++i) {
+        int v = array_get(&switch_context->sorted, i)->value.imm.i;
+        if (i > 0) {
+            int d = v - prev;
+            if (d > maxdiff) {
+                maxdiff = d;
+            }
+        }
+        prev = v;
+    }
+    return maxdiff < JUMPTABLE_THRESHOLD;
+}
+
+static void link_switch_context_bsearch_or_jump_table(
+    struct definition *def,
+    struct block *parent,
+    struct block *next)
+{
+    int i, j, minv, maxv;
     struct var value;
     struct switch_case head, *p, *scp;
 
@@ -387,9 +485,12 @@ static void link_switch_context_bsearch(
     for (scp = head.next; scp; scp = scp->next) {
         array_push_back(&switch_context->sorted, scp);
     }
-    value = eval(def, parent, parent->expr);
-    parent->jump[0] = link_switch_case_bsearch_item(
-        def, value, next, 0, array_len(&switch_context->sorted));
+
+    if (use_jump_table_for_switch_case(&minv, &maxv)) {
+        link_switch_context_jump_table(def, parent, next, minv, maxv);
+    } else {
+        link_switch_context_bsearch(def, parent, next);
+    }
 }
 
 static void link_switch_context(
@@ -398,7 +499,7 @@ static void link_switch_context(
     struct block *next)
 {
     if (array_len(&switch_context->cases) > 4) {
-        link_switch_context_bsearch(def, parent, next);
+        link_switch_context_bsearch_or_jump_table(def, parent, next);
         return;
     }
 

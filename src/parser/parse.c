@@ -68,6 +68,7 @@ static void recycle_block(struct block *block)
     array_empty(&block->code);
     block->label = NULL;
     block->expr = expr;
+    block->has_jump_table = 0;
     block->has_return_value = 0;
     block->has_init_value = 0;
     block->jump[0] = block->jump[1] = NULL;

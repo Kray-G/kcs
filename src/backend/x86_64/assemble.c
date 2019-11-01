@@ -198,7 +198,7 @@ INTERNAL int asm_symbol(const struct symbol *sym)
      * Labels stay in the same function context, otherwise flush to
      * write any end of function metadata.
      */
-    if (sym->symtype != SYM_LABEL) {
+    if (sym->symtype != SYM_LABEL && sym->symtype != SYM_TABLE && sym->symtype != SYM_TABLE_ENTRY) {
         asm_flush();
         current_symbol = sym;
     }
@@ -237,6 +237,12 @@ INTERNAL int asm_symbol(const struct symbol *sym)
         out("\t.string\t");
         fprintstr(asm_output, sym->value.string);
         out("\n");
+        break;
+    case SYM_TABLE:
+        out("%s:\n", sym_name(sym));
+        break;
+    case SYM_TABLE_ENTRY:
+        out("\t.quad\t%s\n", sym_name(sym));
         break;
     case SYM_CONSTANT:
         I0(".section\t.rodata");

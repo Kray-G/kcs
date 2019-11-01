@@ -809,6 +809,26 @@ static void vm_gen_node(struct block *node)
 
     node->color = BLACK;
     emit_vm_label(sym_name(node->label));
+    if (node->has_jump_table) {
+        vm_gen_expr(node->expr);
+        int len = array_len(&node->jump_table);
+        emit_vm_code(((struct vm_code){ .opcode = VM_JMPTBL }));
+        for (int i = 0; i < len; ++i) {
+            struct jump_pair jp = array_get(&node->jump_table, i);
+            emit_vm_code(((struct vm_code){
+                .opcode = VM_TBL_ENTRY,
+                .d.addr.name = str_init(sym_name(jp.symbol)),
+            }));
+        }
+        for (int i = 0; i < len; ++i) {
+            struct jump_pair jp = array_get(&node->jump_table, i);
+            vm_gen_node(jp.label);
+        }
+
+        /* No more use the table */
+        array_clear(&node->jump_table);
+        return;
+    }
 
     if (node->body) {
         assert(node->jump[0]);
@@ -1057,7 +1077,8 @@ static void reassign_label_index()
         switch (code->opcode) {
         case VM_JMP:
         case VM_JZ:
-        case VM_JNZ: {
+        case VM_JNZ:
+        case VM_TBL_ENTRY: {
             if (code->d.addr.index == 0) {
                 struct vm_label *label = get_vm_label(code->d.addr.name);
                 assert(label);

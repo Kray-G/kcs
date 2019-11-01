@@ -263,7 +263,7 @@ static struct address address_of(struct var var)
 
     addr.disp = displacement_from_offset(var.offset);
     if (var.kind == IMMEDIATE) {
-        assert(is_string(var));
+        assert(var.symbol && (var.symbol->symtype == SYM_STRING_VALUE || var.symbol->symtype == SYM_TABLE));
         addr.base = IP;
         addr.sym = var.symbol;
     } else {
@@ -2982,7 +2982,7 @@ static void compile_return(Type func, struct expression expr)
 static void compile_block(struct block *block, Type type, int regs)
 {
     int i;
-    enum reg ax;
+    enum reg ax, cx;
     enum reg xmm0, xmm1;
     enum opcode cmp;
     struct statement st;
@@ -2993,6 +2993,29 @@ static void compile_block(struct block *block, Type type, int regs)
 
     block->color = BLACK;
     enter_context(block->label);
+    if (block->has_jump_table) {
+        emit(INSTR_XOR, OPT_REG_REG, reg(AX, 8), reg(AX, 8));
+        ax = compile_expression(block->expr);
+        assert(ax == AX);
+        cx = get_int_reg();
+        emit(INSTR_LEA, OPT_MEM_REG, location(address_of(block->table_offset), 8), reg(cx, 8));
+        emit(INSTR_JMP, OPT_MEM, location(address(0, cx, ax, 8), 8));
+        relase_regs();
+        enter_context(block->table_offset.symbol);
+        int len = array_len(&block->jump_table);
+        for (int i = 0; i < len; ++i) {
+            struct jump_pair jp = array_get(&block->jump_table, i);
+            enter_context(jp.symbol);
+        }
+        for (int i = 0; i < len; ++i) {
+            struct jump_pair jp = array_get(&block->jump_table, i);
+            compile_block(jp.label, type, regs);
+        }
+
+        /* No more use the table */
+        array_clear(&block->jump_table);
+        return;
+    }
 
     if (block->body) {
         assert(block->jump[0]);

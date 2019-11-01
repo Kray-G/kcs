@@ -139,6 +139,16 @@ struct statement {
 };
 
 /*
+ * Jump table's value pair.
+ */
+struct block;
+struct jump_pair {
+    int value;
+    struct block *label;
+    const struct symbol *symbol;
+};
+
+/*
  * Basic block in function control flow graph, containing a symbolic
  * address and a list of IR operations. Each block has a unique jump
  * target address, a symbol of type SYM_LABEL.
@@ -164,6 +174,11 @@ struct block {
      * - (x, y)      : False and true branch targets, respectively.
      */
     struct block *jump[2];
+
+    /* Jump table. */
+    int has_jump_table;
+    struct var table_offset;
+    array_of(struct jump_pair) jump_table;
 
     /*
      * Loop body block, NULL for non-loop block.

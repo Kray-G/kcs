@@ -101,6 +101,12 @@ INTERNAL struct symbol *sym_create_label(void);
 /* Create a symbol representing a string constant. */
 INTERNAL struct symbol *sym_create_string(String str);
 
+/* Create a symbol table of address. */
+INTERNAL struct symbol *sym_create_table(void);
+
+/* Create a symbol of table entry of address. */
+INTERNAL struct symbol *sym_create_table_entry(const struct symbol* base);
+
 /*
  * Release memory used for a temporary symbol, allowing it to be reused
  * in a different function.

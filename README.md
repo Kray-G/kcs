@@ -28,6 +28,12 @@ The main feature is below.
 
 FYI, please see the [technical notes](doc/technical.md)
 if you have any interest in what I have done in the development.
+Current topics are below.
+
+*   Loop condition at the bottom of loop
+*   Binary search for switch-case
+*   Jump table for switch-case
+*   Calling convention between Microsoft x64 and System V
 
 ### Why not using Clang?
 
@@ -297,7 +303,6 @@ I have a plan to do the followings when I have a time.
 *   [ ] Adding a library of JSON Parser.
 *   [ ] Adding a library with libCurl.
 *   [ ] Supporting encryption of Zip/Unzip.
-*   [ ] Supporting jump table for switch-case.
 *   [ ] One instruction for increment and decrement.
 *   [ ] Combining VM instructions to improve the performance.
 

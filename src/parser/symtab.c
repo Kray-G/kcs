@@ -23,6 +23,7 @@ INTERNAL struct namespace
 #define PREFIX_CONSTANT ".C"
 #define PREFIX_STRING ".LC"
 #define PREFIX_LABEL ".L"
+#define PREFIX_TABLE ".T"
 
 /*
  * Maintain list of symbols allocated for temporaries and labels, which
@@ -584,6 +585,34 @@ INTERNAL struct symbol *sym_create_string(String str)
     sym->linkage = LINK_INTERN;
     sym->name = str_init(PREFIX_STRING);
     sym->n = ++n;
+    array_push_back(&ns_ident.symbol, sym);
+    return sym;
+}
+
+INTERNAL struct symbol *sym_create_table(void)
+{
+    static int n;
+    struct symbol *sym;
+
+    sym = alloc_sym();
+    sym->symtype = SYM_TABLE;
+    sym->linkage = LINK_INTERN;
+    sym->name = str_init(PREFIX_TABLE);
+    sym->n = ++n;
+    array_push_back(&ns_ident.symbol, sym);
+    return sym;
+}
+
+INTERNAL struct symbol *sym_create_table_entry(const struct symbol* base)
+{
+    struct symbol *sym = alloc_sym();
+    assert(base->symtype == SYM_LABEL);
+
+    sym->type = basic_type__void;
+    sym->symtype = SYM_TABLE_ENTRY;
+    sym->linkage = LINK_INTERN;
+    sym->name = str_init(sym_name(base));
+
     array_push_back(&ns_ident.symbol, sym);
     return sym;
 }
