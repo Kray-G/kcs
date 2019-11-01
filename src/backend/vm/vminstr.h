@@ -96,6 +96,7 @@ enum vm_opcode {
         &&LABEL_VM_JMPTBL, \
         &&LABEL_VM_HALT, \
         &&LABEL_VM_HALT, \
+        &&LABEL_VM_HALT, \
         &&LABEL_VM_SAVE_RETVAL, \
     };\
     /**/

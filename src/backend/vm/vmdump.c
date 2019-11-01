@@ -209,7 +209,7 @@ static void print_jmp(struct vm_code *code)
     }
 }
 
-static print_jmptable_entry(struct vm_code *code)
+static int print_jmptable_entry(struct vm_code *code)
 {
     printf(IDT4 "%-24s* %+d <%s>\n", "  - entry", code->d.addr.index, str_raw(code->d.name));
 }
@@ -349,7 +349,7 @@ INTERNAL void print_vm_instruction(struct vm_program *prog, struct vm_code *code
     case VM_LT:     print_vm_op(code->opcode, code->type);                      break;
     case VM_INC:    print_vm_op(code->opcode, code->type);                      break;
     case VM_DEC:    print_vm_op(code->opcode, code->type);                      break;
-    case VM_JMPTBL: printf(IDT4 "%-24s\n", "jmptabl");                          break;
+    case VM_JMPTBL: printf(IDT4 "%-24s\n", "jmptbl");                           break;
     case VM_TBL_ENTRY: print_jmptable_entry(code);                              break;
     case VM_REFLIB: printf(IDT4 "%-24s%s\n", "#lib", str_raw(code->d.name));    break;
     case VM_SAVE_RETVAL: printf(IDT4 "%-24s\n", "save_retval");                 break;

@@ -822,7 +822,7 @@ static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, in
     }
     VM_CASE_(VM_JMPTBL): {
         uint64_t index;
-        POPI(index, uint64_t, /* no mask */);
+        POPI(index, uint32_t, /* no mask */);
         ip += index + 1;
         ip += base[ip]->d.addr.index;
         NEXT();
