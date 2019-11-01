@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 int switch_func(int x)
 {
     switch (x) {
