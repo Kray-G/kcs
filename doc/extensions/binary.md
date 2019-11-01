@@ -50,12 +50,12 @@ binary_t binary_subbin(const binary_t bin, int start, int len);
 *   Returned value should be freed by `binary_free()`.
 
 ```c
-void binary_free(binary_t bin);
+void binary_free(binary_t *bin);
 ```
 *   `binary_t` object will be freed.
 *   Do not use it after freed.
 
 ```c
-void binary_clear(binary_t bin);
+void binary_clear(binary_t *bin);
 ```
 *   Make the `binary_t` object empty.

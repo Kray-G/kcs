@@ -36,7 +36,7 @@ void string_append(string_t* lhs, const string_t rhs)
         char *buf = (char *)calloc(cap, sizeof(char));
         strcpy(buf, lhs->cstr);
         strcat(buf, rhs.cstr);
-        string_free(*lhs);
+        string_free(lhs);
         lhs->len = len;
         lhs->cap = cap;
         lhs->cstr = buf;
@@ -58,7 +58,7 @@ void string_append_cstr(string_t* lhs, const char *rhs)
         char *buf = (char *)calloc(cap, sizeof(char));
         strcpy(buf, lhs->cstr);
         strcat(buf, rhs);
-        string_free(*lhs);
+        string_free(lhs);
         lhs->len = len;
         lhs->cap = cap;
         lhs->cstr = buf;

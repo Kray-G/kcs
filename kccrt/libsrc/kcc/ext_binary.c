@@ -35,7 +35,7 @@ void binary_append(binary_t* lhs, const binary_t rhs)
         uint8_t *buf = (uint8_t *)calloc(cap, sizeof(uint8_t));
         memcpy(buf, lhs->buf, lhs->len);
         memcpy(buf + lhs->len, rhs.buf, rhs.len);
-        binary_free(*lhs);
+        binary_free(lhs);
         lhs->len = len;
         lhs->cap = cap;
         lhs->buf = buf;
@@ -56,7 +56,7 @@ void binary_append_bytes(binary_t* lhs, const uint8_t *rhs, int rlen)
         uint8_t *buf = (uint8_t *)calloc(cap, sizeof(uint8_t));
         memcpy(buf, lhs->buf, lhs->len);
         memcpy(buf + lhs->len, rhs, len);
-        binary_free(*lhs);
+        binary_free(lhs);
         lhs->len = len;
         lhs->cap = cap;
         lhs->buf = buf;
