@@ -188,6 +188,7 @@ static void vm_load_module(struct vm_context *ctx, struct vm_program *prog, stru
         }
         case VM_RET:
         case VM_CLUP:
+        case VM_CLPOP:
         case VM_ENTER: {
             int size = vm_load_size(fp);
             if (is_global) {

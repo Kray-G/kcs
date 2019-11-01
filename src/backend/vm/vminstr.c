@@ -516,12 +516,18 @@ static void emit_vm_alloca(struct var var)
 
 static void emit_vm_pop(struct var var)
 {
-    int size = size_of(var.type);
-    emit_vm_code(((struct vm_code){
-        .opcode = VM_POP,
-        .type = VMOP_NONE,
-        .d.size = size,
-    }));
+    struct vm_code* last = &array_back(&vm_prog.code);
+    if (last->opcode == VM_CLUP) {
+        last->opcode = VM_CLPOP;
+        last->d.size += size_of(var.type);
+    } else {
+        int size = size_of(var.type);
+        emit_vm_code(((struct vm_code){
+            .opcode = VM_POP,
+            .type = VMOP_NONE,
+            .d.size = size,
+        }));
+    }
 }
 
 static void emit_vm_fill_zero(struct var var)
