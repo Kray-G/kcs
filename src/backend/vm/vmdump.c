@@ -209,7 +209,7 @@ static void print_jmp(struct vm_code *code)
     }
 }
 
-static int print_jmptable_entry(struct vm_code *code)
+static void print_jmptable_entry(struct vm_code *code)
 {
     printf(IDT4 "%-24s* %+d <%s>\n", "  - entry", code->d.addr.index, str_raw(code->d.name));
 }
