@@ -252,7 +252,12 @@ static void serialize_lir(FILE *fp, struct vm_program *prog)
             continue;
         }
         case VM_INC:
-        case VM_DEC: {
+        case VM_DEC:
+        case VM_JMPTBL: {
+            continue;
+        }
+        case VM_TBL_ENTRY: {
+            sel_put_address_index(fp, code->d.addr);
             continue;
         }
         case VM_REFLIB: {

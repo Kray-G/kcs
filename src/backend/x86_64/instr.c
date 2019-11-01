@@ -123,7 +123,6 @@ static void encode_addr(
 {
     uint32_t mod;
     enum rel_type reloc;
-    assert(addr.mult == 1 || !addr.mult);
 
     if (addr.sym) {
         c->val[c->len++] = ((reg & 0x7) << 3) | 0x5;
@@ -659,18 +658,31 @@ static struct code jcc(
 
 static struct code jmp(enum instr_optype optype, union operand op)
 {
-    int disp, *ptr;
-    struct code c = {{0xE9}, 1};
-    const struct address *addr = &op.imm.d.addr;
+    if (optype == OPT_IMM) {
+        int disp, *ptr;
+        struct code c = {{0xE9}, 1};
+        const struct address *addr = &op.imm.d.addr;
+        assert(addr->sym);
 
-    assert(optype == OPT_IMM);
-    assert(addr->sym);
-
-    disp = elf_text_displacement(addr->sym, c.len) + addr->disp - 4;
-    ptr = (int *) (c.val + c.len);
-    *ptr = disp;
-    c.len += 4;
-    return c;
+        disp = elf_text_displacement(addr->sym, c.len) + addr->disp - 4;
+        ptr = (int *) (c.val + c.len);
+        *ptr = disp;
+        c.len += 4;
+        return c;
+    } else if (optype == OPT_MEM) {
+        struct code c = {0};
+        int offs = is_64_bit_reg(op.mem.addr.offset) ? 1 :0;
+        if (offs) {
+            c.val[c.len++] = REX | offs;
+        }
+        c.val[c.len++] = 0xFF;
+        encode_addr(&c, 4, op.mem.addr, 0, 0);
+        c.val[c.len - 1] |= 0xC0;
+        return c;
+    } else {
+        assert(optype == OPT_IMM || optype == OPT_MEM);
+        return (struct code){0};
+    }
 }
 
 static struct code leave(void)

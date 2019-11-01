@@ -44,6 +44,8 @@ enum vm_opcode {
 
     VM_INC,
     VM_DEC,
+    VM_JMPTBL,
+    VM_TBL_ENTRY,
 
     VM_GLOBAL,
     VM_REFLIB,
@@ -91,6 +93,8 @@ enum vm_opcode {
         &&LABEL_VM_LT, \
         &&LABEL_VM_INC, \
         &&LABEL_VM_DEC, \
+        &&LABEL_VM_JMPTBL, \
+        &&LABEL_VM_HALT, \
         &&LABEL_VM_HALT, \
         &&LABEL_VM_HALT, \
         &&LABEL_VM_SAVE_RETVAL, \
@@ -157,6 +161,7 @@ enum vm_opcode {
     VM_GOTO_L(VM_LT); \
     VM_GOTO_L(VM_INC); \
     VM_GOTO_L(VM_DEC); \
+    VM_GOTO_L(VM_JMPTBL); \
     VM_GOTO_L(VM_SAVE_RETVAL); \
     VM_GOTO_E();\
     /**/
@@ -233,6 +238,7 @@ struct vm_code {
     int index;
     enum vm_opcode opcode;
     enum vm_optype type;
+
     union {
         int lindex;
         int size;

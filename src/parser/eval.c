@@ -94,6 +94,7 @@ INTERNAL struct var var_direct(const struct symbol *sym)
         var.imm = sym->value.constant;
         break;
     case SYM_STRING_VALUE:
+    case SYM_TABLE:
         var.kind = IMMEDIATE;
         break;
     default:

@@ -20,6 +20,7 @@ struct jit_code {
     int is_float_value  : 1;
     int is_double_value : 1;
     int is_string_value : 1;
+    int is_table_entry  : 1;
     int is_ascii_value  : 1;
     int is_address_value: 1;
     int is_label_ref    : 1;
@@ -167,6 +168,9 @@ static void jit_update_jump(int len)
             if (jc->is_address_value) {
                 int laddr = jit_get_label_address(str_raw(jc->label_text));
                 jc->value.u += (uint64_t)jit.buffer + laddr + JIT_ADDR_BASE;
+            } else if (jc->is_table_entry) {
+                int laddr = jit_get_label_address(str_raw(jc->label_text));
+                jc->value.u += (uint64_t)jit.buffer + laddr + JIT_ADDR_BASE;
             } else if (jc->code.len > 4) {
                 int laddr = jit_get_label_address(str_raw(jc->label_text));
                 if (laddr < 0) {
@@ -228,6 +232,17 @@ static void jit_print_code()
                 printf("   ");
             }
             printf("\t%s\n", str);
+        } else if (jc->is_table_entry) {
+            printf("%08X:", jc->addr);
+            printf(" %02X", (jc->value.i      ) & 0xFF);
+            printf(" %02X", (jc->value.i >>  8) & 0xFF);
+            printf(" %02X", (jc->value.i >> 16) & 0xFF);
+            printf(" %02X", (jc->value.i >> 24) & 0xFF);
+            printf(" %02X", (jc->value.i >> 32) & 0xFF);
+            printf(" %02X", (jc->value.i >> 40) & 0xFF);
+            printf(" %02X", (jc->value.i >> 48) & 0xFF);
+            printf(" %02X", (jc->value.i >> 56) & 0xFF);
+            printf("\t%s\n", str_raw(jc->label_text));
         } else if (jc->is_ascii_value) {
             if (!jc->label_hidden) {
                 printf("%33s%s\n", "", str_raw(jc->name));
@@ -329,6 +344,17 @@ static int jit_fix_code(void)
                 *p++ = str[i];
             }
             s += len;
+        } else if (jc->is_table_entry) {
+            const char *str = str_raw(jc->label_text);
+            *p++ = (jc->value.i      ) & 0xFF;
+            *p++ = (jc->value.i >>  8) & 0xFF;
+            *p++ = (jc->value.i >> 16) & 0xFF;
+            *p++ = (jc->value.i >> 24) & 0xFF;
+            *p++ = (jc->value.i >> 32) & 0xFF;
+            *p++ = (jc->value.i >> 40) & 0xFF;
+            *p++ = (jc->value.i >> 48) & 0xFF;
+            *p++ = (jc->value.i >> 56) & 0xFF;
+            s += 8;
         } else if (jc->is_ascii_value) {
             const char *str = str_raw(jc->label_text);
             int len = jc->label_text.len;
@@ -595,6 +621,25 @@ INTERNAL int jit_symbol(const struct symbol *sym)
         // fall through.
     case SYM_LABEL: {
         jit_gen_label(index, name);
+        jit_sym_curr = NULL;
+        break;
+    }
+    case SYM_TABLE: {
+        jit_gen_label(index, name);
+        jit_sym_curr = NULL;
+        break;
+    }
+    case SYM_TABLE_ENTRY: {
+        base += 8;
+        array_push_back(&jit.jcode, ((struct jit_code){
+            .is_table_entry = 1,
+            .is_label_ref = 1,
+            .name = name,
+            .addr = jit_addr,
+            .base = base,
+            .label_text = name,
+        }));
+        jit_addr = base;
         jit_sym_curr = NULL;
         break;
     }

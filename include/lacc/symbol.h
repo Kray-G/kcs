@@ -20,6 +20,8 @@ enum symtype {
     SYM_STRING_VALUE,
     SYM_CONSTANT,
     SYM_LABEL,
+    SYM_TABLE,
+    SYM_TABLE_ENTRY,
     SYM_TAG
 };
 

@@ -222,6 +222,33 @@ static void dot_print_node(struct block *node)
         return;
 
     node->color = BLACK;
+    if (node->has_jump_table) {
+        int len = array_len(&node->jump_table);
+        fprintf(stream, "\t%s [label=\"{ %s | switch (",
+            sanitize(node->label), escape(node->label));
+        dot_print_expr(node->expr);
+        fputs(")", stream);
+        for (int i = 0; i < len; ++i) {
+            struct jump_pair jp = array_get(&node->jump_table, i);
+            fprintf(stream, " | case %d: goto %s",
+                jp.value, escape(jp.label->label));
+        }
+        fputs(" }\"];\n", stream);
+        for (int i = 0; i < len; ++i) {
+            struct jump_pair jp = array_get(&node->jump_table, i);
+            dot_print_node(jp.label);
+        }
+        for (int i = 0; i < len; ++i) {
+            struct jump_pair jp = array_get(&node->jump_table, i);
+            fprintf(stream, "\t%s:s -> %s:n;\n",
+                sanitize(node->label), sanitize(jp.label->label));
+        }
+
+        /* No more use the table */
+        array_clear(&node->jump_table);
+        return;
+    }
+
     fprintf(stream, "\t%s [label=\"{ %s",
         sanitize(node->label), escape(node->label));
 
