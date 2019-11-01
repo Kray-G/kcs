@@ -53,4 +53,14 @@ extern uint64_t *kcc_argv;
 #endif
 #endif
 
+#if defined(KCC_WINDOWS)
+#if defined(KCC_WINDOWS_DEBUG)
+#define DEBUG 1
+#define _DEBUG 1
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
+#endif
+
 #endif

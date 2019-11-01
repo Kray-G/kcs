@@ -25,7 +25,7 @@ extern void string_append_cstr(string_t* lhs, const char *rhs);
 extern string_t string_substr(const string_t str, int start, int len);
 
 #define string_free(str)    free((str).cstr)
-#define string_clear(str)   ((str).len = 0)
+#define string_clear(str)   (((str).cstr ? ((str).cstr[0] = 0) : 0), (str).len = 0)
 
 #ifndef KCC_NO_IMPORT
 #if defined(__KCC_JIT__) || defined(__KCC__)

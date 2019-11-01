@@ -1,3 +1,4 @@
+#include <kcc.h>
 
 extern int kccmain(int argc, char *argv[]);
 

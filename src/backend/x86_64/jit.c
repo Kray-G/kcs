@@ -892,6 +892,7 @@ INTERNAL int jit_print(void)
 
 INTERNAL int jit_finalize(void)
 {
+    elf_finalize();
     jit_destroy(jit.buffer, jit.size);
     array_clear(&jit.labels);
     array_clear(&jit.jcode);

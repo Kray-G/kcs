@@ -846,10 +846,10 @@ static enum reg load_float_as_integer(
         next = create_label(definition);
         load_sse(val, xmm0, width);
         if (is_float(val.type)) {
-            limit.f = (float) LONG_MAX;
+            limit.f = (float) LONGLONG_MAX;
             load_sse(var_numeric(basic_type__float, limit), xmm1, width);
         } else {
-            limit.d = (double) LONG_MAX;
+            limit.d = (double) LONGLONG_MAX;
             load_sse(var_numeric(basic_type__double, limit), xmm1, width);
         }
         if (is_float(val.type)) {
@@ -869,7 +869,7 @@ static enum reg load_float_as_integer(
             emit(INSTR_SUBSD, OPT_REG_REG, reg(xmm1, 8), reg(xmm0, 8));
         }
         emit(opcode, OPT_REG_REG, reg(xmm0, width), reg(ax, 8));
-        emit(INSTR_MOV, OPT_IMM_REG, constant(LONG_MAX + 1ul, 8), reg(cx, 8));
+        emit(INSTR_MOV, OPT_IMM_REG, constant(LONGLONG_MAX + 1ul, 8), reg(cx, 8));
         emit(INSTR_XOR, OPT_REG_REG, reg(cx, 8), reg(ax, 8));
         enter_context(next);
     }

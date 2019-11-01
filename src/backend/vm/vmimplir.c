@@ -298,6 +298,24 @@ static void vm_load_module(struct vm_context *ctx, struct vm_program *prog, stru
                 code = (struct vm_code){ .opcode = opcode, .type = type, .d.imm.ld = ld, };
                 break;
             }
+            case VMOP_FUNCADDR: {
+                struct vm_address addr = vm_load_address(fp, global_base);
+                PUSH_CODE(((struct vm_code){
+                    .opcode = opcode,
+                    .type = type,
+                    .d.addr = addr,
+                }));
+                break;
+            }
+            case VMOP_BUILTIN: {
+                struct vm_address addr = vm_load_address(fp, global_base);
+                PUSH_CODE(((struct vm_code){
+                    .opcode = opcode,
+                    .type = type,
+                    .d.addr = addr,
+                }));
+                break;
+            }
             case VMOP_INT8:     code = (struct vm_code){ .opcode = opcode, .type = type, .d.imm.byte  = vm_load_byte(fp),  }; break;
             case VMOP_INT16:    code = (struct vm_code){ .opcode = opcode, .type = type, .d.imm.word  = vm_load_word(fp),  }; break;
             case VMOP_INT32:    code = (struct vm_code){ .opcode = opcode, .type = type, .d.imm.dword = vm_load_dword(fp), }; break;

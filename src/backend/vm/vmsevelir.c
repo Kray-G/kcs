@@ -211,6 +211,8 @@ static void serialize_lir(FILE *fp, struct vm_program *prog)
             case VMOP_UINT16:   sel_put_code_word(fp, code->d.imm.word);   break;
             case VMOP_UINT32:   sel_put_code_dword(fp, code->d.imm.dword); break;
             case VMOP_UINT64:   sel_put_code_qword(fp, code->d.imm.qword); break;
+            case VMOP_FUNCADDR: sel_put_address(fp, code->d.addr);         break;
+            case VMOP_BUILTIN:  sel_put_address(fp, code->d.addr);         break;
             default:
                 printf("type = %d\n", code->type);
                 assert(0);
