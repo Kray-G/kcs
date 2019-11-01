@@ -158,7 +158,7 @@ Assembled JIT code is now:
 0000C864: 48 31 C0                      xorq    %rax, %rax
 0000C867: 89 D8                         movl    %ebx, %eax
 0000C869: 48 8D 0D 03 00 00 00          leaq    .T1(%rip), %rcx
-0000C870: FF 24 C1                      jmp     (%rcx,%rax,8)
+0000C870: FF 24 C1                      jmp     *(%rcx,%rax,8)
                                   .T1
 0000C873: B3 C8 94 67 46 00 00 00       .L2456
 0000C87B: BF C8 94 67 46 00 00 00       .L2458

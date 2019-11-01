@@ -91,7 +91,7 @@ static const char *mnemonic(struct registr reg)
     }
 }
 
-static const char *asm_address(struct address addr)
+static const char *asm_address(struct address addr, int is_jmp)
 {
     static char buf[MAX_OPERAND_TEXT_LENGTH];
 
@@ -122,7 +122,7 @@ static const char *asm_address(struct address addr)
 
     if (addr.base) {
         reg.r = addr.base;
-        w += sprintf(buf + w, "(%s", mnemonic(reg));
+        w += sprintf(buf + w, is_jmp ? "*(%s" : "(%s", mnemonic(reg));
         if (addr.offset) {
             reg.r = addr.offset;
             w += sprintf(buf + w, ",%s,%d", mnemonic(reg), addr.mult);
@@ -155,7 +155,7 @@ static const char *immediate(struct immediate imm, int *size)
     assert(imm.d.addr.sym->symtype != SYM_STRING_VALUE);
 
     *size = 8;
-    return asm_address(imm.d.addr);
+    return asm_address(imm.d.addr, 0);
 }
 
 static int is_imm_incdec_range(struct immediate imm)
@@ -336,7 +336,7 @@ INTERNAL int asm_text(struct instruction instr)
     case OPT_MEM:
     case OPT_MEM_REG:
         ws = instr.source.mem.w;
-        source = asm_address(instr.source.mem.addr);
+        source = asm_address(instr.source.mem.addr, is_x64_jmp(instr.opcode));
         break;
     default:
         break;
@@ -352,7 +352,7 @@ INTERNAL int asm_text(struct instruction instr)
     case OPT_REG_MEM:
     case OPT_IMM_MEM:
         wd = instr.dest.mem.w;
-        destin = asm_address(instr.dest.mem.addr);
+        destin = asm_address(instr.dest.mem.addr, 0);
         break;
     default:
         break;
