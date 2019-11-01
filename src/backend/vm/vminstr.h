@@ -13,6 +13,7 @@ enum vm_opcode {
     VM_CALL,
     VM_RET,
     VM_CLUP,
+    VM_CLPOP,
     VM_ENTER,
     VM_DEREF,
     VM_CAST,
@@ -63,6 +64,7 @@ enum vm_opcode {
         &&LABEL_VM_CALL, \
         &&LABEL_VM_RET, \
         &&LABEL_VM_CLUP, \
+        &&LABEL_VM_CLPOP, \
         &&LABEL_VM_ENTER, \
         &&LABEL_VM_DEREF, \
         &&LABEL_VM_CAST, \
@@ -131,6 +133,7 @@ enum vm_opcode {
     VM_GOTO_L(VM_CALL); \
     VM_GOTO_L(VM_RET); \
     VM_GOTO_L(VM_CLUP); \
+    VM_GOTO_L(VM_CLPOP); \
     VM_GOTO_L(VM_ENTER); \
     VM_GOTO_L(VM_DEREF); \
     VM_GOTO_L(VM_CAST); \

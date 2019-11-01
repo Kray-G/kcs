@@ -288,6 +288,12 @@ static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, in
         ++ip;
         NEXT();
     }
+    VM_CASE_(VM_CLPOP): {
+        assert(code->d.size > 0);
+        sp -= code->d.size;
+        ++ip;
+        NEXT();
+    }
     VM_CASE_(VM_ENTER): {
         PUSHI(bp);
         bp = sp;
@@ -811,12 +817,12 @@ static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, in
         NEXT();
     }
     VM_CASE_(VM_INC): {
-        ++TOPIV(uint32_t);
+        ++TOPIV(int32_t);
         ++ip;
         NEXT();
     }
     VM_CASE_(VM_DEC): {
-        --TOPIV(uint32_t);
+        --TOPIV(int32_t);
         ++ip;
         NEXT();
     }

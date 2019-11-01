@@ -184,7 +184,7 @@ When it is the VM code, see below.
 ```asm
   .L2405
       8125:     push                    [BP-24] : x(i32)
-      8126:     dec                     ((object))
+      8126:     dec                     (i32)
       8127:     pop                     [BP+0] : .t950(i32)
   .L2426
       8128:     push(32)                0 (0x0)
@@ -198,7 +198,7 @@ When it is the VM code, see below.
       8135:     jnz                     * +27 <.L2424>
   .L2428
       8136:     push                    [BP+0] : .t950(i32)
-      8137:     jmptabl
+      8137:     jmptbl
       8138:       - entry               * +8 <.L2408>
       8139:       - entry               * +9 <.L2410>
       8140:       - entry               * +10 <.L2412>

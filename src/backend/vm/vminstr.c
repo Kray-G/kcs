@@ -55,7 +55,7 @@ static vm_builtin_get_func_t builtin_get_func = NULL;
         if (expr.r.kind == IMMEDIATE && type_of(expr.r.type) == T_INT && (0 < expr.r.imm.i && expr.r.imm.i <= VM_INCDEC_COUNT_MAX)) {\
             vm_load_var(expr.l);\
             for (int i = 0; i < expr.r.imm.i; ++i) {\
-                emit_vm_code(((struct vm_code){ .opcode = VM_INC }));\
+                emit_vm_code(((struct vm_code){ .opcode = VM_INC, .type = VMOP_INT32 }));\
             }\
         } else {\
             if (is_swap_available(expr.r)) {\
@@ -516,12 +516,18 @@ static void emit_vm_alloca(struct var var)
 
 static void emit_vm_pop(struct var var)
 {
-    int size = size_of(var.type);
-    emit_vm_code(((struct vm_code){
-        .opcode = VM_POP,
-        .type = VMOP_NONE,
-        .d.size = size,
-    }));
+    struct vm_code* last = &array_back(&vm_prog.code);
+    if (last->opcode == VM_CLUP) {
+        last->opcode = VM_CLPOP;
+        last->d.size += size_of(var.type);
+    } else {
+        int size = size_of(var.type);
+        emit_vm_code(((struct vm_code){
+            .opcode = VM_POP,
+            .type = VMOP_NONE,
+            .d.size = size,
+        }));
+    }
 }
 
 static void emit_vm_fill_zero(struct var var)
@@ -723,7 +729,7 @@ static void vm_gen_expr(struct expression expr)
         if (expr.r.kind == IMMEDIATE && type_of(expr.r.type) == T_INT && (0 < expr.r.imm.i && expr.r.imm.i <= VM_INCDEC_COUNT_MAX)) {
             vm_load_var(expr.l);
             for (int i = 0; i < expr.r.imm.i; ++i) {
-                emit_vm_code(((struct vm_code){ .opcode = VM_DEC }));
+                emit_vm_code(((struct vm_code){ .opcode = VM_DEC, .type = VMOP_INT32 }));
             }
         } else {
             vm_load_var(expr.l);

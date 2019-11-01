@@ -318,6 +318,7 @@ INTERNAL void print_vm_instruction(struct vm_program *prog, struct vm_code *code
     case VM_FZERO:  print_vm_var("fill0", code->d.addr, 0);                     break;
     case VM_CALL:   print_vm_call(code);                                        break;
     case VM_CLUP:   printf(IDT4 "%-24s(%d)\n", "cleanup", code->d.size);        break;
+    case VM_CLPOP:  printf(IDT4 "%-24s(%d)\n", "cleanup(pop)", code->d.size);   break;
     case VM_ENTER:  printf(IDT4 "%-24s%d\n", "enter", code->d.size);            break;
     case VM_RET:    printf(IDT4 "%-24s(%d)\n", "ret", code->d.size);            break;
     case VM_DEREF:  print_deref(code);                                          break;

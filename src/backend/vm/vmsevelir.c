@@ -141,6 +141,7 @@ static void serialize_lir(FILE *fp, struct vm_program *prog)
         }
         case VM_RET:
         case VM_CLUP:
+        case VM_CLPOP:
         case VM_ENTER: {
             sel_put_code_dword(fp, code->d.size);
             continue;
