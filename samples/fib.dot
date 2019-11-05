@@ -1,0 +1,12 @@
+digraph {
+    node [fontname="Courier_New",fontsize=10,style="setlinewidth(0.1)",shape=record];
+    edge [fontname="Courier_New",fontsize=10,style="setlinewidth(0.1)"];
+    label="fib"
+    labelloc="t"
+    L1 [label="{ \.L1 | if 3 \> n goto \.L2 }"];
+    L3 [label="{ \.L3 | .t1 = n - 2 | param .t1 | .t2 = call &fib |
+                        .t3 = n - 1 | param .t3 | .t4 = call &fib | return .t2 + .t4 }"];
+    L2 [label="{ \.L2 | return n }"];
+    L1:s -> L3:n;
+    L1:s -> L2:n;
+}
