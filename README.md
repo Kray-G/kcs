@@ -369,7 +369,7 @@ I have a plan to do the followings when I have a time.
 *   [ ] Adding a library of JSON Parser.
 *   [ ] Adding a library with libCurl.
 *   [ ] Supporting encryption of Zip/Unzip.
-S
+
 ## License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
