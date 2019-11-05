@@ -129,7 +129,41 @@ Here is the basic block diagram of KCCI.
 
 ## Usage
 
-### Run on the x64 JIT
+### Command Line Interface
+
+#### Run Options
+
+The option `-x` will be used by default when no option specified.
+
+```
+-x          Run by VM code. (use this when no options specified)
+-j          Run by x64 JIT code.
+```
+
+#### Input Options
+
+```
+-I          Add directory to search for included files.
+-D X[=]     Define macro, optionally with a value.
+```
+
+#### Output Options
+
+The program will be not run when using one of output options.
+
+```
+-E          Output preprocessed code to stdout.
+-J          Output x64 code assembled by JIT to stdout.
+-X          Output VM code to stdout.
+-s          Output GNU style textual x64 assembly to `.s` file.
+-dot        Output IR call flow graph in dot format to `.dot` file.
+```
+
+## Examples
+
+### How to Run
+
+#### Run on the x64 JIT
 
 For JIT use the option `-j`.
 Use the option `-J` if you want to see the x64 assembly code.
@@ -141,7 +175,7 @@ $ kcc -j program.c
 $ kcc -J program.c
 ```
 
-### Run on the VM
+#### Run on the VM
 
 No options or use the option `-x` to run on the VM.
 Use the option `-X` if you want to see the VM instructions.
@@ -154,7 +188,13 @@ $ kcc -x program.c
 $ kcc -X program.c
 ```
 
-## Examples
+### Output Call Flow Graph
+
+This is `lacc`'s functionality, but `kcc` can do it also.
+Here is the output of call flow graph for switch-case assembled as a jump table.
+Please see [here](doc/technical.md) for the detail of a jump table.
+
+![JumpTable](doc/images/switch-case3.png)
 
 ### Fibonacci
 
@@ -174,6 +214,30 @@ int main()
     return printf("%d\n", fib(34));
 }
 ```
+
+#### Dot Output
+
+Although the labels, variable names, and line breaks have been changed for easy to understand,
+the output is like below.
+
+```c
+digraph {
+    node [fontname="Courier_New",fontsize=10,style="setlinewidth(0.1)",shape=record];
+    edge [fontname="Courier_New",fontsize=10,style="setlinewidth(0.1)"];
+    label="fib"
+    labelloc="t"
+    L1 [label="{ \.L1 | if 3 \> n goto \.L2 }"];
+    L3 [label="{ \.L3 | .t1 = n - 2 | param .t1 | .t2 = call &fib |
+                        .t3 = n - 1 | param .t3 | .t4 = call &fib | return .t2 + .t4 }"];
+    L2 [label="{ \.L2 | return n }"];
+    L1:s -> L3:n;
+    L1:s -> L2:n;
+}
+```
+
+The image is like this.
+
+![fib.c](doc/images/fib.png)
 
 #### Execution Sample
 
@@ -195,9 +259,11 @@ For the reference, it shows a result of Ruby and Python.
 
 |           | KCCI VM(64bit) | KCCI JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |
 | --------- | :------------: | :-----------: | :--------: | :--------: | :-----------: |
-| `fib(34)` |     0.718      |   **0.062**   |   1.171    |   0.734    |     1.578     |
+| `fib(34)` |     0.453      |   **0.062**   |   1.171    |   0.734    |     1.578     |
 
-Ruby 2.6.3 is very fast against my expectations.
+I was able to make my VM faster than Ruby this time,
+but Ruby 2.6.3 is very fast against my expectations in spite of no type information.
+Of course x64 JIT code is 7x or 8x faster than that VM code.
 
 #### Compiled Code
 
@@ -303,8 +369,6 @@ I have a plan to do the followings when I have a time.
 *   [ ] Adding a library of JSON Parser.
 *   [ ] Adding a library with libCurl.
 *   [ ] Supporting encryption of Zip/Unzip.
-*   [ ] One instruction for increment and decrement.
-*   [ ] Combining VM instructions to improve the performance.
 
 ## License
 

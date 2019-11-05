@@ -131,6 +131,8 @@ The above example code is compiled as below.
 > Don't care about a big label number and a difference label between the graph and the assemble code.
 
 As you see, I also added the code to output the dot.
+Note that the values from 1 to 8 is mapped to the values from 0 to 7
+because it subtract the minimum value, which is 1.
 
 ![BinarySearch](images/switch-case3.png)
 
@@ -216,7 +218,7 @@ When it is the VM code, see below.
 ```
 
 Notes: The threshold between items are that the interval each item is less than 16 now.
-If there is the interval over threshold, then use binary search algorithm.
+If there is the interval over threshold, then use a binary search algorithm.
 Threfore I prefer you change the code if you write the code like below. 
 
 ```c
@@ -254,7 +256,7 @@ I may try the improvement for this, if I have time.
 
 ## Calling convention between Microsoft x64 and System V
 
-This is only for Windows, and not for Linux.
+This is only for Windows, and not necessary for Linux.
 Basically, the differences between conventions are below.
 
 |           | Arg(1) | Arg(2) | Arg(3) | Arg(4) | Arg(5)  | Arg(6)  | ... and more |
