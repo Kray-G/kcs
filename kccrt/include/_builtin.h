@@ -1,10 +1,14 @@
 #ifndef KCC__BUILTIN_H
 #define KCC__BUILTIN_H
 
-#define NULL                ((void*)0)
 typedef unsigned long long  uint64_t;
+#if defined(__KCC__)
 typedef unsigned long       size_t;
 typedef int                 ptrdiff_t;
+#endif
+#if !defined(NULL)
+#define NULL                ((void*)0)
+#endif
 
 void __kcc_builtin_onstart(void);
 void __kcc_builtin_onexit(void);
