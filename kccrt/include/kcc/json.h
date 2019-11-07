@@ -46,6 +46,7 @@ typedef struct __json_object_ {
 extern __json_object_t *__json_parse(const char *str);
 extern __json_object_t *__json_parse_file(const char *filename);
 extern const char *__json_error_message(void);
+extern void __json_pretty_print_all(__json_object_t *j);
 
 extern __json_object_t *__json_set_top(__json_object_t *j);
 extern __json_object_t *__json_gen_object(void);
@@ -74,7 +75,7 @@ typedef __json_object_t json_object_t;
 #define json_yyin           __json_yyin
 #define json_parse          __json_parse
 #define json_parse_file     __json_parse_file
-#define json_pretty_print   __json_pretty_print
+#define json_pretty_print   __json_pretty_print_all
 #define json_free_all       __json_free_all
 #define json_error_message  __json_error_message
 

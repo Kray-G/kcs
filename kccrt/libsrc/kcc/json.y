@@ -178,7 +178,6 @@ static int __json_object_allocated  = 0;
 static int __json_string_allocated  = 0;
 static __json_object_t *__json_mgr  = NULL;
 static __json_object_t *__json_root = NULL;
-static void __json_pretty_print(__json_object_t *j, int indent, int comma, int contd);
 
 void __json_setup(void)
 {
@@ -689,6 +688,11 @@ static void __json_pretty_print(__json_object_t *j, int indent, int comma, int c
     if (cr) {
         printf("\n");
     }
+}
+
+void __json_pretty_print_all(json_object_t *j)
+{
+    __json_pretty_print(j, 0, 0, 0);
 }
 
 __json_object_t *__json_set_top(__json_object_t *j)
