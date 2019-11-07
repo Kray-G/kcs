@@ -638,9 +638,9 @@ static void __json_pretty_print(__json_object_t *j, int indent, int comma, int c
         if (n) {
             printf("\n");
             while (n) {
-                __json_object_t *prop = n->prop;
-                __json_pretty_print(n, indent+1, prop ? 1 : 0, 0);
-                n = prop;
+                __json_object_t *next = n->prop;
+                __json_pretty_print(n, indent+1, next ? 1 : 0, 0);
+                n = next;
             }
             __json_print_indent(indent);
         }
@@ -1000,7 +1000,7 @@ __json_object_t *__json_parse_file(const char *filename)
     return NULL;
 }
 
-const char *__json_status_message(void)
+const char *__json_error_message(void)
 {
     if (__json_status) {
         static char buf[256] = {0};
@@ -1008,4 +1008,108 @@ const char *__json_status_message(void)
         return buf;
     }
     return "No errors.";
+}
+
+int __json_get_type(__json_object_t *j)
+{
+    return j ? j->type : JSON_UNKNWON;
+}
+
+__json_object_t *__json_get_property(__json_object_t *j, const char *key)
+{
+    if (j && j->type == JSON_OBJECT) {
+        json_object_t *n = j->prop;
+        while (n) {
+            if (strcmp(n->key.cstr, key) == 0) {
+                return n;
+            }
+            n = n->prop;
+        }
+    }
+    return NULL;
+}
+
+int __json_get_property_count(__json_object_t *j)
+{
+    int count = 0;
+    if (j && j->type == JSON_OBJECT) {
+        json_object_t *n = j->prop;
+        while (n) {
+            ++count;
+            n = n->prop;
+        }
+    }
+    return count;
+}
+
+__json_object_t *__json_get_element(__json_object_t *j, int index)
+{
+    if (j && j->type == JSON_ARRAY) {
+        json_object_t *n = j->next;
+        for (int i = 0; n; ++i) {
+            if (i == index) {
+                return n;
+            }
+            n = n->next;
+        }
+    }
+    return NULL;
+}
+
+int __json_get_element_count(__json_object_t *j)
+{
+    int count = 0;
+    if (j && j->type == JSON_ARRAY) {
+        json_object_t *n = j->next;
+        while (n) {
+            ++count;
+            n = n->next;
+        }
+    }
+    return count;
+}
+
+int __json_get_boolean(__json_object_t *j)
+{
+    if (j && j->type == JSON_BOOLEAN) {
+        return j->value.b;
+    }
+    return 0;
+}
+
+int64_t __json_get_integer(__json_object_t *j)
+{
+    if (j && j->type == JSON_INTEGER) {
+        return j->value.i;
+    }
+    return 0;
+}
+
+double __json_get_real(__json_object_t *j)
+{
+    if (j && j->type == JSON_REAL) {
+        return j->value.d;
+    }
+    return 0;
+}
+
+string_t* __json_get_key(__json_object_t *j)
+{
+    if (j && j->type == JSON_PAIR) {
+        return &j->key;
+    }
+    return 0;
+}
+
+string_t* __json_get_string(__json_object_t *j)
+{
+    if (j) {
+        if (j->type == JSON_TEXT) {
+            return &j->value.t;
+        }
+        if (j->type == JSON_PAIR) {
+            return __json_get_string(j->value.o);
+        }
+    }
+    return 0;
 }
