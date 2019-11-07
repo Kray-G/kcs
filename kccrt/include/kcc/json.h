@@ -71,13 +71,35 @@ extern __json_object_t *__json_div(__json_object_t *j1, __json_object_t *j2);
 extern __json_object_t *__json_mod(__json_object_t *j1, __json_object_t *j2);
 extern __json_object_t *__json_neg(__json_object_t *j);
 
+/* accessors */
+extern int __json_get_type(__json_object_t *j);
+extern __json_object_t *__json_get_property(__json_object_t *j, const char *key);
+extern int __json_get_property_count(__json_object_t *j);
+extern __json_object_t *__json_get_element(__json_object_t *j, int index);
+extern int __json_get_element_count(__json_object_t *j);
+extern int __json_get_boolean(__json_object_t *j);
+extern int64_t __json_get_integer(__json_object_t *j);
+extern double __json_get_real(__json_object_t *j);
+extern string_t* __json_get_key(__json_object_t *j);
+extern string_t* __json_get_string(__json_object_t *j);
+
 typedef __json_object_t json_object_t;
-#define json_yyin           __json_yyin
-#define json_parse          __json_parse
-#define json_parse_file     __json_parse_file
-#define json_pretty_print   __json_pretty_print_all
-#define json_free_all       __json_free_all
-#define json_error_message  __json_error_message
+#define json_yyin                   __json_yyin
+#define json_parse                  __json_parse
+#define json_parse_file             __json_parse_file
+#define json_pretty_print           __json_pretty_print_all
+#define json_free_all               __json_free_all
+#define json_error_message          __json_error_message
+
+#define json_get_property           __json_get_property
+#define json_get_property_count     __json_get_property_count
+#define json_get_element            __json_get_element
+#define json_get_element_count      __json_get_element_count
+#define json_get_boolean            __json_get_boolean
+#define json_get_integer            __json_get_integer
+#define json_get_real               __json_get_real
+#define json_get_key                __json_get_key
+#define json_get_string             __json_get_string
 
 #ifndef KCC_NO_IMPORT
 #if defined(__KCC_JIT__) || defined(__KCC__)

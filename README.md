@@ -277,50 +277,49 @@ so it shows the fib function only.
 $ kcc -J fib.c
 ...(omitted)...
                                   fib
-0000BCE6: 55                            pushq   %rbp
-0000BCE7: 48 89 E5                      movq    %rsp, %rbp
-0000BCEA: 53                            pushq   %rbx
-0000BCEB: 41 54                         pushq   %r12
-0000BCED: 41 55                         pushq   %r13
-0000BCEF: 41 56                         pushq   %r14
-0000BCF1: 48 83 EC 10                   subq    $16, %rsp
-0000BCF5: 89 7D D8                      movl    %edi, -40(%rbp)
-                                  .L2343
-0000BCF8: 83 7D D8 03                   cmpl    $3, -40(%rbp)
-0000BCFC: 0F 8D 10 00 00 00             jge     .L2345
-                                  .L2344
-0000BD02: 8B 45 D8                      movl    -40(%rbp), %eax
-0000BD05: 48 8D 65 E0                   leaq    -32(%rbp), %rsp
-0000BD09: 41 5E                         popq    %r14
-0000BD0B: 41 5D                         popq    %r13
-0000BD0D: 41 5C                         popq    %r12
-0000BD0F: 5B                            popq    %rbx
-0000BD10: C9                            leave
-0000BD11: C3                            ret
-                                  .L2345
-0000BD12: 8B 45 D8                      movl    -40(%rbp), %eax
-0000BD15: B9 02 00 00 00                movl    $2, %ecx
-0000BD1A: 29 C8                         subl    %ecx, %eax
-0000BD1C: 89 C3                         movl    %eax, %ebx
-0000BD1E: 89 DF                         movl    %ebx, %edi
-0000BD20: E8 C1 FF FF FF                call    fib
-0000BD25: 41 89 C4                      movl    %eax, %r12d
-0000BD28: 8B 45 D8                      movl    -40(%rbp), %eax
-0000BD2B: B9 01 00 00 00                movl    $1, %ecx
-0000BD30: 29 C8                         subl    %ecx, %eax
-0000BD32: 41 89 C5                      movl    %eax, %r13d
-0000BD35: 44 89 EF                      movl    %r13d, %edi
-0000BD38: E8 A9 FF FF FF                call    fib
-0000BD3D: 41 89 C6                      movl    %eax, %r14d
-0000BD40: 44 89 F0                      movl    %r14d, %eax
-0000BD43: 44 01 E0                      addl    %r12d, %eax
-0000BD46: 48 8D 65 E0                   leaq    -32(%rbp), %rsp
-0000BD4A: 41 5E                         popq    %r14
-0000BD4C: 41 5D                         popq    %r13
-0000BD4E: 41 5C                         popq    %r12
-0000BD50: 5B                            popq    %rbx
-0000BD51: C9                            leave
-0000BD52: C3                            ret
+0000C2F3: 55                            pushq   %rbp
+0000C2F4: 48 89 E5                      movq    %rsp, %rbp
+0000C2F7: 53                            pushq   %rbx
+0000C2F8: 41 54                         pushq   %r12
+0000C2FA: 41 55                         pushq   %r13
+0000C2FC: 41 56                         pushq   %r14
+0000C2FE: 48 83 EC 10                   subq    $16, %rsp
+0000C302: 89 7D D8                      movl    %edi, -40(%rbp)
+                                  .L2453
+0000C305: 83 7D D8 03                   cmpl    $3, -40(%rbp)
+0000C309: 0F 8D 10 00 00 00             jge     .L2455
+                                  .L2454
+0000C30F: 8B 45 D8                      movl    -40(%rbp), %eax
+0000C312: 48 8D 65 E0                   leaq    -32(%rbp), %rsp
+0000C316: 41 5E                         popq    %r14
+0000C318: 41 5D                         popq    %r13
+0000C31A: 41 5C                         popq    %r12
+0000C31C: 5B                            popq    %rbx
+0000C31D: C9                            leave
+0000C31E: C3                            ret
+                                  .L2455
+0000C31F: 8B 45 D8                      movl    -40(%rbp), %eax
+0000C322: FF C8                         decl    %eax
+0000C324: FF C8                         decl    %eax
+0000C326: 89 C3                         movl    %eax, %ebx
+0000C328: 89 DF                         movl    %ebx, %edi
+0000C32A: E8 C4 FF FF FF                call    fib
+0000C32F: 41 89 C4                      movl    %eax, %r12d
+0000C332: 8B 45 D8                      movl    -40(%rbp), %eax
+0000C335: FF C8                         decl    %eax
+0000C337: 41 89 C5                      movl    %eax, %r13d
+0000C33A: 44 89 EF                      movl    %r13d, %edi
+0000C33D: E8 B1 FF FF FF                call    fib
+0000C342: 41 89 C6                      movl    %eax, %r14d
+0000C345: 44 89 F0                      movl    %r14d, %eax
+0000C348: 44 01 E0                      addl    %r12d, %eax
+0000C34B: 48 8D 65 E0                   leaq    -32(%rbp), %rsp
+0000C34F: 41 5E                         popq    %r14
+0000C351: 41 5D                         popq    %r13
+0000C353: 41 5C                         popq    %r12
+0000C355: 5B                            popq    %rbx
+0000C356: C9                            leave
+0000C357: C3                            ret
 ...(omitted)...
 ```
 
@@ -331,30 +330,29 @@ $ kcc -X fib.c
 ...(omitted)...
 ----------------------------------------------------------------
 fib
-      7856:     enter                   32
-  .L2295
-      7857:     push(32)                3 (0x3)
-      7858:     push                    [BP-24] : n(i32)
-      7859:     gt                      (i32)
-      7860:     jnz                     * +15 <.L2296>
-  .L2297
-      7861:     push                    [BP-24] : n(i32)
-      7862:     push(32)                2 (0x2)
-      7863:     sub                     (i32)
-      7864:     call                    * 7856 <fib>
-      7865:     cleanup                 (8)
-      7866:     pop                     [BP+8] : .t849(i32)
-      7867:     push                    [BP-24] : n(i32)
-      7868:     push(32)                1 (0x1)
-      7869:     sub                     (i32)
-      7870:     call                    * 7856 <fib>
-      7871:     cleanup                 (8)
-      7872:     push                    [BP+8] : .t849(i32)
-      7873:     add                     (i32)
-      7874:     ret                     (4)
-  .L2296
-      7875:     push                    [BP-24] : n(i32)
-      7876:     ret                     (4)
+      7979:     enter                   32
+  .L2405
+      7980:     push(32)                3 (0x3)
+      7981:     push                    [BP-24] : n(i32)
+      7982:     gt                      (i32)
+      7983:     jnz                     * +14 <.L2406>
+  .L2407
+      7984:     push                    [BP-24] : n(i32)
+      7985:     dec                     (i32)
+      7986:     dec                     (i32)
+      7987:     call                    * 7979 <fib>
+      7988:     cleanup                 (8)
+      7989:     pop                     [BP+8] : .t945(i32)
+      7990:     push                    [BP-24] : n(i32)
+      7991:     dec                     (i32)
+      7992:     call                    * 7979 <fib>
+      7993:     cleanup                 (8)
+      7994:     push                    [BP+8] : .t945(i32)
+      7995:     add                     (i32)
+      7996:     ret                     (4)
+  .L2406
+      7997:     push                    [BP-24] : n(i32)
+      7998:     ret                     (4)
 ...(omitted)...
 ```
 
@@ -366,9 +364,11 @@ I have a plan to do the followings when I have a time.
 
 *   [ ] Providing all of Standard C Library.
 *   [ ] Adding a library of XML Parser.
-*   [ ] Adding a library of JSON Parser.
 *   [ ] Adding a library with libCurl.
 *   [ ] Supporting encryption of Zip/Unzip.
+*   [ ] Adding [JSONPath][] for JSON parser.
+
+[JSONPath]: http://goessner.net/articles/JsonPath/
 
 ## License
 
