@@ -78,7 +78,7 @@ EXTSRC = \
 	src/_extdll/lib/sqlite3/sqlite3.c \
 	src/_extdll/lib/zip/miniz.c
 
-all: $(TARGET)
+all: ext_json.c $(TARGET)
 
 $(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so bin/bootstrap/kccext.so
 	mkdir -p $(TARGETDIR)
@@ -92,6 +92,13 @@ $(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so b
 	cp -f bin/bootstrap/kccbltin.so .
 	cp -f bin/bootstrap/kccjit.so   .
 	cp -f bin/bootstrap/kccext.so   .
+
+ext_json.c: myacc kccrt/libsrc/kcc/json.y
+	./myacc -y __json_yy -Y JSON_YY kccrt/libsrc/kcc/json.y
+	mv -f y.tab.c kccrt/libsrc/kcc/ext_json.c
+
+myacc:
+	$(CC) $(CFLAGS) -o myacc utility/myacc.c
 
 bin/bootstrap/kcc: bin/bootstrap/libkcc.so
 	@mkdir -p $(@D)

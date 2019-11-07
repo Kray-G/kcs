@@ -90,7 +90,7 @@ EXTOBJ = \
 .SUFFIXES :
 .SUFFIXES : .c .obj
 
-all: libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll kccext.dll
+all: ext_json.c libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll kccext.dll
 
 test: all
 	test\test-8cc\test.cmd
@@ -103,6 +103,13 @@ test: all
 	test\test-lacc\test.cmd -j
 	test\test-picoc\test.cmd -j
 	test\test-picoc\csmith.cmd -j
+
+ext_json.c: myacc.exe kccrt\libsrc\kcc\json.y
+	myacc -y __json_yy -Y JSON_YY kccrt\libsrc\kcc\json.y
+	move /y y.tab.c kccrt\libsrc\kcc\ext_json.c
+
+myacc.exe:
+	$(CC) $(CFLAGS) /Femyacc.exe utility\myacc.c
 
 libs: onig_s.lib
 
