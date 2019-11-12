@@ -176,6 +176,7 @@ static int __json_line              = 1;
 static int __json_pos               = 0;
 static int __json_object_allocated  = 0;
 static int __json_string_allocated  = 0;
+static const char *__json_file      = NULL;
 static __json_object_t *__json_mgr  = NULL;
 static __json_object_t *__json_root = NULL;
 
@@ -184,6 +185,7 @@ void __json_setup(void)
     __json_status = 0;
     __json_line  = 1;
     __json_pos   = 0;
+    __json_file  = NULL;
     __json_mgr   = NULL;
     __json_root  = NULL;
     __json_lex_next();
@@ -591,7 +593,7 @@ static void __json_free_one(__json_object_t *j)
     free(j);
 }
 
-static void __json_free_all(__json_object_t *j)
+void __json_free_all(__json_object_t *j)
 {
     if (!j) {
         return;
@@ -673,7 +675,7 @@ static void __json_pretty_print(__json_object_t *j, int indent, int comma, int c
         printf("%s", j->value.b ? "true" : "false");
         break;
     case JSON_INTEGER:
-        printf("%d", j->value.i);
+        printf("%lld", j->value.i);
         break;
     case JSON_REAL:
         printf("%f", j->value.d);
@@ -797,6 +799,16 @@ __json_object_t *__json_add(__json_object_t *j1, __json_object_t *j2)
             j1->type = JSON_REAL;
             j1->value.d = (double)j1->value.i + j2->value.d;
             break;
+        case JSON_TEXT: {
+            char buf[256] = {0};
+            sprintf(buf, "%lld", j1->value.i);
+            j1->type = JSON_TEXT;
+            j1->value.t = __json_string_alloc(buf);
+            string_append(&j1->value.t, j2->value.t);
+            break;
+        }
+        default:
+            break;
         }
         break;
     case JSON_REAL:
@@ -806,6 +818,38 @@ __json_object_t *__json_add(__json_object_t *j1, __json_object_t *j2)
             break;
         case JSON_REAL:
             j1->value.d = j1->value.d + j2->value.d;
+            break;
+        case JSON_TEXT: {
+            char buf[256] = {0};
+            sprintf(buf, "%f", j1->value.d);
+            j1->type = JSON_TEXT;
+            j1->value.t = __json_string_alloc(buf);
+            string_append(&j1->value.t, j2->value.t);
+            break;
+        }
+        default:
+            break;
+        }
+        break;
+    case JSON_TEXT:
+        switch (j2->type) {
+        case JSON_INTEGER: {
+            char buf[256] = {0};
+            sprintf(buf, "%lld", j2->value.i);
+            string_append_cstr(&j1->value.t, buf);
+            break;
+        }
+        case JSON_REAL: {
+            char buf[256] = {0};
+            sprintf(buf, "%f", j1->value.d);
+            string_append_cstr(&j1->value.t, buf);
+            break;
+        }
+        case JSON_TEXT: {
+            string_append(&j1->value.t, j2->value.t);
+            break;
+        }
+        default:
             break;
         }
         break;
@@ -973,6 +1017,7 @@ __json_object_t *__json_make_null(void)
 
 __json_object_t *__json_parse(const char *str)
 {
+    __json_file = "(text)";
     __json_lex_next = __json_lex_next_from_string;
     __json_yyin.str = str;
     __json_setup();
@@ -986,24 +1031,34 @@ __json_object_t *__json_parse(const char *str)
 
 __json_object_t *__json_parse_file(const char *filename)
 {
+    __json_file = filename;
     __json_lex_next = __json_lex_next_from_file;
     __json_yyin.fp = fopen(filename, "r");
-    if (__json_yyin.fp) {
-        __json_setup();
-        __json_status = __json_yyparse();
-        fclose(__json_yyin.fp);
-        if (__json_status == 0) {
-            return __json_root;
-        }
-        __json_free_all(__json_mgr);
+    if (!__json_yyin.fp) {
+        __json_status = JSON_FILE_NOT_FOUND;
+        return NULL;
     }
+
+    __json_setup();
+    __json_status = __json_yyparse();
+    fclose(__json_yyin.fp);
+    if (__json_status == 0) {
+        return __json_root;
+    }
+
+    __json_free_all(__json_mgr);
     return NULL;
 }
 
 const char *__json_error_message(void)
 {
-    if (__json_status) {
-        static char buf[256] = {0};
+    static char buf[256] = {0};
+    switch (__json_status) {
+    case 0: break;
+    case JSON_FILE_NOT_FOUND:
+        sprintf(buf, "File not found: %s.", __json_file);
+        return buf;
+    default:
         sprintf(buf, "Error near the line %d.", __json_line);
         return buf;
     }
