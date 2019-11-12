@@ -392,18 +392,20 @@ The main modifications are:
 *   Replacing types to build it with Visual Studio.
 *   Some bug fixes.
 
-And special thanks to the following products for useful test codes.
+And special thanks to the following products for useful test & sample codes.
 
 *   Test Code
     *   [lacc][] (MIT License)
     *   [8cc][] (MIT License)
     *   [qcc][] (MIT License)
     *   [picoc][] (BSD License)
+    *   [algo-c][] (CC0) - in Japanese
 
 [lacc]: https://github.com/larmel/lacc/
 [8cc]: https://github.com/rui314/8cc/
 [qcc]: https://github.com/maekawatoshiki/qcc/
 [picoc]: https://github.com/jpoirier/picoc/
+[algo-c]: https://github.com/okumuralab/algo-c
 
 About library, so many thanks to the following amazing products.
 
