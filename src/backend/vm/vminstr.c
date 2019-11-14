@@ -702,8 +702,14 @@ static void vm_gen_expr(struct expression expr)
         }
         break;
     case IR_OP_CALL: {
-        emit_vm_call(expr.l);
-        emit_vm_cleanup(vm_func_args.size);
+        if (strcmp(sym_name(expr.l.symbol), "setjmp") == 0) {
+            emit_vm_code(((struct vm_code){ .opcode = VM_SETJMP }));
+        } else if (strcmp(sym_name(expr.l.symbol), "longjmp") == 0) {
+            emit_vm_code(((struct vm_code){ .opcode = VM_LONGJMP }));
+        } else {
+            emit_vm_call(expr.l);
+            emit_vm_cleanup(vm_func_args.size);
+        }
         vm_func_args.size = 0;
         break;
     }

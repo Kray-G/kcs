@@ -838,6 +838,24 @@ static int run_vm_by_lir(struct vm_program *prog, int64_t ip, uint8_t *stack, in
         ++ip;
         NEXT();
     }
+    VM_CASE_(VM_SETJMP): {
+        int64_t* jmpbuf = (int64_t*)STACK_TOPI_OFFSET(-8);
+        ++ip;
+        *jmpbuf++ = ip;
+        *jmpbuf++ = bp;
+        *jmpbuf   = sp;
+        STACK_TOPI_OFFSET(-8) = 0;
+        NEXT();
+    }
+    VM_CASE_(VM_LONGJMP): {
+        int64_t* jmpbuf = (int64_t*)STACK_TOPI_OFFSET(-8);
+        int64_t r = STACK_TOPI_OFFSET(-16);
+        ip = *jmpbuf++;
+        bp = *jmpbuf++;
+        sp = *jmpbuf  ;
+        PUSHI(r);
+        NEXT();
+    }
     VM_CASE_DEFAULT:
         assert(0);
     }

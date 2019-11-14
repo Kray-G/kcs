@@ -354,6 +354,8 @@ INTERNAL void print_vm_instruction(struct vm_program *prog, struct vm_code *code
     case VM_TBL_ENTRY: print_jmptable_entry(code);                              break;
     case VM_REFLIB: printf(IDT4 "%-24s%s\n", "#lib", str_raw(code->d.name));    break;
     case VM_SAVE_RETVAL: printf(IDT4 "%-24s\n", "save_retval");                 break;
+    case VM_SETJMP: printf(IDT4 "%-24s\n", "setjmp");                           break;
+    case VM_LONGJMP: printf(IDT4 "%-24s\n", "longjmp");                         break;
     }
 }
 

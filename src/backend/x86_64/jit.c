@@ -468,32 +468,73 @@ static void jit_gen_builtin_startup()
      *      - strlen is provided as a faster & a compact function because it is used very often.
      *      - memcpy is used by the compiler to copy string data into char array.
      *
-     *  __startup:
-     *      0:  E9 00 00 00 00          jmp     main
+     * __startup:
+     *         0x00000000:  E9 00 00 00 00          jmp   main
      *
-     *  strlen:
-     *      0:  48 83 c8 ff             orq     $-1, %rax
-     *  .LL1
-     *      4:  48 ff c0                incq    %rax
-     *      7:  80 3c 07 00             cmpb    $0, (%rdi,%rax,1)
-     *      B:  75 F7                   jne     .LL1
-     *      D:  c3                      ret
+     * __kcc_get_rip:
+     *         0x00000005:  48 89 E2                mov   rdx, rsp
+     *         0x00000008:  48 8B 02                mov   rax, qword ptr [rdx]
+     *         0x0000000b:  C3                      ret
      *
-     *  memcpy:
-     *      0:  48 85 d2                testq  %rdx, %rdx
-     *      3:  74 18                   je     .LL1
-     *      5:  48 8d 0c 16             leaq   (%rsi,%rdx,1), %rcx
-     *      9:  48 89 fa                movq   %rdi, %rdx
-     *      C:  48 29 f2                subq   %rsi, %rdx
-     *  .LL2:
-     *      F:  0f b6 06                movzb  (%rsi), eax
-     *     12:  88 04 32                movb   %al, (%dx,%rsi,1)
-     *     15:  48 ff c6                incq   %rsi
-     *     18:  48 39 ce                cmpq   %rcx, %rsi
-     *     1B:  75 f2                   jne    .LL2
-     *  .LL1:
-     *     1D:  48 89 f8                movq   %rdi, %rax
-     *     20:  c3                      ret
+     * setjmp:
+     *         0x0000000c:  48 89 67 08             mov   qword ptr [rdi + 8], rsp
+     *         0x00000010:  48 8B 04 24             mov   rax, qword ptr [rsp]
+     *         0x00000014:  48 89 47 10             mov   qword ptr [rdi + 0x10], rax
+     *         0x00000018:  E8 E8 FF FF FF          call  __kcc_get_rip
+     *         0x0000001d:  48 85 C0                test  rax, rax
+     *         0x00000020:  74 23                   je    .LL1
+     *         0x00000022:  48 89 07                mov   qword ptr [rdi], rax
+     *         0x00000025:  48 89 5F 18             mov   qword ptr [rdi + 0x18], rbx
+     *         0x00000029:  48 89 6F 20             mov   qword ptr [rdi + 0x20], rbp
+     *         0x0000002d:  4C 89 67 28             mov   qword ptr [rdi + 0x28], r12
+     *         0x00000031:  4C 89 6F 30             mov   qword ptr [rdi + 0x30], r13
+     *         0x00000035:  4C 89 77 38             mov   qword ptr [rdi + 0x38], r14
+     *         0x00000039:  4C 89 7F 40             mov   qword ptr [rdi + 0x40], r15
+     *         0x0000003d:  48 C7 C0 00 00 00 00    mov   rax, 0
+     *         0x00000044:  C3                      ret
+     * .LL1:
+     *         0x00000045:  48 8B 47 10             mov   rax, qword ptr [rdi + 0x10]
+     *         0x00000049:  48 89 04 24             mov   qword ptr [rsp], rax
+     *         0x0000004d:  48 89 F0                mov   rax, rsi
+     *         0x00000050:  48 8B 5F 18             mov   rbx, qword ptr [rdi + 0x18]
+     *         0x00000054:  48 8B 6F 20             mov   rbp, qword ptr [rdi + 0x20]
+     *         0x00000058:  4C 8B 67 28             mov   r12, qword ptr [rdi + 0x28]
+     *         0x0000005c:  4C 8B 6F 30             mov   r13, qword ptr [rdi + 0x30]
+     *         0x00000060:  4C 8B 77 38             mov   r14, qword ptr [rdi + 0x38]
+     *         0x00000064:  4C 8B 7F 40             mov   r15, qword ptr [rdi + 0x40]
+     *         0x00000068:  C3                      ret
+     *
+     * longjmp:
+     *         0x00000069:  4C 8B 07                mov   r8, qword ptr [rdi]
+     *         0x0000006c:  4C 8B 4F 08             mov   r9, qword ptr [rdi + 8]
+     *         0x00000070:  4C 89 CC                mov   rsp, r9
+     *         0x00000073:  4C 89 04 24             mov   qword ptr [rsp], r8
+     *         0x00000077:  48 C7 C0 00 00 00 00    mov   rax, 0
+     *         0x0000007e:  41 FF E0                jmp   r8
+     *
+     * strlen:
+     *         0x00000081:  48 83 C8 FF             or    rax, 0xffffffffffffffff
+     * .LL1:
+     *         0x00000085:  48 FF C0                inc   rax
+     *         0x00000088:  80 3C 07 00             cmp   byte ptr [rdi + rax], 0
+     *         0x0000008c:  75 F7                   jne   .LL1
+     *         0x0000008e:  C3                      ret
+     *
+     * memcpy:
+     *         0x0000008f:  48 85 D2                test  rdx, rdx
+     *         0x00000092:  74 18                   je    .LL1
+     *         0x00000094:  48 8D 0C 16             lea   rcx, [rsi + rdx]
+     *         0x00000098:  48 89 FA                mov   rdx, rdi
+     *         0x0000009b:  48 29 F2                sub   rdx, rsi
+     * .LL2:
+     *         0x0000009e:  0F B6 06                movzx eax, byte ptr [rsi]
+     *         0x000000a1:  88 04 32                mov   byte ptr [rdx + rsi], al
+     *         0x000000a4:  48 FF C6                inc   rsi
+     *         0x000000a7:  48 39 CE                cmp   rsi, rcx
+     *         0x000000aa:  75 F2                   jne   .LL2
+     * .LL1
+     *         0x000000ac:  48 89 F8                mov   rax, rdi
+     *         0x000000af:  C3                      ret
      */
     jit_gen_label(0, str_init("__startup"));
     jit_addr = 0;
@@ -509,6 +550,183 @@ static void jit_gen_builtin_startup()
             },
     }));
     jit_addr = base;
+
+    jit_gen_label(base, str_init("__kcc_get_rip"));
+    base += 7;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 7, .val = { 0x48, 0x89, 0xE2, 0x48, 0x8B, 0x02, 0xC3 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+
+    jit_gen_label(base, str_init("setjmp"));
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x48, 0x89, 0x67, 0x08, 0x48, 0x8B, 0x04, 0x24 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x48, 0x89, 0x47, 0x10, 0xE8, 0xE8, 0xFF, 0xFF } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0xFF, 0x48, 0x85, 0xC0, 0x74, 0x23, 0x48, 0x89 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x07, 0x48, 0x89, 0x5F, 0x18, 0x48, 0x89, 0x6F } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x20, 0x4C, 0x89, 0x67, 0x28, 0x4C, 0x89, 0x6F } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x30, 0x4C, 0x89, 0x77, 0x38, 0x4C, 0x89, 0x7F } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x40, 0x48, 0xC7, 0xC0, 0x00, 0x00, 0x00, 0x00 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 1;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 1, .val = { 0xC3 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x48, 0x8B, 0x47, 0x10, 0x48, 0x89, 0x04, 0x24 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x48, 0x89, 0xF0, 0x48, 0x8B, 0x5F, 0x18, 0x48 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x8B, 0x6F, 0x20, 0x4C, 0x8B, 0x67, 0x28, 0x4C } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x8B, 0x6F, 0x30, 0x4C, 0x8B, 0x77, 0x38, 0x4C } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 4;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 4, .val = { 0x8B, 0x7F, 0x40, 0xC3 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+
+    jit_gen_label(base, str_init("longjmp"));
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x4C, 0x8B, 0x07, 0x4C, 0x8B, 0x4F, 0x08, 0x4C } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0x89, 0xCC, 0x4C, 0x89, 0x04, 0x24, 0x48, 0xC7 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+    base += 8;
+    array_push_back(&jit.jcode, ((struct jit_code){
+        .addr = jit_addr,
+        .base = base,
+        .code = (struct code){ .len = 8, .val = { 0xC0, 0x00, 0x00, 0x00, 0x00, 0x41, 0xFF, 0xE0 } },
+        .instr = (struct instruction){
+                .opcode = INSTR_BUILTIN,
+            },
+    }));
+    jit_addr = base;
+
     jit_gen_label(base, str_init("strlen"));
     base += 8;
     array_push_back(&jit.jcode, ((struct jit_code){
@@ -530,6 +748,7 @@ static void jit_gen_builtin_startup()
             },
     }));
     jit_addr = base;
+
     jit_gen_label(base, str_init("memcpy"));
     base += 8;
     array_push_back(&jit.jcode, ((struct jit_code){
