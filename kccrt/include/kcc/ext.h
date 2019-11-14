@@ -12,18 +12,82 @@
     KCC Extended Library - string
 --------------------------------------------------------------------------------------------- */
 
+#define KCC_CAPACITY_STR_UNIT (32)
+#define KCC_CAPACITY(len) (((unsigned int)((len) / KCC_CAPACITY_STR_UNIT) + 1) * KCC_CAPACITY_STR_UNIT)
+
 typedef struct string_ {
-    char         *cstr; // buffer of a string.
-    unsigned int cap;   // capacity of a buffer.
-    unsigned int len;   // actual length of a string.
+    char            *cstr;  // buffer of a string.
+    unsigned int    cap;    // capacity of a buffer.
+    unsigned int    len;    // actual length of a string.
 } string_t;
 
-extern string_t string_init(const char *cstr);
-extern string_t string_copy(const string_t rhs);
-extern void string_append(string_t* lhs, const string_t rhs);
-extern void string_append_cstr(string_t* lhs, const char *rhs);
+extern string_t string_init_alloc(const char *cstr);
 extern string_t string_substr(const string_t str, int start, int len);
 
+#define string_reset(str, s) \
+    if ((str)->cstr) { \
+        string_clear(str); \
+    } \
+    if ((s) && ((s)[0] != 0)) { \
+        string_append_cstr(str, s); \
+    } \
+    /**/
+
+#define string_append_cstr_with_len_to_empty(lhs, rhs, rlen) \
+    unsigned int cap = KCC_CAPACITY(rlen); \
+    (lhs)->cstr = (char *)malloc(cap * sizeof(char)); \
+    if (rlen > 0) { \
+        memcpy((lhs)->cstr, rhs, rlen); \
+    } \
+    (lhs)->len = rlen; \
+    (lhs)->cap = cap; \
+    /**/
+
+#define string_append_cstr_with_len_to_allocated(lhs, rhs, rlen) \
+    int len = (lhs)->len + rlen; \
+    if (len < (lhs)->cap) { \
+        memcpy((lhs)->cstr + (lhs)->len, rhs, rlen); \
+        (lhs)->cstr[len] = 0; \
+        (lhs)->len = len; \
+    } else { \
+        unsigned int cap = KCC_CAPACITY(len); \
+        char *buf = (char *)malloc(cap * sizeof(char)); \
+        memcpy(buf, (lhs)->cstr, (lhs)->len); \
+        memcpy(buf + (lhs)->len, rhs, rlen); \
+        buf[len] = 0; \
+        string_free(lhs); \
+        (lhs)->len = len; \
+        (lhs)->cap = cap; \
+        (lhs)->cstr = buf; \
+    } \
+    /**/
+
+#define string_append(lhs, rhs) \
+    if (!(lhs)->cstr) { \
+        string_append_cstr_with_len_to_empty(lhs, (rhs).cstr, (rhs).len); \
+    } else { \
+        string_append_cstr_with_len_to_allocated(lhs, (rhs).cstr, (rhs).len); \
+    } \
+    /**/
+
+#define string_append_cstr_with_len(lhs, rhs, rlen) \
+    if (!(lhs)->cstr) { \
+        string_append_cstr_with_len_to_empty(lhs, rhs, rlen); \
+    } else { \
+        string_append_cstr_with_len_to_allocated(lhs, rhs, rlen); \
+    } \
+    /**/
+
+#define string_append_cstr(lhs, rhs) \
+    int rlen = strlen(rhs); \
+    if (!(lhs)->cstr) { \
+        string_append_cstr_with_len_to_empty(lhs, rhs, rlen); \
+    } else { \
+        string_append_cstr_with_len_to_allocated(lhs, rhs, rlen); \
+    } \
+    /**/
+
+#define string_copy(str)    string_init(str.cstr);
 #define string_free(str)    free((str)->cstr)
 #define string_clear(str)   (((str)->cstr ? ((str)->cstr[0] = 0) : 0), (str)->len = 0)
 

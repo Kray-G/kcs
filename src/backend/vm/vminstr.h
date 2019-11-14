@@ -51,6 +51,8 @@ enum vm_opcode {
     VM_GLOBAL,
     VM_REFLIB,
     VM_SAVE_RETVAL,
+    VM_SETJMP,
+    VM_LONGJMP,
 };
 
 #if defined(__GNUC__)
@@ -100,6 +102,8 @@ enum vm_opcode {
         &&LABEL_VM_HALT, \
         &&LABEL_VM_HALT, \
         &&LABEL_VM_SAVE_RETVAL, \
+        &&LABEL_VM_SETJMP, \
+        &&LABEL_VM_LONGJMP, \
     };\
     /**/
 #define VM_START()      struct vm_code *code = base[ip];\
@@ -166,6 +170,8 @@ enum vm_opcode {
     VM_GOTO_L(VM_DEC); \
     VM_GOTO_L(VM_JMPTBL); \
     VM_GOTO_L(VM_SAVE_RETVAL); \
+    VM_GOTO_L(VM_SETJMP); \
+    VM_GOTO_L(VM_LONGJMP); \
     VM_GOTO_E();\
     /**/
 
