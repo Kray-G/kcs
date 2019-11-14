@@ -129,9 +129,9 @@ If you are interested in it, please make it and send it to me.
 
 |   Name    | Implementation | Remark |
 | :-------- | :------------: | :----- |
-| `jmp_buf` |                |        |
-| `setjmp`  |                |        |
-| `longjmp` |                |        |
+| `jmp_buf` |       O        |        |
+| `setjmp`  |       O        |        |
+| `longjmp` |       O        |        |
 
 ## signal.h
 
