@@ -21,6 +21,7 @@ typedef struct string_ {
     unsigned int    len;    // actual length of a string.
 } string_t;
 
+extern string_t string_init(const char *s);
 extern string_t string_init_alloc(const char *cstr);
 extern string_t string_substr(const string_t str, int start, int len);
 
@@ -151,6 +152,9 @@ typedef struct {
 #define vector_push(VECTOR, VALUE) \
     (vector_try_grow((VECTOR), 1), (VECTOR)[vector_meta(VECTOR)->used++] = (VALUE))
 
+#define vector_push_uncheck(VECTOR, VALUE) \
+    ((VECTOR)[vector_meta(VECTOR)->used++] = (VALUE))
+
 /* Unshift front [VALUE] into [VECTOR] */
 #define vector_unshift(VECTOR, VALUE) \
     (\
@@ -163,6 +167,9 @@ typedef struct {
 /* Get the size of [VECTOR] */
 #define vector_size(VECTOR) \
     ((VECTOR) ? vector_meta(VECTOR)->used : 0)
+
+#define vector_last_by(VECTOR, i) \
+    (VECTOR[vector_meta(VECTOR)->used - i])
 
 /* Get the capacity of [VECTOR] */
 #define vector_capacity(VECTOR) \
@@ -216,25 +223,27 @@ void vec_delete(void *vector);
     KCC Extended Library - stack
 --------------------------------------------------------------------------------------------- */
 
-#define stack_of_(type, v)          vector_of_(type, v)
-#define stack_free(STACK)           vector_free(STACK)
-#define stack_push(STACK, VALUE)    vector_push(STACK, VALUE)
-#define stack_size(STACK)           vector_size(STACK)
-#define stack_capacity(STACK)       vector_capacity(STACK)
-#define stack_last(STACK)           vector_last(STACK)
-#define stack_pop(STACK)            ((void)(vector_meta(STACK)->used -= 1), ((STACK)[vector_meta(STACK)->used]))
+#define stack_of_(type, v)                  vector_of_(type, v)
+#define stack_free(STACK)                   vector_free(STACK)
+#define stack_push(STACK, VALUE)            vector_push(STACK, VALUE)
+#define stack_push_uncheck(STACK, VALUE)    vector_push_uncheck(STACK, VALUE)
+#define stack_last_by(STACK, i)             vector_last_by(STACK, i)
+#define stack_size(STACK)                   vector_size(STACK)
+#define stack_capacity(STACK)               vector_capacity(STACK)
+#define stack_last(STACK)                   vector_last(STACK)
+#define stack_pop(STACK)                    ((void)(vector_meta(STACK)->used -= 1), ((STACK)[vector_meta(STACK)->used]))
 
 /* ---------------------------------------------------------------------------------------------
     KCC Extended Library - queue
 --------------------------------------------------------------------------------------------- */
 
-#define queue_of_(type, v)          vector_of_(type, v)
-#define queue_free(QUEUE)           vector_free(QUEUE)
-#define queue_enqueue(QUEUE, VALUE) vector_unshift(QUEUE, VALUE)
-#define queue_size(QUEUE)           vector_size(QUEUE)
-#define queue_capacity(QUEUE)       vector_capacity(QUEUE)
-#define queue_last(QUEUE)           vector_last(QUEUE)
-#define queue_dequeue(QUEUE)        ((void)(vector_meta(QUEUE)->used -= 1), ((QUEUE)[vector_meta(QUEUE)->used]))
+#define queue_of_(type, v)                  vector_of_(type, v)
+#define queue_free(QUEUE)                   vector_free(QUEUE)
+#define queue_enqueue(QUEUE, VALUE)         vector_unshift(QUEUE, VALUE)
+#define queue_size(QUEUE)                   vector_size(QUEUE)
+#define queue_capacity(QUEUE)               vector_capacity(QUEUE)
+#define queue_last(QUEUE)                   vector_last(QUEUE)
+#define queue_dequeue(QUEUE)                ((void)(vector_meta(QUEUE)->used -= 1), ((QUEUE)[vector_meta(QUEUE)->used]))
 
 /* ---------------------------------------------------------------------------------------------
     KCC Extended Library - timer
