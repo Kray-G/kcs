@@ -406,7 +406,7 @@ static struct block *postfix_expression(
             if (!sym) {
                 type = type_create_function(basic_type__int);
                 sym_add(&ns_ident, tok.d.string, type,
-                    SYM_DECLARATION, LINK_EXTERN);
+                    SYM_DECLARATION, LINK_EXTERN, DECL_NORMAL);
             }
         }
     }

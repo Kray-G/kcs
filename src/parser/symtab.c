@@ -337,7 +337,8 @@ static struct symbol *sym_redeclare(
     struct namespace *ns,
     Type type,
     enum symtype symtype,
-    enum linkage linkage)
+    enum linkage linkage,
+    enum decltype decltype)
 {
     switch (linkage) {
     case LINK_INTERN:
@@ -372,6 +373,9 @@ static struct symbol *sym_redeclare(
         if (sym->symtype == SYM_DEFINITION) {
             if (!type_equal(sym->type, type)) {
                 error("'%s' redeclared with different type.", sym_name(sym));
+                exit(1);
+            } else if (is_function(sym->type) && decltype == DECL_FUNCBODY) {
+                error("The function '%s' already has a body.", sym_name(sym));
                 exit(1);
             }
         } else {
@@ -433,7 +437,8 @@ INTERNAL struct symbol *sym_add(
     String name,
     Type type,
     enum symtype symtype,
-    enum linkage linkage)
+    enum linkage linkage,
+    enum decltype decltype)
 {
     static int n;
 
@@ -459,7 +464,7 @@ INTERNAL struct symbol *sym_add(
         && (!depth || linkage == LINK_EXTERN)
         && !sym->depth)
     {
-        return sym_redeclare(sym, ns, type, symtype, linkage);
+        return sym_redeclare(sym, ns, type, symtype, linkage, decltype);
     }
 
     sym = alloc_sym();
