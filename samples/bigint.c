@@ -18,6 +18,7 @@ void bigint_sample()
     }
 
     puts(bigint_write(buf, sizeof(buf), b));
+    printf("bigint_write_size = %d, strlen = %d\n", bigint_write_size(b, 10), strlen(buf));
 
     bigint_free(a);
     bigint_free(b);

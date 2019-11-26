@@ -75,12 +75,18 @@ INTERNAL struct symbol *sym_lookup(struct namespace *ns, String name);
  * Add symbol to current scope, or resolve to or complete existing
  * symbols when they occur repeatedly.
  */
+enum decltype {
+    DECL_NORMAL,
+    DECL_FUNCBODY,
+};
+
 INTERNAL struct symbol *sym_add(
     struct namespace *ns,
     String name,
     Type type,
     enum symtype symtype,
-    enum linkage linkage);
+    enum linkage linkage,
+    enum decltype decltype);
 
 /* Add symbol to current scope of given namespace. */
 INTERNAL void sym_make_visible(struct namespace *ns, struct symbol *sym);

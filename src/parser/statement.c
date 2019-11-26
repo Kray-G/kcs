@@ -596,7 +596,8 @@ INTERNAL struct block *statement(struct definition *def, struct block *parent)
             tok.d.string,
             basic_type__void,
             SYM_TENTATIVE,
-            LINK_INTERN);
+            LINK_INTERN,
+            DECL_NORMAL);
         if (!sym->value.label) {
             sym->value.label = cfg_block_init(def);
         }
@@ -665,7 +666,8 @@ INTERNAL struct block *statement(struct definition *def, struct block *parent)
                     tok.d.string,
                     basic_type__void,
                     SYM_DEFINITION,
-                    LINK_INTERN);
+                    LINK_INTERN,
+                    DECL_NORMAL);
                 if (!sym->value.label) {
                     assert(!sym->referenced);
                     sym->value.label = cfg_block_init(def);

@@ -1,6 +1,7 @@
 #ifndef KCC_STRING_STRING_C
 #define KCC_STRING_STRING_C
 
+#include <stdlib.h>
 #define KCC_NO_IMPORT
 #include <string.h>
 #undef KCC_NO_IMPORT
@@ -33,6 +34,13 @@ char* strncat(char* s1, const char* s2, size_t n)
         *ss = '\0';
     }
     return s1;
+}
+
+char* strdup(const char* s)
+{
+    char *p = malloc(strlen(s) * sizeof(char) + 1);
+    strcpy(p, s);
+    return p;
 }
 
 int strcmp(const char* s1, const char* s2)

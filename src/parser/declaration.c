@@ -92,7 +92,7 @@ static struct block *parameter_list(
         param->offset = length;
         if (name.len) {
             param->sym =
-                sym_add(&ns_ident, name, base, SYM_DEFINITION, LINK_NONE);
+                sym_add(&ns_ident, name, base, SYM_DEFINITION, LINK_NONE, DECL_NORMAL);
         }
         if (peek().token != ',') {
             break;
@@ -479,7 +479,7 @@ static Type struct_or_union_declaration(enum token_type t)
         sym = sym_lookup(&ns_tag, name);
         if (!sym) {
             type = type_create(kind);
-            sym = sym_add(&ns_tag, name, type, SYM_TAG, LINK_NONE);
+            sym = sym_add(&ns_tag, name, type, SYM_TAG, LINK_NONE, DECL_NORMAL);
         } else if (is_integer(sym->type)) {
             error("Tag '%s' was previously declared as enum.",
                 str_raw(sym->name));
@@ -494,7 +494,7 @@ static Type struct_or_union_declaration(enum token_type t)
         if (peek().token == '{' && size_of(type)) {
             if (sym->depth != current_scope_depth(&ns_tag)) {
                 type = type_create(kind);
-                sym = sym_add(&ns_tag, name, type, SYM_TAG, LINK_NONE);
+                sym = sym_add(&ns_tag, name, type, SYM_TAG, LINK_NONE, DECL_NORMAL);
             } else {
                 error("Redefinition of '%s'.", str_raw(sym->name));
                 exit(1);
@@ -541,7 +541,8 @@ static void enumerator_list(void)
             name,
             basic_type__int,
             SYM_CONSTANT,
-            LINK_NONE);
+            LINK_NONE,
+            DECL_NORMAL);
         sym->value.constant.i = count++;
         if (peek().token != ',')
             break;
@@ -573,7 +574,8 @@ static void enum_declaration(void)
                 name,
                 basic_type__int,
                 SYM_TAG,
-                LINK_NONE);
+                LINK_NONE,
+                DECL_NORMAL);
         } else if (!is_integer(tag->type)) {
             error("Tag '%s' was previously defined as aggregate type.",
                 str_raw(tag->name));
@@ -864,7 +866,8 @@ static void define_builtin__func__(String name)
         str_init("__func__"),
         type,
         SYM_STRING_VALUE,
-        LINK_INTERN);
+        LINK_INTERN,
+        DECL_NORMAL);
     sym->value.string = name;
 }
 
@@ -913,7 +916,8 @@ static struct block *parameter_declaration_list(
                 param->name,
                 param->type,
                 SYM_DEFINITION,
-                LINK_NONE);
+                LINK_NONE,
+                DECL_NORMAL);
         }
     }
 
@@ -982,6 +986,7 @@ INTERNAL struct block *init_declarator(
     enum linkage linkage)
 {
     Type type;
+    enum token_type next;
     String name = {0};
     struct symbol *sym;
     const struct member *param;
@@ -1017,13 +1022,15 @@ INTERNAL struct block *init_declarator(
         }
     }
 
-    if (is_function(type) && !is_complete(type) && peek().token != ';') {
+    next = peek().token;
+    if (is_function(type) && !is_complete(type) && next != ';') {
         push_scope(&ns_ident);
         parent = parameter_declaration_list(def, parent, type);
         pop_scope(&ns_ident);
     }
 
-    sym = sym_add(&ns_ident, name, type, symtype, linkage);
+    sym = sym_add(&ns_ident, name, type, symtype, linkage,
+                    is_function(type) && next != ';' ? DECL_FUNCBODY : DECL_NORMAL);
     switch (current_scope_depth(&ns_ident)) {
     case 0: break;
     case 1: /* Parameters from old-style function definitions. */

@@ -20,6 +20,7 @@ int strcmp(const char* s1, const char* s2);
 int strncmp(const char *s1, const char *s2, size_t n);
 char* strchr(const char* s, int c);
 size_t strcspn(const char *s1, const char *s2);
+char *strdup(const char *s);
 char* index(const char* s, int c);
 char* strrchr(const char* s, int c);
 char* rindex(const char* s, int c);
