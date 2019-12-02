@@ -252,6 +252,7 @@ call :TEST token.c
 call :TEST tokenize-partial-keyword.c
 call :TEST trigraph.c
 REM call :TEST typedef-function.c
+call :TEST typedef-initialize.c
 call :TEST typedef.c
 call :TEST unary-minus-float.c
 REM call :TEST unary-plus.c
