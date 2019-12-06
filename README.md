@@ -18,7 +18,7 @@ The main feature is below.
 *   KCCI provides a standard C library.
     *   Not completed so far, though. 
     *   See [doc/cstdlib.md](doc/cstdlib.md) for the current status.
-*   KCCI also provides useful libraries by default like regex, zip, and so on.
+*   KCCI also provides useful libraries by default like regex, zip, encryption, and so on.
     *   See [doc/extension.md](doc/extension.md) for extended library interface.
     *   See the [samples](samples) because there are some samples about how to use.
     *   Some libraries will be coming soon.
@@ -414,11 +414,13 @@ About library, so many thanks to the following amazing products.
     *   [Oniguruma][] (BSD License)
     *   [SQLite3] (Public Domain)
     *   [bigint] (Public Domain)
+    *   [tiny-AES-c] (Public Domain)
 
 [Oniguruma]: https://github.com/kkos/oniguruma/
 [Miniz]: https://github.com/richgel999/miniz
 [SQLite3]: https://www.sqlite.org/
 [bigint]: https://github.com/983/bigint
+[tiny-AES-c]: https://github.com/kokke/tiny-AES-c
 
 Lastly, thank you very much for all programmers in the world.
 

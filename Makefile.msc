@@ -2,7 +2,7 @@
 NAME     = kcc
 CC       = cl
 LINK     = link
-CFLAGS   = /O2 /MT /Iinclude /DONIG_EXTERN=extern
+CFLAGS   = /O2 /MT /Iinclude /DONIG_EXTERN=extern /DAES256=1
 LFLAGS   =
 
 MAINOBJ = \
@@ -59,11 +59,13 @@ JIT = \
 
 EXTOBJ = \
 	src/_extdll/ext.obj \
+	src/_extdll/ext/aes.obj \
 	src/_extdll/ext/fileio.obj \
 	src/_extdll/ext/regex.obj \
 	src/_extdll/ext/sqlite3x.obj \
 	src/_extdll/ext/timer.obj \
 	src/_extdll/ext/zip_unzip.obj \
+	src/_extdll/lib/aes/aes.obj \
 	src/_extdll/lib/zip/miniz.obj \
 	src/_extdll/lib/sqlite3/sqlite3.obj \
 	src/_extdll/lib/fileio/_fileio.obj \
