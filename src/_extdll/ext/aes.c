@@ -64,36 +64,6 @@ DLLEXPORT void aes_set_iv(int argc, arg_type_t* argv)
     AES_ctx_set_iv(ctx, iv);
 }
 
-DLLEXPORT void aes_ecb_encrypt(int argc, arg_type_t* argv)
-{
-    if (argc != 2 || argv[0].type !=  C_PTR || !(argv[1].type ==  C_PTR || argv[1].type ==  C_STR)) {
-        return;
-    }
-
-    struct AES_ctx *ctx = (struct AES_ctx *)argv[0].value.p;
-    uint8_t *buf = argv[1].type == C_PTR ? (uint8_t *)argv[1].value.p : (uint8_t *)argv[1].value.s;
-    if (!ctx || !buf) {
-        return;
-    }
-
-    AES_ECB_encrypt(ctx, buf);
-}
-
-DLLEXPORT void aes_ecb_decrypt(int argc, arg_type_t* argv)
-{
-    if (argc != 2 || argv[0].type !=  C_PTR || !(argv[1].type ==  C_PTR || argv[1].type ==  C_STR)) {
-        return;
-    }
-
-    struct AES_ctx *ctx = (struct AES_ctx *)argv[0].value.p;
-    uint8_t *buf = argv[1].type == C_PTR ? (uint8_t *)argv[1].value.p : (uint8_t *)argv[1].value.s;
-    if (!ctx || !buf) {
-        return;
-    }
-
-    AES_ECB_decrypt(ctx, buf);
-}
-
 DLLEXPORT void aes_cbc_encrypt(int argc, arg_type_t* argv)
 {
     if (argc != 3 || argv[0].type !=  C_PTR || !(argv[1].type ==  C_PTR || argv[1].type ==  C_STR) || argv[2].type !=  C_INT) {

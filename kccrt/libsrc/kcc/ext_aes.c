@@ -36,24 +36,6 @@ void aes_set_iv(aes_t *ctx, const uint8_t *iv)
     __kcc_builtin_call(h, "aes_set_iv");
 }
 
-void aes_ecb_encrypt(aes_t *ctx, const uint8_t *buf)
-{
-    void *h = kcc_extlib();
-    __kcc_builtin_reset_args();
-    __kcc_builtin_add_arg_p(ctx);
-    __kcc_builtin_add_arg_p(buf);
-    __kcc_builtin_call(h, "aes_ecb_encrypt");
-}
-
-void aes_ecb_decrypt(aes_t *ctx, const uint8_t *buf)
-{
-    void *h = kcc_extlib();
-    __kcc_builtin_reset_args();
-    __kcc_builtin_add_arg_p(ctx);
-    __kcc_builtin_add_arg_p(buf);
-    __kcc_builtin_call(h, "aes_ecb_decrypt");
-}
-
 void aes_cbc_encrypt(aes_t *ctx, const uint8_t *buf, int32_t len)
 {
     void *h = kcc_extlib();
