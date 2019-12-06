@@ -1,5 +1,6 @@
 #include <kcc/dll.h>
 #include <kcc/dllcore.h>
+#include <stdlib.h>
 #include "../lib/aes/aes.h"
 
 /* ---------------------------------------------------------------------------------------------
