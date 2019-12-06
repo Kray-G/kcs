@@ -6,9 +6,7 @@ LIBDIR = $(PREFIX)/lib
 SRCDIR = $(CURDIR)$(.CURDIR)
 
 CC = gcc
-CPP = g++
-CFLAGS = -O2 -Wno-missing-braces -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -std=gnu99
-CPPFLAGS = -O2 -Wno-missing-braces
+CFLAGS = -O2 -Wno-missing-braces -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -std=gnu99 -DAES256=1
 
 MAINSRC = \
 	src/kcc.c
@@ -69,11 +67,13 @@ JIT = \
 
 EXTSRC = \
 	src/_extdll/ext.c \
+	src/_extdll/ext/aesx.c \
 	src/_extdll/ext/fileio.c \
 	src/_extdll/ext/regex.c \
 	src/_extdll/ext/timer.c \
 	src/_extdll/ext/zip_unzip.c \
 	src/_extdll/ext/sqlite3x.c \
+	src/_extdll/lib/aes/aes.c \
 	src/_extdll/lib/fileio/_fileio.c \
 	src/_extdll/lib/sqlite3/sqlite3.c \
 	src/_extdll/lib/zip/miniz.c

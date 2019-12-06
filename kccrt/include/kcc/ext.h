@@ -261,4 +261,26 @@ void timer_free(timer_t tmr);
 #endif
 #endif
 
+/* ---------------------------------------------------------------------------------------------
+    KCC Extended Library - aes
+--------------------------------------------------------------------------------------------- */
+
+typedef void aes_t;
+
+extern aes_t *aes_init(const uint8_t *key);
+extern aes_t *aes_init_iv(const uint8_t *key, const uint8_t *iv);
+extern void aes_free(aes_t *ctx);
+extern void aes_set_iv(aes_t *ctx, const uint8_t *iv);
+extern void aes_ecb_encrypt(aes_t *ctx, const uint8_t *buf);
+extern void aes_ecb_decrypt(aes_t *ctx, const uint8_t *buf);
+extern void aes_cbc_encrypt(aes_t *ctx, const uint8_t *buf, int32_t len);
+extern void aes_cbc_decrypt(aes_t *ctx, const uint8_t *buf, int32_t len);
+extern void aes_ctr_xcrypt(aes_t *ctx, const uint8_t *buf, int32_t len);
+
+#ifndef KCC_NO_IMPORT
+#if defined(__KCC_JIT__) || defined(__KCC__)
+#include <../libsrc/kcc/ext_aes.c>
+#endif
+#endif
+
 #endif /* EXT_H */
