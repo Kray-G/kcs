@@ -59,7 +59,7 @@ JIT = \
 
 EXTOBJ = \
 	src/_extdll/ext.obj \
-	src/_extdll/ext/aes.obj \
+	src/_extdll/ext/aesx.obj \
 	src/_extdll/ext/fileio.obj \
 	src/_extdll/ext/regex.obj \
 	src/_extdll/ext/sqlite3x.obj \

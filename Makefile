@@ -67,7 +67,7 @@ JIT = \
 
 EXTSRC = \
 	src/_extdll/ext.c \
-	src/_extdll/ext/aes.c \
+	src/_extdll/ext/aesx.c \
 	src/_extdll/ext/fileio.c \
 	src/_extdll/ext/regex.c \
 	src/_extdll/ext/timer.c \
