@@ -415,12 +415,14 @@ About library, so many thanks to the following amazing products.
     *   [SQLite3] (Public Domain)
     *   [bigint] (Public Domain)
     *   [tiny-AES-c] (Public Domain)
+    *   [klib] (MIT License)
 
 [Oniguruma]: https://github.com/kkos/oniguruma/
 [Miniz]: https://github.com/richgel999/miniz
 [SQLite3]: https://www.sqlite.org/
 [bigint]: https://github.com/983/bigint
 [tiny-AES-c]: https://github.com/kokke/tiny-AES-c
+[klib]: https://github.com/attractivechaos/klib
 
 Lastly, thank you very much for all programmers in the world.
 
