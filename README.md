@@ -1,24 +1,19 @@
-# KCCI (Kray-G C Compiler & Interpreter) [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+# KCS (Kray-G C Script) [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-Small but Useful C Compiler & Interpreter As an Execution Environment by JIT(x64)/VM.
+Scripting in C with JIT(x64)/VM.
 
 ## Overview
 
 ### Features
 
-KCCI is a compact C Compiler and Interpreter.
-This compiler has a JIT routine to run the code on the fly.
-And this has also a VM execution routine to run the code on the VM.
-It is basically same except the performance.
-
 The main feature is below.
 
 *   The language is C, so it is easy to use for almost all programmers.
 *   You can execute the code on the fly with JIT or VM like a scripting.
-*   KCCI provides a standard C library.
+*   KCS provides a standard C library.
     *   Not completed so far, though. 
     *   See [doc/cstdlib.md](doc/cstdlib.md) for the current status.
-*   KCCI also provides useful libraries by default like regex, zip, encryption, and so on.
+*   KCS also provides useful libraries by default like regex, zip, encryption, and so on.
     *   See [doc/extension.md](doc/extension.md) for extended library interface.
     *   See the [samples](samples) because there are some samples about how to use.
     *   Some libraries will be coming soon.
@@ -36,7 +31,7 @@ Current topics are below.
 ### Why not using Clang?
 
 Clang is too big for a light use.
-KCCI's goal is a lightweight and easy to use.
+KCS's goal is a lightweight and easy to use.
 If you want to do JIT with Clang, see [clang-jit][] project for your help.
 
 [clang-jit]: https://github.com/Kray-G/clang-jit
@@ -45,7 +40,7 @@ If you want to do JIT with Clang, see [clang-jit][] project for your help.
 
 ### Prerequisites
 
-Now KCCI was tested only on a platform below.
+Now KCS was tested only on a platform below.
 
 *   Windows (x64) with Visual Studio 2017 (Express Edition).
 *   Linux (x64) with gcc.
@@ -81,7 +76,7 @@ C:> make.cmd all test
 
 #### Linux
 
-Do make & test KCCI on Linux x64 as below.
+Do make & test KCS on Linux x64 as below.
 
 ```
 $ make all test
@@ -89,7 +84,7 @@ $ make all test
 
 ### Architecture
 
-Here is the basic block diagram of KCCI.
+Here is the basic block diagram of KCS.
 
 ```
 +-----------------------------------------------------------+
@@ -99,7 +94,7 @@ Here is the basic block diagram of KCCI.
 +-----------------------------+-----------------------------+
                              ---
 +-----------------------------+-----------------------------+
-| KCCI - Kray-G C Compiler & Interpreter                    |
+| KCS - Kray-G C Compiler & Interpreter                    |
 |                                                           |   +---------------------------------------+
 |   +---------------------------------------------------+   |   |  stdio, stdlib, string...             |
 |   |                   Library Code                    +-------+    bigint, regex, xml, json...        |
@@ -255,7 +250,7 @@ Maybe it will depend on the environment.
 Here is one of samples on Windows, and it is an execution time in seconds.
 For the reference, it shows a result of Ruby and Python.
 
-|           | KCCI VM(64bit) | KCCI JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |
+|           | KCS VM(64bit) | KCS JIT(x64) | Ruby 2.4.0 | Ruby 2.6.3 | Python 2.7.13 |
 | --------- | :------------: | :-----------: | :--------: | :--------: | :-----------: |
 | `fib(34)` |     0.453      |   **0.062**   |   1.171    |   0.734    |     1.578     |
 
