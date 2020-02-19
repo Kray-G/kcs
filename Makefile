@@ -9,11 +9,11 @@ CC = gcc
 CFLAGS = -O2 -Wno-missing-braces -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -std=gnu99 -DAES256=1
 
 MAINSRC = \
-	src/kcc.c
+	src/kcs.c
 
 SOURCES = \
-	src/kccmain.c \
-	src/kccutil.c \
+	src/kcsmain.c \
+	src/kcsutil.c \
 	src/context.c \
 	src/util/argparse.c \
 	src/util/fmemopen.c \
@@ -54,7 +54,7 @@ SOURCES = \
 
 LIBDIR_TARGET = $(LIBDIR)
 TARGETDIR = bin/release
-TARGET = $(TARGETDIR)/kcc
+TARGET = $(TARGETDIR)/kcs
 OBJS=$(SOURCES:%.c=%.o)
 
 BUILTIN = \
@@ -80,31 +80,31 @@ EXTSRC = \
 
 all: ext_json.c $(TARGET)
 
-$(TARGET): bin/bootstrap/kcc bin/bootstrap/kccbltin.so bin/bootstrap/kccjit.so bin/bootstrap/kccext.so
+$(TARGET): bin/bootstrap/kcs bin/bootstrap/kcsbltin.so bin/bootstrap/kcsjit.so bin/bootstrap/kcsext.so
 	mkdir -p $(TARGETDIR)
-	cp -f bin/bootstrap/kcc         $(TARGETDIR)/
-	cp -f bin/bootstrap/libkcc.so   $(TARGETDIR)/
-	cp -f bin/bootstrap/kccbltin.so $(TARGETDIR)/
-	cp -f bin/bootstrap/kccjit.so   $(TARGETDIR)/
-	cp -f bin/bootstrap/kccext.so   $(TARGETDIR)/
-	cp -f bin/bootstrap/kcc         .
-	cp -f bin/bootstrap/libkcc.so   .
-	cp -f bin/bootstrap/kccbltin.so .
-	cp -f bin/bootstrap/kccjit.so   .
-	cp -f bin/bootstrap/kccext.so   .
+	cp -f bin/bootstrap/kcs         $(TARGETDIR)/
+	cp -f bin/bootstrap/libkcs.so   $(TARGETDIR)/
+	cp -f bin/bootstrap/kcsbltin.so $(TARGETDIR)/
+	cp -f bin/bootstrap/kcsjit.so   $(TARGETDIR)/
+	cp -f bin/bootstrap/kcsext.so   $(TARGETDIR)/
+	cp -f bin/bootstrap/kcs         .
+	cp -f bin/bootstrap/libkcs.so   .
+	cp -f bin/bootstrap/kcsbltin.so .
+	cp -f bin/bootstrap/kcsjit.so   .
+	cp -f bin/bootstrap/kcsext.so   .
 
-ext_json.c: myacc kccrt/libsrc/kcc/json.y
-	./myacc -y __json_yy -Y JSON_YY kccrt/libsrc/kcc/json.y
-	mv -f y.tab.c kccrt/libsrc/kcc/ext_json.c
+ext_json.c: myacc kcsrt/libsrc/kcs/json.y
+	./myacc -y __json_yy -Y JSON_YY kcsrt/libsrc/kcs/json.y
+	mv -f y.tab.c kcsrt/libsrc/kcs/ext_json.c
 
 myacc:
 	$(CC) $(CFLAGS) -o myacc utility/myacc.c
 
-bin/bootstrap/kcc: bin/bootstrap/libkcc.so
+bin/bootstrap/kcs: bin/bootstrap/libkcs.so
 	@mkdir -p $(@D)
-	$(CC) $(MAINSRC) -o $@ -Wl,-rpath,'$$ORIGIN' -L$(@D) -lkcc
+	$(CC) $(MAINSRC) -o $@ -Wl,-rpath,'$$ORIGIN' -L$(@D) -lkcs
 
-bin/bootstrap/libkcc.so:
+bin/bootstrap/libkcs.so:
 	@mkdir -p $(@D)
 	for file in $(SOURCES) ; do \
 		target=$(@D)/$$(basename $$file .c).o ; \
@@ -113,25 +113,25 @@ bin/bootstrap/libkcc.so:
 	done
 	$(CC) $(@D)/*.o -o $@ -shared -Wl,-rpath,'$$ORIGIN' -ldl
 
-bin/bootstrap/kccbltin.so:
+bin/bootstrap/kcsbltin.so:
 	@mkdir -p $(@D)/bltin
 	for file in $(BUILTIN) ; do \
 		target=$(@D)/bltin/$$(basename $$file .c).o ; \
 		echo $$target ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
-	$(CC) $(@D)/bltin/*.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
+	$(CC) $(@D)/bltin/*.o $(@D)/kcsutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
 
-bin/bootstrap/kccjit.so:
+bin/bootstrap/kcsjit.so:
 	@mkdir -p $(@D)/jit
 	for file in $(JIT) ; do \
 		target=$(@D)/jit/$$(basename $$file .c).o ; \
 		echo $$target ; \
 		$(CC) $(CFLAGS) -fPIC -Iinclude -c $$file -o $$target ; \
 	done
-	$(CC) $(@D)/jit/*.o $(@D)/kccutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
+	$(CC) $(@D)/jit/*.o $(@D)/kcsutil.o $(@D)/string.o -shared -Wl,-rpath,'$$ORIGIN' -o $@ -lm
 
-bin/bootstrap/kccext.so: bin/bootstrap/libonig.a
+bin/bootstrap/kcsext.so: bin/bootstrap/libonig.a
 	@mkdir -p $(@D)/ext
 	for file in $(EXTSRC) ; do \
 		target=$(@D)/ext/$$(basename $$file .c).o ; \
@@ -163,22 +163,22 @@ test-picoc: $(TARGET)
 
 test: test-8cc test-qcc test-lacc test-picoc
 
-install: bin/release/kcc
+install: bin/release/kcs
 	mkdir -p $(LIBDIR_TARGET)
-	cp -r kccrt/                $(LIBDIR_TARGET)
-	cp $(TARGETDIR)/kcc         $(BINDIR)/kcc
-	cp $(TARGETDIR)/libkcc.so   $(BINDIR)/libkcc.so
-	cp $(TARGETDIR)/kccbltin.so $(BINDIR)/kccbltin.so
-	cp $(TARGETDIR)/kccjit.so   $(BINDIR)/kccjit.so
-	cp $(TARGETDIR)/kccext.so   $(BINDIR)/kccext.so
+	cp -r kcsrt/                $(LIBDIR_TARGET)
+	cp $(TARGETDIR)/kcs         $(BINDIR)/kcs
+	cp $(TARGETDIR)/libkcs.so   $(BINDIR)/libkcs.so
+	cp $(TARGETDIR)/kcsbltin.so $(BINDIR)/kcsbltin.so
+	cp $(TARGETDIR)/kcsjit.so   $(BINDIR)/kcsjit.so
+	cp $(TARGETDIR)/kcsext.so   $(BINDIR)/kcsext.so
 
 uninstall:
-	rm -rf $(LIBDIR_TARGET)/kccrt
-	rm -f $(BINDIR)/kcc
-	rm -f $(BINDIR)/libkcc.so
-	rm -f $(BINDIR)/kccbltin.so
-	rm -f $(BINDIR)/kccjit.so
-	rm -f $(BINDIR)/kccext.so
+	rm -rf $(LIBDIR_TARGET)/kcsrt
+	rm -f $(BINDIR)/kcs
+	rm -f $(BINDIR)/libkcs.so
+	rm -f $(BINDIR)/kcsbltin.so
+	rm -f $(BINDIR)/kcsjit.so
+	rm -f $(BINDIR)/kcsext.so
 
 clean:
 	rm -rf bin

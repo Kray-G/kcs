@@ -4,7 +4,7 @@
 ## Header
 
 ```c
-#include <kcc/bigint_t.h>
+#include <kcs/bigint_t.h>
 ```
 
 ## Type

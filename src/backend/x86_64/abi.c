@@ -1,11 +1,11 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
 #endif
 #include "abi.h"
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <string.h>
 #include <stdio.h>
 

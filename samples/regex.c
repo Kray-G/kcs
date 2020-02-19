@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <kcc/regex.h>
+#include <kcs/regex.h>
 
 const char *make_str(const char *s, int b, int e)
 {

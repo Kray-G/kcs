@@ -1,7 +1,7 @@
 #ifndef LINKER_H
 #define LINKER_H
 
-#include <kcc.h>
+#include <kcs.h>
 
 #include <stdio.h>
 

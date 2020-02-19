@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -6,7 +6,7 @@
 #include "abi.h"
 #include "assemble.h"
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <ctype.h>
 #include <stdarg.h>
 

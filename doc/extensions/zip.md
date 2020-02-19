@@ -4,7 +4,7 @@
 ## Header
 
 ```c
-#include <kcc/zip.h>
+#include <kcs/zip.h>
 ```
 
 ## Type

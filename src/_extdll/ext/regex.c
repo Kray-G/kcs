@@ -1,5 +1,5 @@
-#include <kcc/dll.h>
-#include <kcc/dllcore.h>
+#include <kcs/dll.h>
+#include <kcs/dllcore.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../lib/onig/src/oniguruma.h"

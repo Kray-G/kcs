@@ -4,7 +4,7 @@
 ## Header
 
 ```c
-#include <kcc/ext.h>
+#include <kcs/ext.h>
 ```
 
 ## Type

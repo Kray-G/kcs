@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include <kcc/zip.h>
+#include <kcs/zip.h>
 const char *filenames[] = {
     "README.md",
     "LICENSE",
@@ -39,7 +39,7 @@ void zip_append_test(const char *name)
 {
     const char *appendfile[] = {
         "doc/cstdlib.md",
-        "include/kcc.h",
+        "include/kcs.h",
     };
     zip_t *z = zip_open(name, 'a');
     if (z) {

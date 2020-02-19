@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <kcs/ext.h>
 
 /*
     AES256 is worked by default.
-    If you want AES128 or AES192, you need to recompile kccext.dll with compile -D option.
+    If you want AES128 or AES192, you need to recompile kcsext.dll with compile -D option.
     See Makefile.
  */
 #define AES256 1

@@ -1,11 +1,11 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !defined(AMALGAMATION) || !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
 #endif
 #include "dot.h"
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -11,7 +11,7 @@
 #include "jit.h"
 #include <lacc/array.h>
 #include <lacc/context.h>
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 
 #define JIT_ADDR_BASE (0)
 static int jit_return_value = 0;
@@ -130,7 +130,7 @@ static jit_builtin_get_func_t builtin_get_func = NULL;
 
 static void jit_setup_builtin(void)
 {
-    jit_builtin_library = load_library("kccjit", 0);
+    jit_builtin_library = load_library("kcsjit", 0);
     if (!jit_builtin_library) return;
     builtin_get_func = (jit_builtin_get_func_t)get_function(jit_builtin_library, "jit_get_builtin_by_index");
     if (!builtin_get_func) return;

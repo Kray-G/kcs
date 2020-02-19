@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !defined(AMALGAMATION) || !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -8,7 +8,7 @@
 #include "vminstr.h"
 #include <lacc/context.h>
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -1247,7 +1247,7 @@ INTERNAL void vm_init(FILE *stream, const char *file)
     vm_ctx.file = file;
 
     assert(!vm_prog.global);
-    vm_builtin_library = load_library("kccbltin", 0);
+    vm_builtin_library = load_library("kcsbltin", 0);
     if (!vm_builtin_library) return;
     builtin_get_func = (vm_builtin_get_func_t)get_function(vm_builtin_library, "vm_get_builtin_by_index");
     if (!builtin_get_func) return;

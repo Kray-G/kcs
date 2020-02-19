@@ -50,7 +50,7 @@ sum:
     ret
 ```
 
-`kcc` generates the code below.
+`kcs` generates the code below.
 The main loop is the blocks from `.L7` to `.L9`.
 You will see the `jmp` instruction is only 1 instruction in the loop.
 This means a non-conditional jump has been erased from inside the loop.

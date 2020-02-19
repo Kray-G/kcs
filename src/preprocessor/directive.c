@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -11,7 +11,7 @@
 #include <lacc/array.h>
 #include <lacc/context.h>
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 
 #define IDENT(s) {IDENTIFIER, 0, 1, 0, {0}, {SHORT_STRING_INIT(s)}}
 

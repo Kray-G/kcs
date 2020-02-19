@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <kcc/kvec.h>
+#include <kcs/kvec.h>
 
 int main()
 {

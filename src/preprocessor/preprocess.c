@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -13,7 +13,7 @@
 #include <lacc/context.h>
 #include <lacc/deque.h>
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>

@@ -10,6 +10,6 @@ test.c
 result.txt
 timeit.dat
 sample.db
-kccrt/libsrc/kcc/ext_json.c
+kcsrt/libsrc/kcs/ext_json.c
 json.output
 language/

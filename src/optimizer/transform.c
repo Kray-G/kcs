@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -6,7 +6,7 @@
 #include "transform.h"
 #include "liveness.h"
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <lacc/type.h>
 
 static int var_equal(struct var a, struct var b)

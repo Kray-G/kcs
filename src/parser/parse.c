@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -10,7 +10,7 @@
 #include "symtab.h"
 #include <lacc/deque.h>
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 
 /*
  * Parser consumes whole declaration statements, which can include

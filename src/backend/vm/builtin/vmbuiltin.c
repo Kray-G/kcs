@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 
 #if !defined(EXTERNAL)
 # define INTERNAL
@@ -15,7 +15,7 @@
 #include "../vminstr.h"
 #include "vmacpconv.h"
 #include <lacc/array.h>
-#include <kcc/dll.h>
+#include <kcs/dll.h>
 #include <math.h>
 #include <time.h>
 #include <setjmp.h>

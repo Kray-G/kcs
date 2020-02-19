@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <kcc/bigint.h>
+#include <kcs/bigint.h>
 
 void bigint_sample()
 {

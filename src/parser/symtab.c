@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -7,7 +7,7 @@
 #include "typetree.h"
 #include <lacc/context.h>
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

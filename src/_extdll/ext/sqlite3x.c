@@ -1,5 +1,5 @@
-#include <kcc/dll.h>
-#include <kcc/dllcore.h>
+#include <kcs/dll.h>
+#include <kcs/dllcore.h>
 #include "../lib/sqlite3/sqlite3.h"
 #include <string.h>
 

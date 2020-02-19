@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -6,7 +6,7 @@
 #include "strtab.h"
 #include <lacc/hash.h>
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>

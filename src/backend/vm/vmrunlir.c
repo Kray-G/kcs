@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !defined(AMALGAMATION) || !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -6,7 +6,7 @@
 #include "vm.h"
 #include "vminstr.h"
 #include <lacc/array.h>
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 
 static int vm_return_value = 0;
 

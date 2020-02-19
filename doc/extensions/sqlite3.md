@@ -4,7 +4,7 @@
 ## Header
 
 ```c
-#include <kcc/sqlite3.h>
+#include <kcs/sqlite3.h>
 ```
 
 ## Type

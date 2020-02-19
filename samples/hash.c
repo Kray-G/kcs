@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <kcc/khash.h>
+#include <kcs/khash.h>
 
 KHASH_MAP_INIT_STR(str, int)
 

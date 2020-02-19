@@ -4,7 +4,7 @@
 ## Header
 
 ```c
-#include <kcc/regex.h>
+#include <kcs/regex.h>
 ```
 
 ## Type

@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -6,7 +6,7 @@
 #include "liveness.h"
 #include "optimize.h"
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 
 /*
  * Set bit for symbol definitely written through operation. Unless used

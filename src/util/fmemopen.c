@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #include <stdio.h>
 
 #if defined(KCCI_USE_FUNOPEN)
@@ -107,7 +107,7 @@ FILE *fmemopen(void *buf, size_t len, const char *type)
     if (!GetTempPathA(sizeof(tfn), tfn)) {
         return NULL;
     }
-    if (!GetTempFileNameA(tfn, "kccitemp", 0, ifn)) {
+    if (!GetTempFileNameA(tfn, "kcsitemp", 0, ifn)) {
         return NULL;
     }
 

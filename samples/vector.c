@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <kcc/ext.h>
+#include <kcs/ext.h>
 
 void vector_sample()
 {

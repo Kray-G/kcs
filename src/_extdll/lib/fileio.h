@@ -1,7 +1,7 @@
 #ifndef KLIB_FILESYSTEM_FILEIO_H_
 #define KLIB_FILESYSTEM_FILEIO_H_
 
-#include <kcc/dllcore.h>
+#include <kcs/dllcore.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdarg.h>

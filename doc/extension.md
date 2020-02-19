@@ -6,7 +6,7 @@
 ## Basic Data Structure
 
 ```c
-#include <kcc/ext.h>
+#include <kcs/ext.h>
 ```
 
 *   [String](extensions/string.md)
@@ -20,7 +20,7 @@
 ## Big Integer
 
 ```c
-#include <kcc/bigint.h>
+#include <kcs/bigint.h>
 ```
 
 *   [Big Integer](extensions/bigint.md)
@@ -30,7 +30,7 @@
 ## Regular Expression
 
 ```c
-#include <kcc/regex.h>
+#include <kcs/regex.h>
 ```
 
 *   [Regular Expression](extensions/regex.md)
@@ -40,7 +40,7 @@
 ## Zip/Unzip
 
 ```c
-#include <kcc/zip.h>
+#include <kcs/zip.h>
 ```
 
 *   [Zip/Unzip](extensions/zip.md)
@@ -50,7 +50,7 @@
 ## SQLite3
 
 ```c
-#include <kcc/sqlite3.h>
+#include <kcs/sqlite3.h>
 ```
 
 *   [SQLite3](extensions/sqlite3.md)

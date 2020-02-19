@@ -1,16 +1,16 @@
 
-NAME     = kcc
+NAME     = kcs
 CC       = cl
 LINK     = link
 CFLAGS   = /O2 /MT /Iinclude /DONIG_EXTERN=extern /DAES256=1
 LFLAGS   =
 
 MAINOBJ = \
-	src/kcc.obj
+	src/kcs.obj
 
 OBJS = \
-	src/kccmain.obj \
-	src/kccutil.obj \
+	src/kcsmain.obj \
+	src/kcsutil.obj \
 	src/context.obj \
 	src/util/argparse.obj \
 	src/util/fmemopen.obj \
@@ -92,7 +92,7 @@ EXTOBJ = \
 .SUFFIXES :
 .SUFFIXES : .c .obj
 
-all: ext_json.c libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll kccext.dll
+all: ext_json.c libs $(NAME).exe $(NAME)bltin.dll $(NAME)jit.dll kcsext.dll
 
 test: all
 	test\test-8cc\test.cmd
@@ -106,9 +106,9 @@ test: all
 	test\test-picoc\test.cmd -j
 	test\test-picoc\csmith.cmd -j
 
-ext_json.c: myacc.exe kccrt\libsrc\kcc\json.y
-	myacc -y __json_yy -Y JSON_YY kccrt\libsrc\kcc\json.y
-	move /y y.tab.c kccrt\libsrc\kcc\ext_json.c
+ext_json.c: myacc.exe kcsrt\libsrc\kcs\json.y
+	myacc -y __json_yy -Y JSON_YY kcsrt\libsrc\kcs\json.y
+	move /y y.tab.c kcsrt\libsrc\kcs\ext_json.c
 
 myacc.exe:
 	$(CC) $(CFLAGS) /Femyacc.exe utility\myacc.c
@@ -138,10 +138,10 @@ lib$(NAME).dll: $(OBJS)
 	$(CC) /LD /Felib$(NAME).dll $(OBJS)
 
 $(NAME)bltin.dll: $(BUILTIN)
-	$(CC) $(CFLAGS) /LD /Fe$(NAME)bltin.dll $(BUILTIN:.obj=.c) src\kccutil.obj src/util/string.obj
+	$(CC) $(CFLAGS) /LD /Fe$(NAME)bltin.dll $(BUILTIN:.obj=.c) src\kcsutil.obj src/util/string.obj
 
 $(NAME)jit.dll: $(JIT)
-	$(CC) $(CFLAGS) /LD /Fe$(NAME)jit.dll $(JIT:.obj=.c) src\kccutil.obj src/util/string.obj
+	$(CC) $(CFLAGS) /LD /Fe$(NAME)jit.dll $(JIT:.obj=.c) src\kcsutil.obj src/util/string.obj
 
 .c.obj:
 	$(CC) -c $(CFLAGS) -Fo$*.obj $<

@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -14,7 +14,7 @@
 #include <lacc/context.h>
 #include <lacc/token.h>
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 
 #define JUMPTABLE_THRESHOLD (16)
 

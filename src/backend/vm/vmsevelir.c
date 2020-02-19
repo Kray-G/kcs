@@ -1,4 +1,4 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !defined(AMALGAMATION) || !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
@@ -7,7 +7,7 @@
 #include "vm.h"
 #include "vminstr.h"
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 #include <stdio.h>
 
 static int sel_put_magic_number(FILE *fp)

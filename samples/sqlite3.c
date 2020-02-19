@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <kcc/sqlite3.h>
+#include <kcs/sqlite3.h>
 
 void error(sqlite3_t *db, const char *msg)
 {

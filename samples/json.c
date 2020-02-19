@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <kcc/json.h>
+#include <kcs/json.h>
 
 int main()
 {

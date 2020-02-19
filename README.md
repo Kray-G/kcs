@@ -51,19 +51,19 @@ I am waiting for pull requests to support any other platforms & compilers.
 
 **Notes for executing:**
 
-To execute `kcc` on Linux or `kcc.exe` on Windows, the files below are required.
-Especially for `kccrt` folder will be used at runtime.
+To execute `kcs` on Linux or `kcs.exe` on Windows, the files below are required.
+Especially for `kcsrt` folder will be used at runtime.
 
 ```
 +-- (installed)
-    +-- kccrt
+    +-- kcsrt
     |   +-- include/*
     |   +-- libsrc/*
-    +-- kcc                 (kcc.exe)
-    +-- libkcc.so           (libkcc.dll)
-    +-- kccbltin.so         (kccbltin.dll)
-    +-- kccjit.so           (kccjit.dll)
-    +-- kccext.so           (kccext.dll)
+    +-- kcs                 (kcs.exe)
+    +-- libkcs.so           (libkcs.dll)
+    +-- kcsbltin.so         (kcsbltin.dll)
+    +-- kcsjit.so           (kcsjit.dll)
+    +-- kcsext.so           (kcsext.dll)
 ```
 
 #### Windows
@@ -94,7 +94,7 @@ Here is the basic block diagram of KCS.
 +-----------------------------+-----------------------------+
                              ---
 +-----------------------------+-----------------------------+
-| KCS - Kray-G C Compiler & Interpreter                    |
+| KCS - Kray-G C Compiler & Interpreter                     |
 |                                                           |   +---------------------------------------+
 |   +---------------------------------------------------+   |   |  stdio, stdlib, string...             |
 |   |                   Library Code                    +-------+    bigint, regex, xml, json...        |
@@ -102,8 +102,8 @@ Here is the basic block diagram of KCS.
 |                                                           |   +-------------------+-------------------+
 |   +-----------------------+   +-----------------------+   |                       |
 |   |     JIT builtin       |   |     VM builtin        |   |   +-------------------+-------------------+
-|   |        kccjit.dll     |   |       kccbltin.dll    |   |   |             Extension DLL             |
-|   +-----------------------+   +-----------------------+   |   |                  kccext.dll           |
+|   |        kcsjit.dll     |   |       kcsbltin.dll    |   |   |             Extension DLL             |
+|   +-----------------------+   +-----------------------+   |   |                  kcsext.dll           |
 |   +-----------------------+   +-----------------------+   |   +---+-----------------------------------+
 |   |     JIT Executor      |   |    VM Interpreter     |   |       |       |       |       |       |
 |   +-----------+-----------+   +-----------+-----------+   |   +-------+   :       :       :       :
@@ -163,9 +163,9 @@ Use the option `-J` if you want to see the x64 assembly code.
 
 ```c
 // Run on the x64 JIT.
-$ kcc -j program.c
+$ kcs -j program.c
 // Show the x64 assembly code.
-$ kcc -J program.c
+$ kcs -J program.c
 ```
 
 #### Run on the VM
@@ -175,15 +175,15 @@ Use the option `-X` if you want to see the VM instructions.
 
 ```c
 // Run on the VM.
-$ kcc program.c
-$ kcc -x program.c
+$ kcs program.c
+$ kcs -x program.c
 // Show the VM instruction code.
-$ kcc -X program.c
+$ kcs -X program.c
 ```
 
 ### Output Call Flow Graph
 
-This is `lacc`'s functionality, but `kcc` can do it also.
+This is `lacc`'s functionality, but `kcs` can do it also.
 Here is the output of call flow graph for switch-case assembled as a jump table.
 Please see [here](doc/technical.md) for the detail of a jump table.
 
@@ -237,10 +237,10 @@ The image is like this.
 The results are below.
 
 ```c
-$ kcc -j fib.c
+$ kcs -j fib.c
 9227465
 
-$ kcc fib.c
+$ kcs fib.c
 9227465
 ```
 
@@ -267,7 +267,7 @@ so it shows the fib function only.
 ##### x64 assembly code
 
 ```asm
-$ kcc -J fib.c
+$ kcs -J fib.c
 ...(omitted)...
                                   fib
 0000C2F3: 55                            pushq   %rbp
@@ -319,7 +319,7 @@ $ kcc -J fib.c
 ##### VM instructions
 
 ```asm
-$ kcc -X fib.c
+$ kcs -X fib.c
 ...(omitted)...
 ----------------------------------------------------------------
 fib
@@ -422,4 +422,4 @@ About library, so many thanks to the following amazing products.
 Lastly, thank you very much for all programmers in the world.
 
 ---
-https://github.com/Kray-G/kcci-platform
+https://github.com/Kray-G/kcs

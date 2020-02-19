@@ -1,11 +1,11 @@
-#include <kcc.h>
+#include <kcs.h>
 #if !AMALGAMATION
 # define INTERNAL
 # define EXTERNAL extern
 #endif
 #include "elf.h"
 
-#include <kcc/assert.h>
+#include <kcs/assert.h>
 
 /*
  * Map register enum values to register encoding. Depends on register
