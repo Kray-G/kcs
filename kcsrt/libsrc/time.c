@@ -94,4 +94,9 @@ char *asctime(const struct tm *tp)
     return result;
 }
 
+clock_t clock(void)
+{
+    return __kcc_builtin_clock();
+}
+
 #endif /* KCC_TIME_TIME_C */

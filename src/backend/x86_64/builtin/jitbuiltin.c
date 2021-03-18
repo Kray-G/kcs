@@ -401,6 +401,16 @@ static uint64_t jit_call_builtin_gmtime(struct tm *t, int flag)
     return r;
 }
 
+static uint64_t jit_call_builtin_clock(void)
+{
+    return (uint64_t)clock();
+}
+
+static uint64_t jit_call_builtin_clocks_per_sec(void)
+{
+    return (uint64_t)CLOCKS_PER_SEC;
+}
+
 struct jit_builtin_def_t {
     const char *name;
     void *func;
@@ -484,6 +494,8 @@ struct jit_builtin_def_t {
     { "__kcc_builtin_time",         time,                               1,  0x00    },
     { "__kcc_builtin_gmtime_init",  jit_call_builtin_gmtime_init,       2,  0x00    },
     { "__kcc_builtin_gmtime",       jit_call_builtin_gmtime,            2,  0x00    },
+    { "__kcc_builtin_clock",        jit_call_builtin_clock,             0,  0x00    },
+    { "__kcc_builtin_clocks_ps",    jit_call_builtin_clocks_per_sec,    0,  0x00    },
 };
 
 DLLEXPORT int jit_get_builtin_index(const char *name)

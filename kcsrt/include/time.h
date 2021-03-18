@@ -28,10 +28,16 @@ struct tm *gmtime(const time_t *timer);
 struct tm *gmtime_r(const time_t *timer, struct tm *result);
 char *asctime(const struct tm *timeptr);
 
+typedef long clock_t;
+clock_t clock(void);
+
 #ifndef KCC_NO_IMPORT
 #if defined(__KCC_JIT__) || defined(__KCC__)
+#define CLOCKS_PER_SEC (__kcc_builtin_clocks_ps())
 #include <../libsrc/time.c>
 #endif
+#else
+#define CLOCKS_PER_SEC (1000)
 #endif
 
 #endif /* KCC_TIME_H */

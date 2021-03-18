@@ -762,6 +762,23 @@ static int vm_call_builtin_gmtime(uint8_t *stack, int64_t sp)
     return 8;   /* sp += 8; */
 }
 
+static int vm_call_builtin_clock(uint8_t *stack, int64_t sp)
+{
+    CHECK_BUILTIN_ENTER();
+    STACK_TOPI() = clock();
+    CHECK_BUILTIN_LEAVE();
+    return 8;   /* sp += 8; */
+}
+
+
+static int vm_call_builtin_clocks_ps(uint8_t *stack, int64_t sp)
+{
+    CHECK_BUILTIN_ENTER();
+    STACK_TOPI() = CLOCKS_PER_SEC;
+    CHECK_BUILTIN_LEAVE();
+    return 8;   /* sp += 8; */
+}
+
 struct vm_builtin_def_t {
     const char *name;
     vm_builtin_t func;
@@ -843,6 +860,8 @@ struct vm_builtin_def_t {
     { "__kcc_builtin_time",         vm_call_builtin_time        },
     { "__kcc_builtin_gmtime_init",  vm_call_builtin_gmtime_init },
     { "__kcc_builtin_gmtime",       vm_call_builtin_gmtime      },
+    { "__kcc_builtin_clock",        vm_call_builtin_clock       },
+    { "__kcc_builtin_clocks_ps",    vm_call_builtin_clocks_ps   },
 };
 
 DLLEXPORT int vm_get_builtin_index(const char *name)

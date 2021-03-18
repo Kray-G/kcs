@@ -100,6 +100,9 @@ uint64_t __kcc_builtin_time(uint64_t *timer);
 void *__kcc_builtin_gmtime_init(uint64_t *timer, int is_gmtime);
 int __kcc_builtin_gmtime(void *p, int type);
 
+uint64_t __kcc_builtin_clock(void);
+uint64_t __kcc_builtin_clocks_per_sec(void);
+
 #ifndef KCC_NO_IMPORT
 #if defined(__KCC_JIT__) || defined(__KCC__)
 #include <../libsrc/_builtin.c>
