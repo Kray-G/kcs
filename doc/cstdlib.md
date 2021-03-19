@@ -290,9 +290,9 @@ If you are interested in it, please make it and send it to me.
 | `clock_t`        |                |        |
 | `time_t`         |       O        |        |
 | `struct tm`      |       O        |        |
-| `CLOCKS_PER_SEC` |                |        |
+| `CLOCKS_PER_SEC` |       O        |        |
 | `asctime`        |       O        |        |
-| `clock`          |                |        |
+| `clock`          |       O        |        |
 | `ctime`          |                |        |
 | `difftime`       |       O        |        |
 | `gmtime`         |       O        |        |
