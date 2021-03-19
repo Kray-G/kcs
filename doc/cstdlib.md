@@ -287,7 +287,7 @@ If you are interested in it, please make it and send it to me.
 
 |       Name       | Implementation | Remark |
 | :--------------- | :------------: | :----- |
-| `clock_t`        |                |        |
+| `clock_t`        |       O        |        |
 | `time_t`         |       O        |        |
 | `struct tm`      |       O        |        |
 | `CLOCKS_PER_SEC` |       O        |        |

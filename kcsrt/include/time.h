@@ -28,7 +28,7 @@ struct tm *gmtime(const time_t *timer);
 struct tm *gmtime_r(const time_t *timer, struct tm *result);
 char *asctime(const struct tm *timeptr);
 
-typedef long clock_t;
+typedef uint64_t clock_t;
 clock_t clock(void);
 
 #ifndef KCC_NO_IMPORT
